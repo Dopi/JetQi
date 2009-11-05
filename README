@@ -1,0 +1,66 @@
+SmartQ Qi
+=========
+
+This is a modified Qi bootloader for the SmartQ 5 MID. It can boot from the
+external SD card (keep the "move/fullscreen" button pressed and then press
+"power").
+
+Use make to compile. The resulting binary file will be placed on
+image/qi-s3c6410-<version>-SmartQ. Look at the script install-smartq-qi.sh
+in order to make a bootable SD card.
+
+-- Roberto Gordo Saez <roberto.gordo@gmail.com>
+
+
+Qi
+==
+
+Qi (named by Alan Cox on Openmoko kernel list) is a minimal bootloader that
+"breathes life" into Linux.  Its goal is to stay close to the minimum needed
+to "load" and then "boot" Linux -- no boot menus, additional peripheral init
+or private states.
+
+
+What's wrong with U-Boot, they keep telling people to not reinvent the wheel?
+=============================================================================
+
+U-Boot is gradually becoming a simplified knockoff of Linux.  After using it a
+while, it became clear we were cutting and pasting drivers into U-Boot from
+Linux, cutting them down and not having a plan to maintain the U-Boot versions
+as the Linux ones were changed.
+
+We decided that we would use full Linux for things that Linux is good at and
+only have the bootloader do the device init that is absolutely required before
+Linux can be pulled into memory and started.  In practice since we had a working
+U-Boot implementation it meant cutting that right down to the bone (start.S
+mainly for s3c2442) and then building it up from scratch optimized to just do
+load and boot.
+
+
+Samsung - specific boot sequence
+================================
+
+Right now Qi supports Samsung "steppingstone" scheme devices, but in fact it's
+the same in processors like iMX31 that there is a small area of SRAM that is
+prepped with NAND content via ROM on the device.  There's nothing that stops Qi
+use on processors without steppingstone, although the ATAG stuff assumes we deal
+with ARM based processor.
+
+
+Appending to commandline
+========================
+
+You can append to the Qi commandline by creating a file /boot/append-<device>,
+eg, /boot/append-GTA02 containing the additional kernel commandline you want.
+
+This means you can affect the boot per-rootfs, but that if you reimage the
+rootfs you at the same time define what is appeneded.  Because these files are
+looked for with the <device> name in them, options can be selected depending on
+the device the rootfs is run on.
+
+
+Initrd support
+==============
+
+Initrd or initramfs in separate file is supported to be loaded at given
+memory address in addition to kernel image.  The ATAGs are issued accordingly.
