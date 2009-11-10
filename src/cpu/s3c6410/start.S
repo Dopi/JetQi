@@ -1,7 +1,14 @@
 /*
+ * Original and derived works:
  * (C) Copyright 2007 OpenMoko, Inc.
  *
- * Configuation settings for the OPENMOKO Neo GTA02 Linux GSM phone
+ * SmartQ clock setup and DDR settings:
+ * (C) Copyright 2007 Chronolytics Inc. 
+ * (C) Copyright 2007 David F. Carlson <dave at chronolytics dot com>
+ *
+ * Configuration settings for:
+ *   SmartQ5/7 s3c6410 @ 666MHz with DDR333 Qimonda-HYB25DC512128CF-6
+ *   
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -26,99 +33,246 @@
 
 #define TEXT_BASE 0x53000000
 
+/* 
+**  NOTE: support for CS=1 found on SMKD-6410 et al. is vestigial.
+**  NOTE: code has been left in-situ for folks who are forward porting
+**  NOTE: to other chips/configs.
+*/
 #ifndef SMARTQ
 #define S3C6410_POP_A 1
 #endif
 
 #define set_pll(mdiv, pdiv, sdiv)	(1<<31 | mdiv<<16 | pdiv<<8 | sdiv)
 
+/* the smartQ works fine at 666MHz */
+/* Pick 1 of these clocks */
+#define CONFIG_CLK_666_166_66
+// #define CONFIG_CLK_666_133_66  
+// #define CONFIG_CLK_532_133_66  
+
+#if defined(CONFIG_CLK_666_166_66) /* FIN 12MHz, Fout 666MHz */
+
+#define APLL_MDIV       333
+#define	Startup_PCLKdiv		4
+// #undef  CONFIG_SYNC_MODE /* ASYNC MODE */
+#define CONFIG_SYNC_MODE
+
+#elif defined(CONFIG_CLK_666_133_66) /* FIN 12MHz, Fout 666MHz */
+
+#define APLL_MDIV       333
+#define	Startup_PCLKdiv		3
+#undef  CONFIG_SYNC_MODE /* ASYNC MODE */
+
+#elif defined(CONFIG_CLK_532_133_66) /* FIN 12MHz, Fout 532MHz */
+
+#define APLL_MDIV       266
+#define	Startup_PCLKdiv		3
+#define CONFIG_SYNC_MODE
+
+#endif
+
+/* input clock of PLL */
+#define CONFIG_SYS_CLK_FREQ     12000000  /* the SmartQ has 12MHz input clock */
+
+
 /* fixed MPLL 533MHz */
 #define MPLL_MDIV	266
 #define MPLL_PDIV	3
 #define MPLL_SDIV	1
 
-#define Startup_APLLdiv		0
-#define APLL_MDIV	266
-#define APLL_PDIV	3
-#define APLL_SDIV	1
-#define	Startup_PCLKdiv		3
+/* for 666MHz/533MHz */
+#define APLL_PDIV       3
+#define APLL_SDIV       1
+
+#define Startup_APLLdiv         0
 #define Startup_HCLKdiv		1
 #define Startup_MPLLdiv		1
-#define Startup_HCLKx2div	1
-#define Startup_APLL	(12000000/(APLL_PDIV<<APLL_SDIV)*APLL_MDIV)
-#define Startup_HCLK	(Startup_APLL/(Startup_HCLKx2div+1)/(Startup_HCLKdiv+1))
+#define Startup_HCLKx2div      	1
 
-#define CLK_DIV_VAL	((Startup_PCLKdiv<<12)|(Startup_HCLKx2div<<9)|(Startup_HCLKdiv<<8)|(Startup_MPLLdiv<<4)|Startup_APLLdiv)
+#define Startup_APLL	(CONFIG_SYS_CLK_FREQ/(APLL_PDIV<<APLL_SDIV)*APLL_MDIV)
+#define Startup_MPLL    ((CONFIG_SYS_CLK_FREQ)/(MPLL_PDIV<<MPLL_SDIV)*MPLL_MDIV)
+
+#if defined(CONFIG_SYNC_MODE)
+#define Startup_HCLK    (Startup_APLL/(Startup_HCLKx2div+1)/(Startup_HCLKdiv+1))
+#else
+#define Startup_HCLK    (Startup_MPLL/(Startup_HCLKx2div+1)/(Startup_HCLKdiv+1))
+#endif
+
+/* convert tXXX to memory clks */
+#define nSecToClk(nS)  (((Startup_HCLK / 1000 * (nS)) - 1) / 1000000 + 1)
+
+/* selects whether HCLK/PCLK are derived from APLL (=1) or MPLL (=0) */
+#define DMC_OTHERS_SYNCACK      (0xf << 8) /* read only acknowledge of sync */
+#define DMC_OTHERS_SYNCMUXSEL	(1<<6) 
+/* sync=1 async=0 */
+#define DMC_OTHERS_SYNCMODE     (1<<7)  /* sync mode request to ARM */
+#define DMC_OTHERS_SYNCVICPORT  (1<<5)  /* Nice: undocument bits */
+
+#define CLK_DIV_VAL	((Startup_PCLKdiv<<12)|(Startup_HCLKx2div<<9)|(Startup_HCLKdiv<<8)|(Startup_MPLLdiv<<4)|Startup_APLLdiv<<0)
 #define APLL_VAL	set_pll(APLL_MDIV, APLL_PDIV, APLL_SDIV)
 #define MPLL_VAL	set_pll(MPLL_MDIV, MPLL_PDIV, MPLL_SDIV)
+
+/* These are the fields for the DMC CFG register */
+/* device column pins */
+#define CFG_COL_11		(0)
+#define CFG_COL_12		(1)
+#define CFG_COL_13		(2)
+#define CFG_COL_14		(3)
+
+/* device row pins */
+#define CFG_ROW_8		(0)
+#define CFG_ROW_9		(1)
+#define CFG_ROW_10		(2)
+#define CFG_ROW_11		(3)
+#define CFG_ROW_12		(4)
+
+/* CFG burst length */
+#define CFG_BL_4		(0x2)
+#define CFG_BL_8		(0x3)
+
+/* These are the fields for the DMC CFG2 register */
+#define CFG2_RD_DELAY_SDR	(0x0 << 11)
+#define CFG2_RD_DELAY_LPDDR	(0x1 << 11)
+#define CFG2_RD_DELAY_DDR	(0x2 << 11)
+
+#define CFG2_TYPE_SDR		(0x0 << 8 )
+#define CFG2_TYPE_DDR		(0x1 << 8 )
+#define CFG2_TYPE_LPDDR		(0x3 << 8 )
+
+#define CFG2_WIDTH_16		(0x0 << 6 )
+#define CFG2_WIDTH_32		(0x1 << 6 )
+
+/* common JEDEC commands */
+#define CMD_PRE_CHARGE		(0x0 << 18)
+#define CMD_AUTO		(0x1 << 18)
+#define CMD_MODE		(0x2 << 18)  /* aka MR  */
+#define CMD_EXTMODE		(0x3 << 18)  /* aka EMR */
+
+/* common (?) RAM command states */
+#define MEMC_CMD_GO		(0)
+#define MEMC_CMD_SLEEP		(1)
+#define MEMC_CMD_WAKEUP		(2)
+#define MEMC_CMD_PAUSE		(3)
+#define MEMC_CMD_CONFIG		(4)
+
+
 #if S3C6410_POP_A
 
 #define DMC1_MEM_CFG		0x00210011	/* Supports one CKE control, Chip1, Burst4, Row/Column bit */
 #define DMC1_MEM_CFG2		0xB41
 #define DMC1_CHIP0_CFG		0x150FC
 #define DMC1_CHIP1_CFG		0x154FC
-#define DMC_DDR_32_CFG		0x0		/* 32bit, DDR */
 
 /* Memory Parameters */
 /* DDR Parameters */
-#define DDR_tREFRESH		5865		/* ns */
-#define DDR_tRAS		50		/* ns (min: 45ns)*/
-#define DDR_tRC 		68		/* ns (min: 67.5ns)*/
-#define DDR_tRCD		23		/* ns (min: 22.5ns)*/
-#define DDR_tRFC		133		/* ns (min: 80ns)*/
-#define DDR_tRP 		23		/* ns (min: 22.5ns)*/
-#define DDR_tRRD		20		/* ns (min: 15ns)*/
-#define DDR_tWR 		20		/* ns (min: 15ns)*/
-#define DDR_tXSR		125		/* ns (min: 120ns)*/
-#define DDR_CASL		3		/* CAS Latency 3 */
+#define RAM_tREFRESH		5865		/* ns */
+#define RAM_tRAS		50		/* ns (min: 45ns)*/
+#define RAM_tRC 		68		/* ns (min: 67.5ns)*/
+#define RAM_tRCD		23		/* ns (min: 22.5ns)*/
+#define RAM_tRFC		133		/* ns (min: 80ns)*/
+#define RAM_tRP 		23		/* ns (min: 22.5ns)*/
+#define RAM_tRRD		20		/* ns (min: 15ns)*/
+#define RAM_tWR 		20		/* ns (min: 15ns)*/
+#define RAM_tXSR		125		/* ns (min: 120ns)*/
+
+#define RAM_clk_tCAS		3		/* CAS Latency 3 */
 
 #else
 
-#define DMC1_MEM_CFG		0x00010012	/* Supports one CKE control, Chip1, Burst4, Row/Column bit */
-#define DMC1_MEM_CFG2		0xB45
-#define DMC1_CHIP0_CFG		0x150F8
+/* These numbers are for the Qimonda HYB25DC512160 */
+
+#define CFG_COLS             	(CFG_COL_13 <<  0)      /* for 512Mbit */
+
+#define CFG_ROWS		(CFG_ROW_10 <<  3)      /* for 512Mbit */
+
+#define BURST			(CFG_BL_8)
+
+#define CFG_AUTOPOWER		(0x1  << 13)
+#define CFG_PD_CYCLES		(32 <<  7)     /* clocks before PD */
+#define CFG_BURST_LEN		(BURST << 15)      
+
+// was: #define DMC1_MEM_CFG		0x00010012
+#define DMC1_MEM_CFG		\
+       (CFG_BURST_LEN|CFG_AUTOPOWER|CFG_PD_CYCLES|CFG_ROWS|CFG_COLS) 
+
+#define CFG2_RD_DELAY		(CFG2_RD_DELAY_DDR)
+
+#define CFG2_TYPE		(CFG2_TYPE_DDR)
+
+#define CFG2_WIDTH		(CFG2_WIDTH_32)
+
+#define CFG2_DQM_INIT		(0x1 << 2 )
+#define CFG2_SYNC		(0x1 << 0 )
+
+// was: #define DMC1_MEM_CFG2		0xB45
+#define DMC1_MEM_CFG2		\
+		(CFG2_RD_DELAY|CFG2_TYPE|CFG2_WIDTH|CFG2_DQM_INIT|CFG2_SYNC)
+
+#define BA_ROW_COL		(0x1  << 16)
+#define ADDR_MATCH		(0x50 <<  8)
+#define ADDR_MASK               (0xf8 <<  0)
+
+// #define DMC1_CHIP0_CFG		0x150F8
+#define DMC1_CHIP0_CFG          (BA_ROW_COL|ADDR_MATCH|ADDR_MASK)
 #define DMC_DDR_32_CFG		0x0 		/* 32bit, DDR */
 
 /* Memory Parameters */
 /* DDR Parameters */
-#define DDR_tREFRESH		7800		/* ns */
-#define DDR_tRAS		45		/* ns (min: 45ns)*/
-#define DDR_tRC 		68		/* ns (min: 67.5ns)*/
-#define DDR_tRCD		23		/* ns (min: 22.5ns)*/
-#define DDR_tRFC		80		/* ns (min: 80ns)*/
-#define DDR_tRP 		23		/* ns (min: 22.5ns)*/
-#define DDR_tRRD		15		/* ns (min: 15ns)*/
-#define DDR_tWR 		15		/* ns (min: 15ns)*/
-#define DDR_tXSR		120		/* ns (min: 120ns)*/
-#define DDR_CASL		3		/* CAS Latency 3 */
+
+/* FYI: For HCLK=133MHz, clk=7.5188nS */
+
+/* These numbers are for the Qimonda HYB25DC512160 */
+
+#define RAM_tREFRESH		7800			/* ns */
+#define RAM_tRAS		42			/* ns */
+#define RAM_tRC 		60			/* ns */
+#define RAM_tRCD		18			/* ns */
+#define RAM_tRFC		72			/* ns */
+#define RAM_tRP 		18			/* ns */
+#define RAM_tRRD		12			/* ns */
+#define RAM_tWR 		15			/* ns */
+#define RAM_tXSR		200			/* ns */
+
+/* CAS latency in clks */
+#define RAM_clk_tCAS		3			/* clk */
+
+#define MODE_BL			(BURST << 0)
+#define MODE_CAS		(RAM_clk_tCAS << 4)
+
+#define DRAM_MODE		(CMD_MODE | MODE_BL | MODE_CAS)  /* ModeReg */
 
 #endif
+
+#define RAM_clk_tREFRESH	nSecToClk(RAM_tREFRESH)	/* clk */
+#define RAM_clk_tRAS		nSecToClk(RAM_tRAS)	/* clk */
+#define RAM_clk_tRC		nSecToClk(RAM_tRC)	/* clk */
+#define RAM_clk_tRCD		nSecToClk(RAM_tRCD)	/* clk */
+#define RAM_clk_tRFC		nSecToClk(RAM_tRFC)	/* clk */
+#define RAM_clk_tRP 		nSecToClk(RAM_tRP)	/* clk */
+#define RAM_clk_tRRD		nSecToClk(RAM_tRRD)	/* clk */
+#define RAM_clk_tWR 		nSecToClk(RAM_tWR)	/* clk */
+#define RAM_clk_tXSR		nSecToClk(RAM_tXSR)	/* clk */
 
 
 /*
  * mDDR memory configuration
  */
 #define DMC_DDR_BA_EMRS 	2
-#define DMC_DDR_MEM_CASLAT	3
-#define DMC_DDR_CAS_LATENCY	(DDR_CASL<<1)						//6   Set Cas Latency to 3
-#define DMC_DDR_t_DQSS		1							// Min 0.75 ~ 1.25
-#define DMC_DDR_t_MRD		2							//Min 2 tck
-#define DMC_DDR_t_RAS		(((Startup_HCLK / 1000 * DDR_tRAS) - 1) / 1000000 + 1)	//7, Min 45ns
-#define DMC_DDR_t_RC		(((Startup_HCLK / 1000 * DDR_tRC) - 1) / 1000000 + 1) 	//10, Min 67.5ns
-#define DMC_DDR_t_RCD		(((Startup_HCLK / 1000 * DDR_tRCD) - 1) / 1000000 + 1) 	//4,5(TRM), Min 22.5ns
-#define DMC_DDR_schedule_RCD	((DMC_DDR_t_RCD - 3) << 3)
-#define DMC_DDR_t_RFC		(((Startup_HCLK / 1000 * DDR_tRFC) - 1) / 1000000 + 1) 	//11,18(TRM) Min 80ns
-#define DMC_DDR_schedule_RFC	((DMC_DDR_t_RFC - 3) << 5)
-#define DMC_DDR_t_RP		(((Startup_HCLK / 1000 * DDR_tRP) - 1) / 1000000 + 1) 	//4, 5(TRM) Min 22.5ns
-#define DMC_DDR_schedule_RP	((DMC_DDR_t_RP - 3) << 3)
-#define DMC_DDR_t_RRD		(((Startup_HCLK / 1000 * DDR_tRRD) - 1) / 1000000 + 1)	//3, Min 15ns
-#define DMC_DDR_t_WR		(((Startup_HCLK / 1000 * DDR_tWR) - 1) / 1000000 + 1)	//Min 15ns
-#define DMC_DDR_t_WTR		2
-#define DMC_DDR_t_XP		2							//1tck + tIS(1.5ns)
-#define DMC_DDR_t_XSR		(((Startup_HCLK / 1000 * DDR_tXSR) - 1) / 1000000 + 1)	//17, Min 120ns
-#define DMC_DDR_t_ESR		DMC_DDR_t_XSR
-#define DMC_DDR_REFRESH_PRD	(((Startup_HCLK / 1000 * DDR_tREFRESH) - 1) / 1000000) 	// TRM 2656
-#define DMC_DDR_USER_CONFIG	1							// 2b01 : mDDR
+#define DMC_DDR_CAS_LATENCY	(RAM_clk_tCAS << 1)	//  Set Cas Latency
+#define RAM_clk_tDQSS	1		// Min 0.75 ~ 1.25
+#define RAM_clk_tMRD		2		//Min 2 tck
+
+#define DMC_DDR_schedule_RCD	((RAM_clk_tRCD - 3) << 3)
+#define DMC_DDR_RCD		(DMC_DDR_schedule_RCD | RAM_clk_tRCD)
+
+#define DMC_DDR_schedule_RFC	((RAM_clk_tRFC - 3) << 5)
+#define DMC_DDR_RFC		(DMC_DDR_schedule_RFC | RAM_clk_tRFC)
+
+#define DMC_DDR_schedule_RP	((RAM_clk_tRP - 3) << 3)
+#define DMC_DDR_RP		(DMC_DDR_schedule_RP | RAM_clk_tRP)
+#define RAM_clk_tWTR		2
+#define RAM_clk_tXP		2	//1tck + tIS(1.5ns)
+#define RAM_clk_tESR		RAM_clk_tXSR
 
 
 .globl _start, processor_id, is_jtag
@@ -201,58 +355,52 @@ start_code:
 
 	ldr	r0, =ELFIN_DMC1_BASE			@DMC1 base address 0x7e001000
 
-	ldr	r1, =0x04
+	ldr	r1, =MEMC_CMD_CONFIG
 	str	r1, [r0, #INDEX_DMC_MEMC_CMD]
 
-	ldr	r1, =DMC_DDR_REFRESH_PRD
+	ldr	r1, =RAM_clk_tREFRESH
 	str	r1, [r0, #INDEX_DMC_REFRESH_PRD]
 
 	ldr	r1, =DMC_DDR_CAS_LATENCY
 	str	r1, [r0, #INDEX_DMC_CAS_LATENCY]
 
-	ldr	r1, =DMC_DDR_t_DQSS
+	ldr	r1, =RAM_clk_tDQSS
 	str	r1, [r0, #INDEX_DMC_T_DQSS]
 
-	ldr	r1, =DMC_DDR_t_MRD
+	ldr	r1, =RAM_clk_tMRD
 	str	r1, [r0, #INDEX_DMC_T_MRD]
 
-	ldr	r1, =DMC_DDR_t_RAS
+	ldr	r1, =RAM_clk_tRAS
 	str	r1, [r0, #INDEX_DMC_T_RAS]
 
-	ldr	r1, =DMC_DDR_t_RC
+	ldr	r1, =RAM_clk_tRC
 	str	r1, [r0, #INDEX_DMC_T_RC]
 
-	ldr	r1, =DMC_DDR_t_RCD
-	ldr	r2, =DMC_DDR_schedule_RCD
-	orr	r1, r1, r2
+	ldr	r1, =DMC_DDR_RCD
 	str	r1, [r0, #INDEX_DMC_T_RCD]
 
-	ldr	r1, =DMC_DDR_t_RFC
-	ldr	r2, =DMC_DDR_schedule_RFC
-	orr	r1, r1, r2
+	ldr	r1, =DMC_DDR_RFC
 	str	r1, [r0, #INDEX_DMC_T_RFC]
 
-	ldr	r1, =DMC_DDR_t_RP
-	ldr	r2, =DMC_DDR_schedule_RP
-	orr	r1, r1, r2
+	ldr	r1, =DMC_DDR_RP
 	str	r1, [r0, #INDEX_DMC_T_RP]
 
-	ldr	r1, =DMC_DDR_t_RRD
+	ldr	r1, =RAM_clk_tRRD
 	str	r1, [r0, #INDEX_DMC_T_RRD]
 
-	ldr	r1, =DMC_DDR_t_WR
+	ldr	r1, =RAM_clk_tWR
 	str	r1, [r0, #INDEX_DMC_T_WR]
 
-	ldr	r1, =DMC_DDR_t_WTR
+	ldr	r1, =RAM_clk_tWTR
 	str	r1, [r0, #INDEX_DMC_T_WTR]
 
-	ldr	r1, =DMC_DDR_t_XP
+	ldr	r1, =RAM_clk_tXP
 	str	r1, [r0, #INDEX_DMC_T_XP]
 
-	ldr	r1, =DMC_DDR_t_XSR
+	ldr	r1, =RAM_clk_tXSR
 	str	r1, [r0, #INDEX_DMC_T_XSR]
 
-	ldr	r1, =DMC_DDR_t_ESR
+	ldr	r1, =RAM_clk_tESR
 	str	r1, [r0, #INDEX_DMC_T_ESR]
 
 	ldr	r1, =DMC1_MEM_CFG
@@ -275,7 +423,7 @@ start_code:
 	ldr	r1, =DMC_PA0
 	str	r1, [r0, #INDEX_DMC_DIRECT_CMD]
 
-	@Auto Refresh	2 time
+	@Auto Refresh	2 times
 	ldr	r1, =DMC_AR0
 	str	r1, [r0, #INDEX_DMC_DIRECT_CMD]
 	str	r1, [r0, #INDEX_DMC_DIRECT_CMD]
@@ -285,7 +433,7 @@ start_code:
 	str	r1, [r0, #INDEX_DMC_DIRECT_CMD]
 
 	@Mode Reg
-	ldr	r1, =DMC_mDDR_MR0
+	ldr	r1, =DRAM_MODE
 	str	r1, [r0, #INDEX_DMC_DIRECT_CMD]
 
 #if S3C6410_POP_A
@@ -315,7 +463,7 @@ start_code:
 #endif
 
 	@Enable DMC1
-	mov	r1, #0x0
+	ldr	r1, =MEMC_CMD_GO
 	str	r1, [r0, #INDEX_DMC_MEMC_CMD]
 
 1:
@@ -328,8 +476,9 @@ start_code:
 
 	ldr	r0, =ELFIN_CLOCK_POWER_BASE	@0x7e00f000
 
+#ifdef  CONFIG_SYNC_MODE
 	ldr	r1, [r0, #OTHERS_OFFSET]
-	mov	r2, #0x40
+	mov	r2, #DMC_OTHERS_SYNCMUXSEL
 	orr	r1, r1, r2
 	str	r1, [r0, #OTHERS_OFFSET]
 
@@ -339,16 +488,41 @@ start_code:
 	nop
 	nop
 
-	ldr	r2, =0x80
+	mov	r2, #DMC_OTHERS_SYNCMODE
 	orr	r1, r1, r2
 	str	r1, [r0, #OTHERS_OFFSET]
 
-2:
+check_sync_ack:
 	ldr	r1, [r0, #OTHERS_OFFSET]
-	ldr	r2, =0xf00
+	mov	r2, #DMC_OTHERS_SYNCACK
 	and	r1, r1, r2
-	cmp	r1, #0xf00
-	bne	2b
+	cmp	r1, #DMC_OTHERS_SYNCACK
+	bne	check_sync_ack
+
+#else /* ASYNC mode */
+
+        nop
+        nop
+        nop
+        nop
+        nop
+
+        ldr     r1, [r0, #OTHERS_OFFSET]
+        bic     r1, r1, #(DMC_OTHERS_SYNCMODE|DMC_OTHERS_SYNCMUXSEL)
+        orr     r1, r1, #DMC_OTHERS_SYNCMUXSEL
+        str     r1, [r0, #OTHERS_OFFSET]
+
+wait_for_async:
+        ldr     r1, [r0, #OTHERS_OFFSET]
+        and     r1, r1, #DMC_OTHERS_SYNCACK
+        cmp     r1, #0x0
+        bne     wait_for_async
+
+        ldr     r1, [r0, #OTHERS_OFFSET]
+        bic     r1, r1, #DMC_OTHERS_SYNCMUXSEL
+        str     r1, [r0, #OTHERS_OFFSET]
+#endif
+
 
 	mov	r1, #0xff00
 	orr	r1, r1, #0xff
@@ -395,9 +569,17 @@ start_code:
 3:	subs	r1, r1, #1
 	bne	3b
 
+#ifdef CONFIG_SYNC_MODE                    /* Synchronization for VIC port */
+
 	ldr	r1, [r0, #OTHERS_OFFSET]
-	orr	r1, r1, #0x20
+	orr	r1, r1, #DMC_OTHERS_SYNCVICPORT
 	str	r1, [r0, #OTHERS_OFFSET]
+#else
+        ldr     r1, [r0, #OTHERS_OFFSET]
+        bic     r1, r1, #DMC_OTHERS_SYNCVICPORT
+        str     r1, [r0, #OTHERS_OFFSET]
+
+#endif
 
 
 	/* set GPIO to enable UART */

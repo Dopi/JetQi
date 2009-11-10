@@ -18,7 +18,7 @@ include config.mk
 
 BUILD_DATE := $(shell date -Iseconds)
 BUILD_HOST := $(shell hostname)
-BUILD_VERSION := 20091105-SmartQ
+BUILD_VERSION := 20091110-SmartQ
 
 LDS = src/cpu/$(CPU)/qi.lds
 INCLUDE = include
