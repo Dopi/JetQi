@@ -31,9 +31,9 @@
 #define u32 unsigned int
 #define u16 unsigned short
 #define u8 unsigned char
-typedef unsigned int uint32_t;
-typedef unsigned short uint16_t;
-typedef unsigned char uint8_t;
+//typedef unsigned int uint32_t;
+//typedef unsigned short uint16_t;
+//typedef unsigned char uint8_t;
 
 #define ARRAY_SIZE(x) (sizeof(x) / sizeof(x[0]))
 

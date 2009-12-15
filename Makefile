@@ -18,13 +18,14 @@ include config.mk
 
 BUILD_DATE := $(shell date -Iseconds)
 BUILD_HOST := $(shell hostname)
-BUILD_VERSION := 20091126-SmartQ
+BUILD_VERSION := 20091215-JetQi
 
 LDS = src/cpu/$(CPU)/qi.lds
 INCLUDE = include
 IMAGE_DIR = image
 TOOLS = tools
-CFLAGS = -Wall -Werror -I $(INCLUDE) -c -Os -fno-strict-aliasing -mlong-calls \
+CFLAGS = -Wall -Werror -I $(INCLUDE) -I ${INCLUDE_ARCH} -I ${INCLUDE_KERNEL} -I ${INCLUDE_LIBC}\
+	-c -Os -fno-strict-aliasing -mlong-calls \
 	-fno-common -ffixed-r8 -msoft-float -fno-builtin -ffreestanding \
 	-march=armv6 -mno-thumb-interwork -Wstrict-prototypes -fno-stack-protector \
 	-DBUILD_HOST="${BUILD_HOST}" -DBUILD_VERSION="${BUILD_VERSION}" \
