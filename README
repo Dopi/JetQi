@@ -1,15 +1,15 @@
-SmartQ Qi
+JetQi
 =========
 
-This is a modified Qi bootloader for the SmartQ 5 MID. It can boot from the
-external SD card (keep the "move/fullscreen" button pressed and then press
-"power").
+This is a modified Qi bootloader for the Samsung Jét smartphone. It can 
+boot from the external SD card. JetQi is based on SmartQi by Roberto Gordo 
+Saez <roberto.gordo@gmail.com> (git://gitorious.org/qi-smartq/smartqi.git).
 
 Use make to compile. The resulting binary file will be placed on
-image/qi-s3c6410-<version>-SmartQ. Look at the script install-smartq-qi.sh
+image/qi-s3c6410-<version>-JetQi. Look at the script install-smartq-qi.sh
 in order to make a bootable SD card.
 
--- Roberto Gordo Saez <roberto.gordo@gmail.com>
+-- Dopi <dopi711@googlemail.com>
 
 
 Qi
