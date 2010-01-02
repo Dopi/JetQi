@@ -44,13 +44,21 @@
 
 #define set_pll(mdiv, pdiv, sdiv)	(1<<31 | mdiv<<16 | pdiv<<8 | sdiv)
 
-/* the smartQ works fine at 666MHz */
 /* Pick 1 of these clocks */
-#define CONFIG_CLK_666_166_66
+#define CONFIG_CLK_800_266_66	// FIXME: Is this correct?
+// #define CONFIG_CLK_666_166_66
 // #define CONFIG_CLK_666_133_66  
 // #define CONFIG_CLK_532_133_66  
 
-#if defined(CONFIG_CLK_666_166_66) /* FIN 12MHz, Fout 666MHz */
+#if defined(CONFIG_CLK_800_266_66) /* FIN 12MHz, Fout 800MHz */
+// 	 ARMCLK,  HCLKX2,	APLL,	PDIV,	ARM_DIV, HCLKX2_DIV */
+// 	{800*MHZ, 266 *MHZ, 	400, 	3, 	0, 	 2},
+
+#define APLL_MDIV       400
+#define	Startup_PCLKdiv		3
+#undef  CONFIG_SYNC_MODE /* ASYNC MODE */
+
+#elif defined(CONFIG_CLK_666_166_66) /* FIN 12MHz, Fout 666MHz */
 
 #define APLL_MDIV       333
 #define	Startup_PCLKdiv		4
@@ -72,7 +80,7 @@
 #endif
 
 /* input clock of PLL */
-#define CONFIG_SYS_CLK_FREQ     12000000  /* the SmartQ has 12MHz input clock */
+#define CONFIG_SYS_CLK_FREQ     12000000  /* 12MHz input clock */
 
 
 /* fixed MPLL 533MHz */

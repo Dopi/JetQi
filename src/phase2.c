@@ -5,7 +5,8 @@
  * Parse the U-Boot header and Boot Linux
  * based on various code from U-Boot
  *
- * Modified for SmartQ, 2009, Roberto Gordo Saez <roberto.gordo@gmail.com>
+ * Modified for Jet, 2010, dopi711@googlemail.com
+ * based on smartQi by Roberto Gordo Saez <roberto.gordo@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -29,7 +30,7 @@
 #include <setup.h>
 #include <ext2.h>
 
-#include "cpu/s3c6410/smartq.h"
+#include "cpu/s3c6410/jet.h"
 
 typedef void (*the_kernel_fn)(int zero, int arch, unsigned int params);
 

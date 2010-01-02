@@ -3,7 +3,8 @@
  * Author: xiangfu liu <xiangfu@openmoko.org>
  *         Andy Green <andy@openmoko.com>
  *
- * Modified for SmartQ, 2009, Roberto Gordo Saez <roberto.gordo@gmail.com>
+ * Modified for Jet, 2010 dopi711@googlemail.com
+ * based on SmartQi by Roberto Gordo Saez <roberto.gordo@gmail.com>
  *
  * This program is free software; you can redistribute it and/or
  * modify it under the terms of the GNU General Public License as
@@ -26,7 +27,7 @@
 
 #include <qi.h>
 #include <serial-s3c64xx.h>
-#include "smartq.h"
+#include "jet.h"
 
 #define stringify2(s) stringify1(s)
 #define stringify1(s) #s
@@ -34,7 +35,7 @@
 void bootloader_second_phase(void);
 
 const struct board_api *boards[] = {
-	&board_api_smartq,
+	&board_api_jet,
 	NULL /* always last */
 };
 
@@ -95,8 +96,8 @@ void start_qi(void)
 	   "\n");
 
 	puts(stringify2(BUILD_DATE) "  Copyright (C) 2008 Openmoko, Inc.\n");
-	puts("  This version of Qi for SmartQ devices is modified by\n");
-	puts("  Roberto Gordo Saez <roberto.gordo@gmail.com>\n\n");
+	puts("  This version of Qi for Jet (S8000) is modified by\n");
+	puts("  dopi711@googlemail.com>\n\n");
 
 	if (!is_jtag) {
 		/*
@@ -111,7 +112,7 @@ void start_qi(void)
 		* crash when we run it from there.
 		*/
 
-		if (!(flag = sd_card_block_read_smartq((void*)BOOTLOADER_MEM_ADDR,
+		if (!(flag = sd_card_block_read_jet((void*)BOOTLOADER_MEM_ADDR,
 		globalBlockSizeHide - BOOTLOADER_BLKS - 18, BOOTLOADER_BLKS))) {
 			led_blink(3, 0);
 			poweroff();
