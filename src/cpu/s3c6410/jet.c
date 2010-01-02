@@ -141,6 +141,7 @@ void led_set(int flag)
 		gpio_direction_output(GPIO_LED_1, 1);
 #else
 	if(0==1) gpio_direction_output(GPIO_LED_1, 1);
+
 #endif
 }
 
