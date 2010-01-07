@@ -38,7 +38,7 @@
 **  NOTE: code has been left in-situ for folks who are forward porting
 **  NOTE: to other chips/configs.
 */
-#ifndef SMARTQ
+#ifndef JET
 #define S3C6410_POP_A 1
 #endif
 
@@ -186,7 +186,7 @@
 #define RAM_clk_tCAS		3		/* CAS Latency 3 */
 
 #else
-
+#if 0
 /* These numbers are for the Qimonda HYB25DC512160 */
 
 #define CFG_COLS             	(CFG_COL_13 <<  0)      /* for 512Mbit */
@@ -249,6 +249,7 @@
 
 #define DRAM_MODE		(CMD_MODE | MODE_BL | MODE_CAS)  /* ModeReg */
 
+#endif
 #endif
 
 #define RAM_clk_tREFRESH	nSecToClk(RAM_tREFRESH)	/* clk */
@@ -325,6 +326,7 @@ _bss_end:
 _ss_stack:
 
 start_code:
+#ifdef S3C6410_POP_A
 	/*
 	 * set the cpu to SVC32 mode
 	 */
@@ -332,6 +334,7 @@ start_code:
 	bic	r0,r0,#0x1f
 	orr	r0,r0,#0xd3
 	msr	cpsr,r0
+#endif 
 
 	/*
 	 * flush v4 I/D caches
@@ -340,6 +343,7 @@ start_code:
 	mcr	p15, 0, r0, c7, c7, 0	/* flush v3/v4 cache */
 	mcr	p15, 0, r0, c8, c7, 0	/* flush v4 TLB */
 
+#if 0
 	/*
 	 * disable MMU stuff and caches
 	 */
@@ -353,7 +357,7 @@ start_code:
 	/* Peri port setup */
 	ldr	r0, =0x70000000
 	orr	r0, r0, #0x13
-		mcr	p15,0,r0,c15,c2,4       @ 256M(0x70000000-0x7fffffff)
+	mcr	p15,0,r0,c15,c2,4       @ 256M(0x70000000-0x7fffffff)
 
 	/* SDRAM */
 
@@ -443,7 +447,172 @@ start_code:
 	@Mode Reg
 	ldr	r1, =DRAM_MODE
 	str	r1, [r0, #INDEX_DMC_DIRECT_CMD]
+#else
+		ORR	R0, R0,	#0x1000
+		MCR	p15, 0,	R0,c1,c0
+		LDR	R0, =0x70000013	// R0 = SROM Bank control register adress
+		MCR	p15, 0,	R0,c15,c2, 4
+		LDR	R0, =0x7E004000	// R0 = Watchdog	timer control register adress
+		MOV	R1, #0
+		STR	R1, [R0]	// clear	Watchdog timer control register
+		LDR	R0, =0x71200014
+		MOVL	R1, 0xFFFFFFFF
+		STR	R1, [R0]
+		LDR	R0, =0x71300014
+		MOVL	R1, 0xFFFFFFFF
+		STR	R1, [R0]
+		LDR	R0, =0x7F0081D4
+		LDR	R1, =0x55555555
+		STR	R1, [R0]
+//		BL	sub_1D8
+//		LDR	R1, =(loc_FFFC+3)
+//		LDR	R2, =(loc_E10+3)
+//		LDR	R0, =0x7E00F000
+//		STR	R1, [R0]
+//		STR	R1, [R0,#4]
+//		STR	R2, [R0,#8]
+//		LDR	R0, =0x7E00F020
+//		LDR	R1, [R0]
+//		BIC	R1, R1,	#loc_30000
+//		BIC	R1, R1,	#0xFF00
+//		BIC	R1, R1,	#0xFF
+//		LDR	R2, =(loc_7500+1)
+//		ORR	R1, R1,	R2
+//		STR	R1, [R0]
+		LDR	R0, =0x7E00F00C
+		LDR	R1, =0x81900301
+		STR	R1, [R0]
+		LDR	R0, =0x7E00F010
+		LDR	R1, =0x81840303
+		STR	R1, [R0]
+		LDR	R0, =0x7E00F018
+		LDR	R1, =loc_C49C
+		STR	R1, [R0]
+		LDR	R0, =0x7E00F014
+		LDR	R1, =0x80200103
+		STR	R1, [R0]
+		LDR	R0, =0x7E00F01C
+		LDR	R1, [R0]
+		ORR	R1, R1,	#7
+		STR	R1, [R0]
+		LDR	R0, =0x7E00F120
+		MOV	R1, #0
+		BIC	R1, R1,	#0x80
+		STR	R1, [R0]
+		BL	sub_21C		// DRAM CONTROLLER INIT
+					// load DRAM CONTROLLER STATUS REGISTER base adress in R0
+// =============== S U B	R O U T	I N E =======================================
 
+// DRAM CONTROLLER INIT
+// load DRAM CONTROLLER STATUS REGISTER base adress in R0
+
+sub_21C:					// CODE XREF: ROM:000000F8p
+		LDR	R0, =0x7E001000
+		MOV	R1, #4
+		STR	R1, [R0,#4]	// Store	#4 in P1MEMCCMD	(Config	Mode)
+		MOV	R1, #0x208
+		STR	R1, [R0,#0x10]	// Store	0x208 to REFRESH PERIOD	REGISTER (Refresh timing = 208 cycles)
+
+		MOV	R1, #6
+		STR	R1, [R0,#0x14]	// Store	#6 to CAS LATENCY REGISTER (reset value)
+		MOV	R1, #1
+
+		STR	R1, [R0,#0x18]	// Store	#1 to T_DQSS REGISTER (Reset Value)
+		MOV	R1, #2
+		STR	R1, [R0,#0x1C]	// Store	#2 to T_MRD REGISTER (Reset Value)
+		MOV	R1, #7
+		STR	R1, [R0,#0x20]	// Store	#7 to T_RAS REGISTER (Reset Value)
+		MOV	R1, #9
+		STR	R1, [R0,#0x24]	// Store	#9 to T_RC REGISTER (defines bank to bank delay	in clk cycles)
+
+		MOV	R1, #3
+		MOV	R2, #0
+		ORR	R1, R1,	R2	// Load R1 with #3
+
+		STR	R1, [R0,#0x28]
+		MOV	R1, #0x11
+		MOV	R2, #0x1C0
+		ORR	R1, R1,	R2
+		STR	R1, [R0,#0x2C]
+
+		MOV	R1, #3
+		MOV	R2, #0
+		ORR	R1, R1,	R2
+		STR	R1, [R0,#0x30]
+		MOV	R1, #3
+		STR	R1, [R0,#0x34]
+
+		MOV	R1, #3
+		STR	R1, [R0,#0x38]
+		MOV	R1, #2
+		STR	R1, [R0,#0x3C]
+		MOV	R1, #2
+		STR	R1, [R0,#0x40]
+		MOV	R1, #0x11
+
+		STR	R1, [R0,#0x44]
+		MOV	R1, #0x11
+		STR	R1, [R0,#0x48]
+		LDR	R1, =0x40224019
+		STR	R1, [R0,#0xC]
+//		LDR	R1, =dword_B41	// Load 0x5CE28EE0 in R1
+
+		STR	R1, [R0,#0x4C]	// Store	0x5CE28EE0 to MEMORY CONFIGURATION 2 REGISTER
+		LDR	R1, =loc_150F8
+		STR	R1, [R0,#0x200]
+		LDR	R1, =loc_158F8
+		STR	R1, [R0,#0x204]
+		MOV	R1, #0
+
+loc_2DC					// DATA XREF: ROM:off_A4F4o
+		STR	R1, [R0,#0x304]
+		MOV	R1, #0xC0000
+		STR	R1, [R0,#8]
+		MOV	R1, #0
+
+loc_2EC					// DATA XREF: ROM:off_A4F8o
+		STR	R1, [R0,#8]
+
+loc_2F0					// DATA XREF: ROM:off_A4FCo
+		MOV	R1, #loc_40000
+		STR	R1, [R0,#8]
+		STR	R1, [R0,#8]
+		MOV	R1, #0xA0000
+		STR	R1, [R0,#8]
+
+loc_304					// DATA XREF: ROM:off_46E4o
+					// ROM:off_19A84o
+		LDR	R1, =0x80034
+		STR	R1, [R0,#8]
+		MOV	R1, #0x1C0000
+		STR	R1, [R0,#8]
+		MOV	R1, #0x100000
+
+loc_318					// DATA XREF: ROM:off_A500o
+		STR	R1, [R0,#8]
+
+loc_31C					// DATA XREF: ROM:off_186A0o
+		MOV	R1, #0x140000
+		STR	R1, [R0,#8]
+		STR	R1, [R0,#8]
+		MOV	R1, #0x1A0000
+		STR	R1, [R0,#8]
+		LDR	R1, =0x180034
+		STR	R1, [R0,#8]
+		MOV	R1, #0
+		STR	R1, [R0,#4]
+
+loc_340					// CODE XREF: sub_21C+134j
+		LDR	R1, [R0]
+		MOV	R2, #3
+		AND	R1, R1,	R2
+		CMP	R1, #1
+		BNE	loc_340
+		NOP
+		RET
+// End of function sub_21C
+
+#endif
 #if S3C6410_POP_A
 	ldr	r1, =DMC1_CHIP1_CFG
 	str	r1, [r0, #INDEX_DMC_CHIP_1_CFG]

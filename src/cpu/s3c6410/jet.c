@@ -34,6 +34,8 @@
 #include <qi.h>
 #include <serial-s3c64xx.h>
 
+#define JET
+
 #define SMDK6410_DEBUG_UART 0
 
 #define CHANNEL ((*(volatile u32*)0x0C003FEC == 0x7c300000) ? 1 : 0)
