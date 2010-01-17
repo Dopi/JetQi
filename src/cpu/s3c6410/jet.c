@@ -34,7 +34,8 @@
 #include <qi.h>
 #include <serial-s3c64xx.h>
 
-#define JET	
+#define JET
+#define JET_START	
 
 #define SMDK6410_DEBUG_UART 0
 
