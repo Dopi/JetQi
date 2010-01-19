@@ -226,7 +226,7 @@
 
 
 .globl _start, processor_id, is_jtag
-#ifndef JET_START
+#if 0 // JET_START
 _start:	b       start_code
 #else
 _start:
@@ -492,15 +492,14 @@ is_jtag:
  * we need to go through this hassle because before this moment, SDRAM is not
  * working so we can't prep it from JTAG
  */
-
-_steppingstone_done:
-	ldr	pc, _start_armboot
-
 _start_armboot:
 	.word 	start_qi
 
 _TEXT_BASE:
 	.word	TEXT_BASE
+
+_steppingstone_done:
+	ldr	pc, _start_armboot
 
 /*
  * These are defined in the board-specific linker script.
@@ -518,7 +517,8 @@ _bss_end:
  * memory tests
  */
 
-	.fill   128
+//	.fill   128
+	.fill   0x800-0x400-0x48
 .globl _ss_stack
 _ss_stack:
 

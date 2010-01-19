@@ -43,6 +43,8 @@ SECTIONS
 		AT (0)
 	{
 	  src/cpu/s3c6410/start.o		(.text .rodata* .data .bss)
+	  src/cpu/s3c6410/waiting.o		(.text .rodata* .data .bss)
+	  src/cpu/s3c6410/boot_loader.little.o		(.text .rodata* .data .bss)
 	  src/cpu/s3c6410/start_qi.o		(.text .rodata* .data .bss)
 	  src/cpu/s3c6410/jet.o			(.text .rodata* .data .bss)
 	  src/cpu/s3c6410/serial-s3c64xx.o	(.text .rodata* .data .bss)

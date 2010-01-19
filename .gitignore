@@ -6,5 +6,6 @@
 
 *.orig
 *.rej
+*~
 
 image/*
