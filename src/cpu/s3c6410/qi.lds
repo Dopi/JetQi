@@ -43,7 +43,7 @@ SECTIONS
 		AT (0)
 	{
 	  src/cpu/s3c6410/start.o		(.text .rodata* .data .bss)
-	  src/cpu/s3c6410/waiting.o		(.text .rodata* .data .bss)
+/*	  src/cpu/s3c6410/waiting.o		(.text .rodata* .data .bss) */
 	  src/cpu/s3c6410/boot_loader.little.o		(.text .rodata* .data .bss)
 /*	  src/cpu/s3c6410/start_qi.o		(.text .rodata* .data .bss) */
 /*	  src/cpu/s3c6410/jet.o			(.text .rodata* .data .bss) */
@@ -60,7 +60,6 @@ SECTIONS
 	{
 		*(.text .rodata* .data)
 	}
-
 
 	__bss_start = __system_ram_start + 0x03800000;
 	.bss_6410

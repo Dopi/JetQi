@@ -18,7 +18,7 @@ include config.mk
 
 BUILD_DATE := $(shell date -Iseconds)
 BUILD_HOST := $(shell hostname)
-BUILD_VERSION := 20100120-JetQi
+BUILD_VERSION := 20100121-JetQi
 
 LDS = src/cpu/$(CPU)/qi.lds
 INCLUDE = include

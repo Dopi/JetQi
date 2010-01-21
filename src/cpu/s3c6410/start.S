@@ -518,7 +518,7 @@ _bss_end:
  */
 
 //	.fill   128
-	.fill   0x800-0x400-0x48
+	.fill   0x800-0x400-0x48+72
 .globl _ss_stack
 _ss_stack:
 
