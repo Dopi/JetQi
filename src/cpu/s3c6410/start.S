@@ -230,223 +230,226 @@
 _start:	b       start_code
 #else
 _start:
-_0:	b	0x20
-_4:	b	0x4
-_8:	b	0x8
-_c:	b	0xc
-_10:	b	0x10
-_14:	b	0x14
-_18:	b	0x18
-_1c:	b	0x1c
-_20:	mov	r0, #0
-_24:	mcr	15, 0, r0, cr7, cr7, 0	/* flush v3/v4 cache */
+	b	l_20		// 0x20
+l_4:	b	l_4		// 0x4
+l_8:	b	l_8		// 0x8
+l_c:	b	l_c		// 0xc
+l_10:	b	l_10		// 0x10
+l_14:	b	l_14		// 0x14
+l_18:	b	l_18		// 0x18
+l_1c:	b	l_1c		// 0x1c
+l_20:	mov	r0, #0
+	mcr	15, 0, r0, cr7, cr7, 0	/* flush v3/v4 cache */
 //	mcr	p15, 0, r0, c7, c7, 0	/* flush v3/v4 cache */
 //	mcr	p15, 0, r0, c8, c7, 0	/* flush v4 TLB */
-_28:	mrc	15, 0, r0, cr1, cr0, 0
-_2c:	orr	r0, r0, #4096	// 0x1000
-_30:	mcr	15, 0, r0, cr1, cr0, 0
-_34:	ldr	r0, [pc, #800]	// 0x35c
-_38:	mcr	15, 0, r0, cr15, cr2, 4
-_3c:	ldr	r0, [pc, #796]	// 0x360
-_40:	mov	r1, #0
-_44:	str	r1, [r0]
-_48:	ldr	r0, [pc, #788]	// 0x364
-_4c:	mvn	r1, #0
-_50:	str	r1, [r0]
-_54:	ldr	r0, [pc, #780]	// 0x368
-_58:	mvn	r1, #0
-_5c:	str	r1, [r0]
-_60:	ldr	r0, [pc, #772]	// 0x36c
-_64:	ldr	r1, [pc, #772]	// 0x370
-_68:	str	r1, [r0]
-_6c:	bl	0x1d8
-_70:	ldr	r1, [pc, #764]	// 0x374
-_74:	ldr	r2, [pc, #764]	// 0x378
-_78:	ldr	r0, [pc, #764]	// 0x37c
-_7c:	str	r1, [r0]
-_80:	str	r1, [r0, #4]
-_84:	str	r2, [r0, #8]
-_88:	ldr	r0, [pc, #752]	// 0x380
-_8c:	ldr	r1, [r0]
-_90:	bic	r1, r1, #196608	// 0x30000
-_94:	bic	r1, r1, #65280	// 0xff00
-_98:	bic	r1, r1, #255	// 0xff
-_9c:	ldr	r2, [pc, #736]	// 0x384
-_a0:	orr	r1, r1, r2
-_a4:	str	r1, [r0]
-_a8:	ldr	r0, [pc, #728]	// 0x388
-_ac:	ldr	r1, [pc, #728]  // 0x38c
-_b0:	str	r1, [r0]
-_b4:	ldr	r0, [pc, #724]	// 0x390
-_b8:	ldr	r1, [pc, #724]	// 0x394
-_bc:	str	r1, [r0]
-_c0:	ldr	r0, [pc, #720]	// 0x398
-_c4:	ldr	r1, [pc, #720]	// 0x39c
-_c8:	str	r1, [r0]
-_cc:	ldr	r0, [pc, #716]	// 0x3a0
-_d0:	ldr	r1, [pc, #716]	// 0x3a4
-_d4:	str	r1, [r0]
-_d8:	ldr	r0, [pc, #712]	// 0x3a8
-_dc:	ldr	r1, [r0]
-_e0:	orr	r1, r1, #7
-_e4:	str	r1, [r0]
-_e8:	ldr	r0, [pc, #700]	// 0x3ac
-_ec:	mov	r1, #0
-_f0:	bic	r1, r1, #128	// 0x80
-_f4:	str	r1, [r0]
-_f8:	bl	0x21c
-_fc:	ldr	r0, [pc, #684]	// 0x3b0
-_100:	ldr	r1, [r0]
-_104:	and	r1, r1, #72	// 0x48
-_108:	and	r2, r1, #72	// 0x48
-_10c:	cmp	r2, #0
-_110:	beq	0x120
-_114:	ldr	r0, [pc, #664]	// 0x3b4
-_118:	ldr	r1, [r0]
-_11c:	mov	pc, r1
-_120:	ldr	r0, [pc, #656]	// 0x3b8
-_124:	ldr	r1, [pc, #656]	// 0x3bc
-_128:	str	r1, [r0]
-_12c:	ldr	r0, [pc, #652]	// 0x3c0
-_130:	mov	r1, #1
-_134:	str	r1, [r0]
-_138:	mov	r6, #4
-_13c:	ldr	r7, [pc, #640]	// 0x3c4
-_140:	mov	r4, #0
-_144:	mov	r3, #1
-_148:	mov	r2, #553648128	// 0x21000000
-_14c:	add	r2, r2, r4, lsl #12
-_150:	mov	r8, #128	// 0x80
-_154:	add	r2, r2, r3, lsl #6
-_158:	ldm	r2, {r9, sl, fp, ip}
-_15c:	stmia	r7!, {r9, sl, fp, ip}
-_160:	subs	r8, r8, #1
-_164:	bne	0x158
-_168:	cmp	r3, #0
-_16c:	bne	0x1a0
-_170:	ldr	r9, [r2]
-_174:	lsl	r9, r9, #16
-_178:	lsr	r9, r9, #16
-_17c:	ldr	r2, [pc, #496]	// 0x374
-_180:	cmp	r9, r2
-_184:	beq	0x1a0
-_188:	add	r6, r6, #1
-_18c:	sub	r7, r7, #2048	// 0x800
-_190:	ldr	r0, [pc, #544]	// 0x3b8
-_194:	mov	r1, #1024	// 0x400
-_198:	str	r1, [r0, #80]	// 0x50
-_19c:	b	0x1b8
-_1a0:	ldr	r0, [pc, #528]	// 0x3b8
-_1a4:	mov	r1, #1024	// 0x400
-_1a8:	str	r1, [r0, #80]	// 0x50
-_1ac:	add	r3, r3, #1
-_1b0:	cmp	r3, #64	// 0x40
-_1b4:	blt	0x148
-_1b8:	add	r4, r4, #1
-_1bc:	mov	r3, #0
-_1c0:	cmp	r4, r6
-_1c4:	blt	0x148
-_1c8:	ldr	r0, [pc, #500]	// 0x3c4
-_1cc:	mov	pc, r0
-_1d0:	bl	0x1d4
-_1d4:	b	0x1d4
-_1d8:	ldr	r0, [pc, #488]	// 0x3c8
-_1dc:	ldr	r1, [r0]
-_1e0:	orr	r1, r1, #64	// 0x40
-_1e4:	str	r1, [r0]
-_1e8:	nop	{0}
-_1ec:	nop	{0}
-_1f0:	nop	{0}
-_1f4:	nop	{0}
-_1f8:	nop	{0}
-_1fc:	ldr	r1, [r0]
-_200:	orr	r1, r1, #128	// 0x80
-_204:	str	r1, [r0]
-_208:	ldr	r1, [r0]
-_20c:	and	r1, r1, #3840	// 0xf00
-_210:	cmp	r1, #3840	// 0xf00
-_214:	bne	0x208
-_218:	mov	pc, lr
-_21c:	ldr	r0, [pc, #424]	// 0x3cc
-_220:	mov	r1, #4
-_224:	str	r1, [r0, #4]
-_228:	mov	r1, #520	// 0x208
-_22c:	str	r1, [r0, #16]
-_230:	mov	r1, #6
-_234:	str	r1, [r0, #20]
-_238:	mov	r1, #1
-_23c:	str	r1, [r0, #24]
-_240:	mov	r1, #2
-_244:	str	r1, [r0, #28]
-_248:	mov	r1, #7
-_24c:	str	r1, [r0, #32]
-_250:	mov	r1, #9
-_254:	str	r1, [r0, #36]	// 0x24
-_258:	mov	r1, #3
-_25c:	mov	r2, #0
-_260:	orr	r1, r1, r2
-_264:	str	r1, [r0, #40]	// 0x28
-_268:	mov	r1, #17
-_26c:	mov	r2, #448	// 0x1c0
-_270:	orr	r1, r1, r2
-_274:	str	r1, [r0, #44]	// 0x2c
-_278:	mov	r1, #3
-_27c:	mov	r2, #0
-_280:	orr	r1, r1, r2
-_284:	str	r1, [r0, #48]	// 0x30
-_288:	mov	r1, #3
-_28c:	str	r1, [r0, #52]	// 0x34
-_290:	mov	r1, #3
-_294:	str	r1, [r0, #56]	// 0x38
-_298:	mov	r1, #2
-_29c:	str	r1, [r0, #60]	// 0x3c
-_2a0:	mov	r1, #2
-_2a4:	str	r1, [r0, #64]	// 0x40
-_2a8:	mov	r1, #17
-_2ac:	str	r1, [r0, #68]	// 0x44
-_2b0:	mov	r1, #17
-_2b4:	str	r1, [r0, #72]	// 0x48
-_2b8:	ldr	r1, [pc, #272]	// 0x3d0
-_2bc:	str	r1, [r0, #12]
-_2c0:	ldr	r1, [pc, #268]	// 0x3d4
-_2c4:	str	r1, [r0, #76]	// 0x4c
-_2c8:	ldr	r1, [pc, #264]	// 0x3d8
-_2cc:	str	r1, [r0, #512]	// 0x200
-_2d0:	ldr	r1, [pc, #260]	// 0x3dc
-_2d4:	str	r1, [r0, #516]	// 0x204
-_2d8:	mov	r1, #0
-_2dc:	str	r1, [r0, #772]	// 0x304
-_2e0:	mov	r1, #786432	// 0xc0000
-_2e4:	str	r1, [r0, #8]
-_2e8:	mov	r1, #0
-_2ec:	str	r1, [r0, #8]
-_2f0:	mov	r1, #262144	// 0x40000
-_2f4:	str	r1, [r0, #8]
-_2f8:	str	r1, [r0, #8]
-_2fc:	mov	r1, #655360	// 0xa0000
-_300:	str	r1, [r0, #8]
-_304:	ldr	r1, [pc, #212]	// 0x3e0
-_308:	str	r1, [r0, #8]
-_30c:	mov	r1, #1835008	// 0x1c0000
-_310:	str	r1, [r0, #8]
-_314:	mov	r1, #1048576	// 0x100000
-_318:	str	r1, [r0, #8]
-_31c:	mov	r1, #1310720	// 0x140000
-_320:	str	r1, [r0, #8]
-_324:	str	r1, [r0, #8]
-_328:	mov	r1, #1703936	// 0x1a0000
-_32c:	str	r1, [r0, #8]
-_330:	ldr	r1, [pc, #172]	// 0x3e4
-_334:	str	r1, [r0, #8]
-_338:	mov	r1, #0
-_33c:	str	r1, [r0, #4]
-_340:	ldr	r1, [r0]
-_344:	mov	r2, #3
-_348:	and	r1, r1, r2
-_34c:	cmp	r1, #1
-_350:	bne	0x340
-_354:	nop	{0}
-_358:	mov	pc, lr		// RET
+	mrc	15, 0, r0, cr1, cr0, 0
+	orr	r0, r0, #4096	// 0x1000
+	mcr	15, 0, r0, cr1, cr0, 0
+	ldr	r0, [pc, #800]	// 0x35c	// R0 = SROM Bank control register adress
+	mcr	15, 0, r0, cr15, cr2, 4
+	ldr	r0, [pc, #796]	// 0x360	// R0 = Watchdog timer control register adress
+	mov	r1, #0
+	str	r1, [r0]			// clear Watchdog timer control register
+	ldr	r0, [pc, #788]	// 0x364
+	mvn	r1, #0
+	str	r1, [r0]
+	ldr	r0, [pc, #780]	// 0x368
+	mvn	r1, #0
+	str	r1, [r0]
+	ldr	r0, [pc, #772]	// 0x36c
+	ldr	r1, [pc, #772]	// 0x370
+	str	r1, [r0]
+	bl	s_1d8		// 0x1d8	// JUMP TO ???
+	ldr	r1, [pc, #764]	// 0x374
+	ldr	r2, [pc, #764]	// 0x378
+	ldr	r0, [pc, #764]	// 0x37c
+	str	r1, [r0]
+	str	r1, [r0, #4]
+	str	r2, [r0, #8]
+	ldr	r0, [pc, #752]	// 0x380
+	ldr	r1, [r0]
+	bic	r1, r1, #196608	// 0x30000
+	bic	r1, r1, #65280	// 0xff00
+	bic	r1, r1, #255	// 0xff
+	ldr	r2, [pc, #736]	// 0x384
+	orr	r1, r1, r2
+	str	r1, [r0]
+	ldr	r0, [pc, #728]	// 0x388
+	ldr	r1, [pc, #728]  // 0x38c
+	str	r1, [r0]
+	ldr	r0, [pc, #724]	// 0x390
+	ldr	r1, [pc, #724]	// 0x394
+	str	r1, [r0]
+	ldr	r0, [pc, #720]	// 0x398
+	ldr	r1, [pc, #720]	// 0x39c
+	str	r1, [r0]
+	ldr	r0, [pc, #716]	// 0x3a0
+	ldr	r1, [pc, #716]	// 0x3a4
+	str	r1, [r0]
+	ldr	r0, [pc, #712]	// 0x3a8
+	ldr	r1, [r0]
+	orr	r1, r1, #7
+	str	r1, [r0]
+	ldr	r0, [pc, #700]	// 0x3ac
+	mov	r1, #0
+	bic	r1, r1, #128	// 0x80
+	str	r1, [r0]
+	bl	s_21c		// 0x21c	// JUMP To DRAM INIT
+	ldr	r0, [pc, #684]	// 0x3b0
+	ldr	r1, [r0]
+	and	r1, r1, #72	// 0x48
+	and	r2, r1, #72	// 0x48
+	cmp	r2, #0
+	beq	l_120		// 0x120
+	ldr	r0, [pc, #664]	// 0x3b4
+	ldr	r1, [r0]
+	mov	pc, r1
+l_120:	ldr	r0, [pc, #656]	// 0x3b8
+	ldr	r1, [pc, #656]	// 0x3bc
+	str	r1, [r0]
+	ldr	r0, [pc, #652]	// 0x3c0
+	mov	r1, #1
+	str	r1, [r0]
+	mov	r6, #4
+	ldr	r7, [pc, #640]	// 0x3c4
+	mov	r4, #0
+	mov	r3, #1
+l_148:	mov	r2, #553648128	// 0x21000000
+	add	r2, r2, r4, lsl #12
+	mov	r8, #128	// 0x80
+	add	r2, r2, r3, lsl #6
+l_158:	ldm	r2, {r9, sl, fp, ip}
+	stmia	r7!, {r9, sl, fp, ip}
+	subs	r8, r8, #1
+	bne	l_158		// 0x158
+	cmp	r3, #0
+	bne	l_1a0		// 0x1a0
+	ldr	r9, [r2]
+	lsl	r9, r9, #16
+	lsr	r9, r9, #16
+	ldr	r2, [pc, #496]	// 0x374
+	cmp	r9, r2
+	beq	l_1a0		// 0x1a0
+	add	r6, r6, #1
+	sub	r7, r7, #2048	// 0x800
+	ldr	r0, [pc, #544]	// 0x3b8
+	mov	r1, #1024	// 0x400
+	str	r1, [r0, #80]	// 0x50
+	b	l_1b8		// 0x1b8
+l_1a0:	ldr	r0, [pc, #528]	// 0x3b8
+	mov	r1, #1024	// 0x400
+	str	r1, [r0, #80]	// 0x50
+	add	r3, r3, #1
+	cmp	r3, #64	// 0x40
+	blt	l_148		// 0x148
+l_1b8:	add	r4, r4, #1
+	mov	r3, #0
+	cmp	r4, r6
+	blt	l_148		// 0x148
+	ldr	r0, [pc, #500]	// 0x3c4
+	mov	pc, r0
+	bl	l_1d4		// 0x1d4
+l_1d4:	b	l_1d4		// 0x1d4	// Infinite Loop
+
+s_1d8:	ldr	r0, [pc, #488]	// 0x3c8	// 0x7E00F900
+	ldr	r1, [r0]
+	orr	r1, r1, #64	// 0x40
+	str	r1, [r0]
+	nop	{0}
+	nop	{0}
+	nop	{0}
+	nop	{0}
+	nop	{0}
+	ldr	r1, [r0]
+	orr	r1, r1, #128	// 0x80
+	str	r1, [r0]
+l_208:	ldr	r1, [r0]
+	and	r1, r1, #3840	// 0xf00
+	cmp	r1, #3840	// 0xf00
+	bne	l_208		// 0x208
+	mov	pc, lr				// RETURN
+
+s_21c:	ldr	r0, [pc, #424]	// 0x3cc
+	mov	r1, #4
+	str	r1, [r0, #4]
+	mov	r1, #520	// 0x208
+	str	r1, [r0, #16]
+	mov	r1, #6
+	str	r1, [r0, #20]
+	mov	r1, #1
+	str	r1, [r0, #24]
+	mov	r1, #2
+	str	r1, [r0, #28]
+	mov	r1, #7
+	str	r1, [r0, #32]
+	mov	r1, #9
+	str	r1, [r0, #36]	// 0x24
+	mov	r1, #3
+	mov	r2, #0
+	orr	r1, r1, r2
+	str	r1, [r0, #40]	// 0x28
+	mov	r1, #17
+	mov	r2, #448	// 0x1c0
+	orr	r1, r1, r2
+	str	r1, [r0, #44]	// 0x2c
+	mov	r1, #3
+	mov	r2, #0
+	orr	r1, r1, r2
+	str	r1, [r0, #48]	// 0x30
+	mov	r1, #3
+	str	r1, [r0, #52]	// 0x34
+	mov	r1, #3
+	str	r1, [r0, #56]	// 0x38
+	mov	r1, #2
+	str	r1, [r0, #60]	// 0x3c
+	mov	r1, #2
+	str	r1, [r0, #64]	// 0x40
+	mov	r1, #17
+	str	r1, [r0, #68]	// 0x44
+	mov	r1, #17
+	str	r1, [r0, #72]	// 0x48
+	ldr	r1, [pc, #272]	// 0x3d0
+	str	r1, [r0, #12]
+	ldr	r1, [pc, #268]	// 0x3d4
+	str	r1, [r0, #76]	// 0x4c
+	ldr	r1, [pc, #264]	// 0x3d8
+	str	r1, [r0, #512]	// 0x200
+	ldr	r1, [pc, #260]	// 0x3dc
+	str	r1, [r0, #516]	// 0x204
+	mov	r1, #0
+	str	r1, [r0, #772]	// 0x304
+	mov	r1, #786432	// 0xc0000
+	str	r1, [r0, #8]
+	mov	r1, #0
+	str	r1, [r0, #8]
+	mov	r1, #262144	// 0x40000
+	str	r1, [r0, #8]
+	str	r1, [r0, #8]
+	mov	r1, #655360	// 0xa0000
+	str	r1, [r0, #8]
+	ldr	r1, [pc, #212]	// 0x3e0
+	str	r1, [r0, #8]
+	mov	r1, #1835008	// 0x1c0000
+	str	r1, [r0, #8]
+	mov	r1, #1048576	// 0x100000
+	str	r1, [r0, #8]
+	mov	r1, #1310720	// 0x140000
+	str	r1, [r0, #8]
+	str	r1, [r0, #8]
+	mov	r1, #1703936	// 0x1a0000
+	str	r1, [r0, #8]
+	ldr	r1, [pc, #172]	// 0x3e4
+	str	r1, [r0, #8]
+	mov	r1, #0
+	str	r1, [r0, #4]
+l_340:	ldr	r1, [r0]
+	mov	r2, #3
+	and	r1, r1, r2
+	cmp	r1, #1
+	bne	l_340		// 0x340
+	nop	{0}
+	mov	pc, lr		// RET
+
 _35c:	.long	0x70000013	// andvc	r0, r0, r3, lsl r0
 _360:	.long	0x7e004000	// cdpvc	0, 0, cr4, cr0, cr0, 0
 _364:	.long	0x71200014	// teqvc	r0, r4, lsl r0
