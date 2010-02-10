@@ -510,7 +510,7 @@ _TEXT_BASE:
 	.word	TEXT_BASE
 
 _waitstart:
-	mov	r0, #0x2000000
+	mov	r0, #0x20000000
 _waitloop:
 	subs	r0, r0, #1
 	cmp	r0, #0
