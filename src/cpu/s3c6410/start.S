@@ -494,6 +494,8 @@ _3e4:	.long	0x00180034
 
 
 #endif
+_keypad_base:
+	.long	0x7E00A000
 
 /* if we are injected by JTAG, the script sets _istag content to nonzero */
 is_jtag:
@@ -503,6 +505,7 @@ is_jtag:
  * we need to go through this hassle because before this moment, SDRAM is not
  * working so we can't prep it from JTAG
  */
+
 _start_armboot:
 	.word 	start_qi
 
@@ -510,7 +513,13 @@ _TEXT_BASE:
 	.word	TEXT_BASE
 
 _waitstart:
-	mov	r0, #0x20000000
+	ldr	r0, _keypad_base		// store Keypad base register in R0
+	ldr	r0, [r0,#0xC]			// Read from KEYIFROW
+	and	r0, r0,	#0xFF			// Mask out lower 8 bits
+
+
+	mov	r0, #0x20000000			// approx 10 sec wait
+//	mov	r0, #0x10000000			// approx 5 sec wait
 _waitloop:
 	subs	r0, r0, #1
 	cmp	r0, #0
