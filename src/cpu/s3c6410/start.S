@@ -250,76 +250,81 @@ l_20:	mov	r0, #0
 	ldr	r0, [pc, #796]	// 0x360	// R0 = Watchdog timer control register adress
 	mov	r1, #0
 	str	r1, [r0]			// clear Watchdog timer control register
-	ldr	r0, [pc, #788]	// 0x364
-	mvn	r1, #0
-	str	r1, [r0]
-	ldr	r0, [pc, #780]	// 0x368
-	mvn	r1, #0
-	str	r1, [r0]
-	ldr	r0, [pc, #772]	// 0x36c
-	ldr	r1, [pc, #772]	// 0x370
-	str	r1, [r0]
-	bl	s_1d8		// 0x1d8	// JUMP TO ???
-	ldr	r1, [pc, #764]	// 0x374
-	ldr	r2, [pc, #764]	// 0x378
-	ldr	r0, [pc, #764]	// 0x37c
-	str	r1, [r0]
+	ldr	r0, [pc, #788]	// 0x364	// r0 = 0x71200014
+	mvn	r1, #0				// r1 = 0xFFFFFFFF
+	str	r1, [r0]			// store 0xFFFFFFFF to 0x71200014
+	ldr	r0, [pc, #780]	// 0x368	// r0 = 0x71300014
+	mvn	r1, #0				// r1 = 0xFFFFFFFF
+	str	r1, [r0]			// store 0xFFFFFFFF to 0x71300014
+	ldr	r0, [pc, #772]	// 0x36c	// r0 = 0x7F0081D4
+	ldr	r1, [pc, #772]	// 0x370	// r1 = 0x55555555
+	str	r1, [r0]			// store 0x55555555 to 0x7F0081D4
+
+	bl	s_1d8		// 0x1d8	// JUMP TO OTHER Control reg setting
+
+	ldr	r1, [pc, #764]	// 0x374	// r1 = 0x0000ffff
+	ldr	r2, [pc, #764]	// 0x378	// r2 = 0x00000e13
+	ldr	r0, [pc, #764]	// 0x37c	// LOAD APLL_LOCK adr (0x7E00F000) in R0
+	str	r1, [r0]			// Read APLL_LOCK to R1
 	str	r1, [r0, #4]
 	str	r2, [r0, #8]
-	ldr	r0, [pc, #752]	// 0x380
-	ldr	r1, [r0]
-	bic	r1, r1, #196608	// 0x30000
-	bic	r1, r1, #65280	// 0xff00
-	bic	r1, r1, #255	// 0xff
+	ldr	r0, [pc, #752]	// 0x380	// Load CLK_DIV0 reg adr (0x7E00F020) in R0
+	ldr	r1, [r0]			// Read CLK_DIV0 to R1
+	bic	r1, r1, #196608	// 0x30000	// R1 = R1 AND !(0x30000)
+	bic	r1, r1, #65280	// 0xff00	// R1 = R1 AND !(0x0FF00)
+	bic	r1, r1, #255	// 0xff		// R1 = R1 AND !(0x000FF
 	ldr	r2, [pc, #736]	// 0x384
-	orr	r1, r1, r2
-	str	r1, [r0]
-	ldr	r0, [pc, #728]	// 0x388
-	ldr	r1, [pc, #728]  // 0x38c
-	str	r1, [r0]
-	ldr	r0, [pc, #724]	// 0x390
-	ldr	r1, [pc, #724]	// 0x394
-	str	r1, [r0]
-	ldr	r0, [pc, #720]	// 0x398
-	ldr	r1, [pc, #720]	// 0x39c
-	str	r1, [r0]
-	ldr	r0, [pc, #716]	// 0x3a0
-	ldr	r1, [pc, #716]	// 0x3a4
-	str	r1, [r0]
-	ldr	r0, [pc, #712]	// 0x3a8
-	ldr	r1, [r0]
-	orr	r1, r1, #7
-	str	r1, [r0]
-	ldr	r0, [pc, #700]	// 0x3ac
+	orr	r1, r1, r2			// R1 = R1 | 0x7501
+	str	r1, [r0]			// Write R1 to CLK_DIV0
+	ldr	r0, [pc, #728]	// 0x388	// Load APLL_CON reg adr in R0
+	ldr	r1, [pc, #728]  // 0x38c	// =0x81900301
+	str	r1, [r0]			// Write 0x81900301 to APLL_CON
+	ldr	r0, [pc, #724]	// 0x390	// load MPLL_CON reg adr (0x7E00F010) in R0
+	ldr	r1, [pc, #724]	// 0x394	// =0x81840303
+	str	r1, [r0]			// Write 0x81840303 to MPLL_CON
+	ldr	r0, [pc, #720]	// 0x398	// load EPLL_CON1 reg ard (0x7E00F018) in R0 
+	ldr	r1, [pc, #720]	// 0x39c	// =0xC49C
+	str	r1, [r0]			// write 0xC39C to EPLL_CON1
+	ldr	r0, [pc, #716]	// 0x3a0	// load EPLL_CON0 reg adr (0x7E00F014) in R0
+	ldr	r1, [pc, #716]	// 0x3a4	// =0x80200103
+	str	r1, [r0]			// write 0x80200103 to EPLL_CON0
+	ldr	r0, [pc, #712]	// 0x3a8	// load CLK_SRC reg adr (0x7E00F01C) in R0
+	ldr	r1, [r0]			// Read CLK_SRC content to R1
+	orr	r1, r1, #7			// R1 = R1 | 7
+	str	r1, [r0]			// Store R1 to CLK_SRC
+	ldr	r0, [pc, #700]	// 0x3ac	// =0x7E00F120
 	mov	r1, #0
 	bic	r1, r1, #128	// 0x80
 	str	r1, [r0]
+
 	bl	s_21c		// 0x21c	// JUMP To DRAM INIT
-	ldr	r0, [pc, #684]	// 0x3b0
-	ldr	r1, [r0]
+
+	ldr	r0, [pc, #684]	// 0x3b0	// load RST_STAT reg adr (0x7E00F904) in r0
+	ldr	r1, [r0]			// load RESET STATUS REGISTER content to R1
 	and	r1, r1, #72	// 0x48
 	and	r2, r1, #72	// 0x48
 	cmp	r2, #0
 	beq	l_120		// 0x120
-	ldr	r0, [pc, #664]	// 0x3b4
-	ldr	r1, [r0]
-	mov	pc, r1
-l_120:	ldr	r0, [pc, #656]	// 0x3b8
-	ldr	r1, [pc, #656]	// 0x3bc
+	ldr	r0, [pc, #664]	// 0x3b4	// r0 = INFORM2 Information register2 (0x7E00FA08)
+	ldr	r1, [r0]			// load from INFORM2 to r1 
+	mov	pc, r1				// JUMP to adr in R1
+
+l_120:	ldr	r0, [pc, #656]	// 0x3b8	// load OneNAND SFR adr (0x70100000) in r0
+	ldr	r1, [pc, #656]	// 0x3bc	// 0x000040e0
 	str	r1, [r0]
-	ldr	r0, [pc, #652]	// 0x3c0
+	ldr	r0, [pc, #652]	// 0x3c0	// =0x70100140
 	mov	r1, #1
 	str	r1, [r0]
 	mov	r6, #4
-	ldr	r7, [pc, #640]	// 0x3c4
+	ldr	r7, [pc, #640]	// 0x3c4	// =0x51400000
 	mov	r4, #0
 	mov	r3, #1
 l_148:	mov	r2, #553648128	// 0x21000000
 	add	r2, r2, r4, lsl #12
 	mov	r8, #128	// 0x80
 	add	r2, r2, r3, lsl #6
-l_158:	ldm	r2, {r9, sl, fp, ip}
-	stmia	r7!, {r9, sl, fp, ip}
+l_158:	ldm	r2, {r9, sl, fp, ip}		// MEMCOPY ????
+	stmia	r7!, {r9, sl, fp, ip}		// MEMCOPY ????
 	subs	r8, r8, #1
 	bne	l_158		// 0x158
 	cmp	r3, #0
@@ -332,7 +337,7 @@ l_158:	ldm	r2, {r9, sl, fp, ip}
 	beq	l_1a0		// 0x1a0
 	add	r6, r6, #1
 	sub	r7, r7, #2048	// 0x800
-	ldr	r0, [pc, #544]	// 0x3b8
+	ldr	r0, [pc, #544]	// 0x3b8	// load OneNAND SFR adr (0x70100000) in r0
 	mov	r1, #1024	// 0x400
 	str	r1, [r0, #80]	// 0x50
 	b	l_1b8		// 0x1b8
@@ -346,24 +351,25 @@ l_1b8:	add	r4, r4, #1
 	mov	r3, #0
 	cmp	r4, r6
 	blt	l_148		// 0x148
-	ldr	r0, [pc, #500]	// 0x3c4
-	mov	pc, r0
+	ldr	r0, [pc, #500]	// 0x3c4	// r0 = 0x51400000
+//	mov	pc, r0				// jump to 0x51400000
+	b	_waitstart
 	bl	l_1d4		// 0x1d4
 l_1d4:	b	l_1d4		// 0x1d4	// Infinite Loop
 
-s_1d8:	ldr	r0, [pc, #488]	// 0x3c8	// 0x7E00F900
-	ldr	r1, [r0]
-	orr	r1, r1, #64	// 0x40
-	str	r1, [r0]
+s_1d8:	ldr	r0, [pc, #488]	// 0x3c8	// r0 = OTHERS control register (0x7E00F900)
+	ldr	r1, [r0]			// read from OTHERS control register to r1
+	orr	r1, r1, #64	// 0x40		
+	str	r1, [r0]			// store r1 in OTHERS control register
 	nop	{0}
 	nop	{0}
 	nop	{0}
 	nop	{0}
 	nop	{0}
-	ldr	r1, [r0]
+	ldr	r1, [r0]			// read OTHERS control register again
 	orr	r1, r1, #128	// 0x80
-	str	r1, [r0]
-l_208:	ldr	r1, [r0]
+	str	r1, [r0]			// store r1 in OTHERS control register
+l_208:	ldr	r1, [r0]			// read OTHERS control register again
 	and	r1, r1, #3840	// 0xf00
 	cmp	r1, #3840	// 0xf00
 	bne	l_208		// 0x208
@@ -450,41 +456,43 @@ l_340:	ldr	r1, [r0]
 	nop	{0}
 	mov	pc, lr		// RET
 
-_35c:	.long	0x70000013	// andvc	r0, r0, r3, lsl r0
-_360:	.long	0x7e004000	// cdpvc	0, 0, cr4, cr0, cr0, 0
-_364:	.long	0x71200014	// teqvc	r0, r4, lsl r0
-_368:	.long	0x71300014	// teqvc	r0, r4, lsl r0
-_36c:	.long	0x7f0081d4	// svcvc	0x000081d4
-_370:	.long	0x55555555	// ldrbpl	r5, [r5, #-1365]	// 0x555
-_374:	.long	0x0000ffff	// strdeq	pc, [r0], -pc
-_378:	.long	0x00000e13	// andeq	r0, r0, r3, lsl lr
-_37c:	.long	0x7e00f000	// cdpvc	0, 0, cr15, cr0, cr0, 0
-_380:	.long	0x7e00f020	// cdpvc	0, 0, cr15, cr0, cr0, 1
-_384:	.long	0x00007501	// andeq	r7, r0, r1, lsl #10
-_388:	.long	0x7e00f00c	// cdpvc	0, 0, cr15, cr0, cr12, 0
-_38c:	.long	0x81900301	// orrshi	r0, r0, r1, lsl #6
-_390:	.long	0x7e00f010	// mcrvc	0, 0, pc, cr0, cr0, 0
-_394:	.long	0x81840303	// orrhi	r0, r4, r3, lsl #6
-_398:	.long	0x7e00f018	// mcrvc	0, 0, pc, cr0, cr8, 0
-_39c:	.long	0x0000c49c	// muleq	r0, ip, r4
-_3a0:	.long	0x7e00f014	// mcrvc	0, 0, pc, cr0, cr4, 0
-_3a4:	.long	0x80200103	// eorhi	r0, r0, r3, lsl #2
-_3a8:	.long	0x7e00f01c	// mcrvc	0, 0, pc, cr0, cr12, 0
-_3ac:	.long	0x7e00f120	// mvfvcsp	f7, f0
-_3b0:	.long	0x7e00f904	// cdpvc	9, 0, cr15, cr0, cr4, 0
-_3b4:	.long	0x7e00fa08	// vmlavc.f32	s30, s0, s16
-_3b8:	.long	0x70100000	// andsvc	r0, r0, r0
-_3bc:	.long	0x000040e0	// andeq	r4, r0, r0, ror #1
-_3c0:	.long	0x70100140	// andsvc	r0, r0, r0, asr #2
-_3c4:	.long	0x51400000	// cmppl	r0, r0
-_3c8:	.long	0x7e00f900	// cdpvc	9, 0, cr15, cr0, cr0, 0
-_3cc:	.long	0x7e001000	// cdpvc	0, 0, cr1, cr0, cr0, 0
-_3d0:	.long	0x40224019	// eormi	r4, r2, r9, lsl r0
-_3d4:	.long	0x00000b41	// andeq	r0, r0, r1, asr #22
-_3d8:	.long	0x000150f8	// strdeq	r5, [r1], -r8
-_3dc:	.long	0x000158f8	// strdeq	r5, [r1], -r8
-_3e0:	.long	0x00080034	// andeq	r0, r8, r4, lsr r0
-_3e4:	.long	0x00180034	// andseq	r0, r8, r4, lsr r0
+_35c:	.long	0x70000013
+_360:	.long	0x7e004000
+_364:	.long	0x71200014
+_368:	.long	0x71300014
+_36c:	.long	0x7f0081d4
+_370:	.long	0x55555555
+_374:	.long	0x0000ffff
+_378:	.long	0x00000e13
+_37c:	.long	0x7e00f000
+_380:	.long	0x7e00f020
+_384:	.long	0x00007501
+_388:	.long	0x7e00f00c
+_38c:	.long	0x81900301
+_390:	.long	0x7e00f010
+_394:	.long	0x81840303
+_398:	.long	0x7e00f018
+_39c:	.long	0x0000c49c
+_3a0:	.long	0x7e00f014
+_3a4:	.long	0x80200103
+_3a8:	.long	0x7e00f01c
+_3ac:	.long	0x7e00f120
+_3b0:	.long	0x7e00f904
+_3b4:	.long	0x7e00fa08
+_3b8:	.long	0x70100000
+_3bc:	.long	0x000040e0
+_3c0:	.long	0x70100140
+_3c4:	.long	0x51400000
+_3c8:	.long	0x7e00f900
+_3cc:	.long	0x7e001000
+_3d0:	.long	0x40224019
+_3d4:	.long	0x00000b41
+_3d8:	.long	0x000150f8
+_3dc:	.long	0x000158f8
+_3e0:	.long	0x00080034
+_3e4:	.long	0x00180034
+
+
 #endif
 
 /* if we are injected by JTAG, the script sets _istag content to nonzero */
@@ -500,6 +508,20 @@ _start_armboot:
 
 _TEXT_BASE:
 	.word	TEXT_BASE
+
+_waitstart:
+	mov	r0, #0x2000000
+_waitloop:
+	subs	r0, r0, #1
+	cmp	r0, #0
+	bne	_waitloop
+_endwait:
+//	ldr	r0, [pc, #500]	// 0x3c4	// r0 = 0x51400000
+	ldr	r0, _3c4	// 0x3c4	// r0 = 0x51400000
+	mov	pc, r0				// jump to 0x51400000
+
+
+
 
 _steppingstone_done:
 	ldr	pc, _start_armboot
@@ -521,7 +543,7 @@ _bss_end:
  */
 
 //	.fill   128
-	.fill   0x800-0x400-0x48+72
+	.fill   0x800-0x400-0x48+48
 .globl _ss_stack
 _ss_stack:
 

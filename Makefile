@@ -18,7 +18,7 @@ include config.mk
 
 BUILD_DATE := $(shell date -Iseconds)
 BUILD_HOST := $(shell hostname)
-BUILD_VERSION := 20100208-JetQi
+BUILD_VERSION := $(shell date +%Y%m%d)-JetQi
 
 LDS = src/cpu/$(CPU)/qi.lds
 INCLUDE = include
@@ -29,7 +29,7 @@ CFLAGS = -Wall -Werror -I $(INCLUDE) -I ${INCLUDE_ARCH} -I ${INCLUDE_KERNEL} -I 
 	-fno-common -ffixed-r8 -msoft-float -fno-builtin -ffreestanding \
 	-march=armv6 -mno-thumb-interwork -Wstrict-prototypes -fno-stack-protector \
 	-DBUILD_HOST="${BUILD_HOST}" -DBUILD_VERSION="${BUILD_VERSION}" \
-	-DBUILD_DATE="${BUILD_DATE}" -DQI_CPU="${CPU}" -DSMARTQ
+	-DBUILD_DATE="${BUILD_DATE}" -DQI_CPU="${CPU}" -DJETQI
 LDFLAGS =
 
 S_SRCS	= $(wildcard src/cpu/$(CPU)/*.S)
@@ -61,6 +61,7 @@ ${IMAGE}:${OBJS}
 	@$(LD) ${LDFLAGS} -T$(LDS) -g $(OBJS) -o ${TARGET} ${LIBS}
 	@$(OBJCOPY) -O binary -S ${TARGET} ${IMAGE}
 	@$(OBJDUMP) -d ${TARGET} > ${IMAGE}.dis
+	@cat ${IMAGE} src/binary/mbn_footer.bin >${IMAGE}.mbn
 
 clean:
 	@rm -f *~ src/*.o src/*~
