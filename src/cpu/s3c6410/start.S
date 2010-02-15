@@ -523,11 +523,12 @@ _waitstart:
 
 	ldr	r0, _keypad_base		// store Keypad base register in R0
 	ldr	r0, [r0,#0xC]			// Read from KEYIFROW
-//	mov	r1, #0xff			// set r1 to 0xff
+	mov	r1, #0xff			// set r1 to 0xff
+	and	r0, r0, r1
 //	bic	r0, r1,	r0			// invert R0 and Mask out lower 8 bits
 //	mov	r0, r0, lsr#2			// shift r0 to right by 0 bits
 //	and	r0, r0, #1			// mask out last bit 
-	cmp	r0, #0				// r0 = 0 ?
+	cmp	r0, #0x0				// r0 = 0 ?
 //	tst	r0, #1
 	beq	_endwait			// yes ==> no waiting
 
