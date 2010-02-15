@@ -496,6 +496,10 @@ _3e4:	.long	0x00180034
 #endif
 _keypad_base:
 	.long	0x7E00A000
+_gpio_base:
+	.long	0x7F008000
+_keypad_row_const:
+	.long	0x33333333
 
 /* if we are injected by JTAG, the script sets _istag content to nonzero */
 is_jtag:
@@ -513,10 +517,19 @@ _TEXT_BASE:
 	.word	TEXT_BASE
 
 _waitstart:
+	ldr	r0, _gpio_base
+	ldr	r1, _keypad_row_const
+	str	r1, [r0, #0x804]		// set GPKCON1 to keypad row input
+
 	ldr	r0, _keypad_base		// store Keypad base register in R0
 	ldr	r0, [r0,#0xC]			// Read from KEYIFROW
-	and	r0, r0,	#0xFF			// Mask out lower 8 bits
-
+//	mov	r1, #0xff			// set r1 to 0xff
+//	bic	r0, r1,	r0			// invert R0 and Mask out lower 8 bits
+//	mov	r0, r0, lsr#2			// shift r0 to right by 0 bits
+//	and	r0, r0, #1			// mask out last bit 
+	cmp	r0, #0				// r0 = 0 ?
+//	tst	r0, #1
+	beq	_endwait			// yes ==> no waiting
 
 	mov	r0, #0x20000000			// approx 10 sec wait
 //	mov	r0, #0x10000000			// approx 5 sec wait
@@ -525,11 +538,8 @@ _waitloop:
 	cmp	r0, #0
 	bne	_waitloop
 _endwait:
-//	ldr	r0, [pc, #500]	// 0x3c4	// r0 = 0x51400000
 	ldr	r0, _3c4	// 0x3c4	// r0 = 0x51400000
 	mov	pc, r0				// jump to 0x51400000
-
-
 
 
 _steppingstone_done:
@@ -552,7 +562,7 @@ _bss_end:
  */
 
 //	.fill   128
-	.fill   0x800-0x400-0x48+48
+	.fill   0x800-0x400-0x40
 .globl _ss_stack
 _ss_stack:
 
