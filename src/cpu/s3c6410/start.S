@@ -520,15 +520,22 @@ _waitstart:
 	ldr	r0, _gpio_base
 	ldr	r1, _keypad_row_const
 	str	r1, [r0, #0x804]		// set GPKCON1 to keypad row input
+	
+	ldr	r1, [r0, #0x80C]		// load from GPKPUD
+	mov	r1, r1, lsl#2
+	mov	r1, r1, lsr#2
+	mov	r0, #0x2
+	orr	r1, r1, r0, lsl#30		//
+	str	r1, [r0, #0x80C]		// store to GPKPUD
 
 	ldr	r0, _keypad_base		// store Keypad base register in R0
 	ldr	r0, [r0,#0xC]			// Read from KEYIFROW
-	mov	r1, #0xff			// set r1 to 0xff
-	and	r0, r0, r1
+	and	r0, r0, #0xff			// mask out only lower 8 bits
 //	bic	r0, r1,	r0			// invert R0 and Mask out lower 8 bits
-//	mov	r0, r0, lsr#2			// shift r0 to right by 0 bits
-//	and	r0, r0, #1			// mask out last bit 
-	cmp	r0, #0x0				// r0 = 0 ?
+
+	mov	r0, r0, lsr#7			// shift r0 to right
+	and	r0, r0, #1			// mask out last bit 
+	cmp	r0, #0x0			// r0 = 1 ?
 //	tst	r0, #1
 	beq	_endwait			// yes ==> no waiting
 
@@ -563,7 +570,7 @@ _bss_end:
  */
 
 //	.fill   128
-	.fill   0x800-0x400-0x40
+	.fill   0x800-0x400-0x40-36
 .globl _ss_stack
 _ss_stack:
 
