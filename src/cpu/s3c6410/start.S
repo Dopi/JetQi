@@ -353,7 +353,7 @@ l_1b8:	add	r4, r4, #1
 	blt	l_148		// 0x148
 	ldr	r0, [pc, #500]	// 0x3c4	// r0 = 0x51400000
 //	mov	pc, r0				// jump to 0x51400000
-	b	_waitstart
+	b	_modstart
 	bl	l_1d4		// 0x1d4
 l_1d4:	b	l_1d4		// 0x1d4	// Infinite Loop
 
@@ -520,19 +520,8 @@ _start_armboot:
 _TEXT_BASE:
 	.word	TEXT_BASE
 
-_waitstart:
+_modstart:
 	ldr	r0, _gpio_base
-
-//	ldr	r1, _keypad_row_const
-//	str	r1, [r0, #0x804]		// set GPKCON1 to keypad row input
-	
-//	ldr	r1, [r0, #0x80C]		// load from GPKPUD
-//	mov	r1, r1, lsl#2
-//	mov	r1, r1, lsr#2
-//	mov	r0, #0x2
-//	orr	r1, r1, r0, lsl#30		//
-//	str	r1, [r0, #0x80C]		// store to GPKPUD
-
 	ldr	r1, [r0,#0x810] // R1 = GPLCON0
 	mov	r1, r1,lsr#12
 	mov	r1, r1,lsr#12   // clear lower 12 bits of R1
@@ -547,67 +536,42 @@ _waitstart:
 	orr	r1, r1, #0x33   // R1 = R1 + 0x333
 	str	r1, [r0,#0x804] // store R1 in GPKCON1
 		                // Set GPK8, GPK9, GPK10 to keypad ROW0, ROW1, ROW2
-
-SetupGPIO_L:
+_setupGPIO_L:
 	ldr	r1, _gpio_base
-//	mov	r2, #0
-SetupGPIO_L_R0_b0is1:
 	ldr     r0, [r1,#0x81C] // r1 = GPLPUD (Port L Pull-up/down Register)
 	bic     r0, r0, #3
 	orr     r0, r0, #2
 	str     r0, [r1,#0x81C] // set bit 1 (#2) and clear bit 0 of GPLPUP
 	                        // ==> pull-up enabled for GPL0
-	ldr     r0, [r1,#0x810] // GPLCON0
-	bic     r0, r0, #0xF
-	str     r0, [r1,#0x810] // clear lower 4 bits of GPLCON0 (Port L Configuration Register)
-	                        // ==> GPL0 set as input
-SetupGPIO_L_R0_b1is0:
+
 	ldr     r0, [r1,#0x818] // GPLDAT
 	bic     r0, r0, #6
-//	orr     r0, r0, r2
 	str     r0, [r1,#0x818] // clear bits 2:1 (#2+#4) of GPLDAT
 	                        // ==> Output 0 on GPL2, GPL1
 	ldr     r0, [r1,#0x810] // GPLCON0
-	bic     r0, r0, #0xFF0
+	ldr	r2, _const_fff
+	bic     r0, r0, r2
 	orr     r0, r0, #0x110
-	str     r0, [r1,#0x810] // Set bits 7-4 of GPLCON0 to 0001
-
+	str     r0, [r1,#0x810] // Set bits 11-4 of GPLCON0 to 00010001
+				// clear lower 4 bits of GPLCON0 
+	                        // ==> GPL0 set as input, GPL1, GPL2 as output
 _key_scan:
 	ldr	r0, _keypad_base		// store Keypad base register in r0
 	ldr	r0, [r0,#0xC]			// Read from KEYIFROW
-	and	r0, r0, #0xff			// mask out only lower 8 bits
-	mov	r0, r0, lsr#0			// shift r0 to right
 	and	r0, r0, #1			// mask out last bit 
-	cmp	r0, #0x0			// r0 = 1 ?
-//	beq	_endwait			// yes ==> no waiting
-	bne	_endwait			// yes ==> no waiting
+	cmp	r0, #0x0			// r0 = 0 ?
+	beq	_second_phase			// no ==> second phase
+_continue_ssboot:
+	ldr	r0, _3c4	// 0x3c4	// r0 = 0x51400000
+	mov	pc, r0				// jump to 0x51400000
 
+_second_phase:
 	mov	r0, #0x20000000			// approx 10 sec wait
-//	mov	r0, #0x10000000			// approx 5 sec wait
 _waitloop:
 	subs	r0, r0, #1
 	cmp	r0, #0
 	bne	_waitloop
-_endwait:
-
-	ldr	r1, _gpio_base
-	ldr     r0, [r1,#0x81C] // r0 = GPLPUD (Port L Pull-up/down Register)
-	bic     r0, r0, #0x3F
-	str     r0, [r1,#0x81C] // clear lower 6 bits of GPLPUP
-	                        // ==> disable pull-up/down for GPL0, GPL1, GPL2
-	ldr     r0, [r1,#0x818] // GPLDAT
-	bic     r0, r0, #7
-	str     r0, [r1,#0x818] // clear bit 1 (#2) of GPLDAT
-	                        // ==> Output 0 on GPL1
-	ldr     r0, [r1,#0x810] // GPLCON0
-	ldr	r1, _const_fff
-	bic     r0, r0, r1
-	orr     r0, r0, #0x100
-	orr     r0, r0, #0x11
-	str     r0, [r1,#0x810] // Set bits 11-0 of GPLCON0 to 0001
-
-	ldr	r0, _3c4	// 0x3c4	// r0 = 0x51400000
-	mov	pc, r0				// jump to 0x51400000
+	b	_continue_ssboot
 
 
 _steppingstone_done:
@@ -629,8 +593,7 @@ _bss_end:
  * memory tests
  */
 
-//	.fill   128
-	.fill   0x400-0xC0-36
+	.fill   0x400-0xC0+0x44-40
 .globl _ss_stack
 _ss_stack:
 
