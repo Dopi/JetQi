@@ -67,7 +67,7 @@ void start_qi(void)
 	 * under control of JTAG.
 	 */
 
-	led_set(2);
+//	led_set(2);
 
 	/* ask all the boards we support in turn if they recognize this
 	 * hardware we are running on, accept the first positive answer

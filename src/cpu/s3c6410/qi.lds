@@ -43,6 +43,11 @@ SECTIONS
 		AT (0)
 	{
 	  src/cpu/s3c6410/start.o		(.text .rodata* .data .bss)
+/*	} */
+/*	.oldboot */
+/*		__steppingstone + 0x800 : */
+/*		AT (0x800) */
+/*	{ */
 	  src/cpu/s3c6410/boot_loader.little.o		(.text .rodata* .data .bss)
 /*	  src/cpu/s3c6410/start_qi.o		(.text .rodata* .data .bss) */
 /*	  src/cpu/s3c6410/jet.o			(.text .rodata* .data .bss) */
@@ -54,8 +59,8 @@ SECTIONS
 
 	. = ALIGN(4);
 	.everything_else
-		__system_ram_start + 0x3000000 + SIZEOF(.text) :
-		AT (SIZEOF(.text))
+		__system_ram_start + 0x3000000 + SIZEOF(.text) : /*+ SIZEOF(.oldboot) : */
+		AT (SIZEOF(.text)) /* + SIZEOF(.oldboot)) */
 	{
 		*(.text .rodata* .data)
 	}
