@@ -29,10 +29,13 @@ SECTIONS
 {
 	. = 0x00000000;
 
+	__steppingstone = 0x0c000000;
 	__system_ram_start = 0x50000000;
 	__oldboot_ram_start = 0x51400000;
 	__jetqi_ram_start = 0x53000000;
-	__steppingstone = 0x0c000000;
+
+	__oldboot_location = 0x800;
+	__jetqi_location = 0x48000;
 
 	/* this text section is magically pulled from flash
 	 * and stored by the iRom at 0x0c000000, then it is jumped into
@@ -45,32 +48,34 @@ SECTIONS
 	  src/cpu/s3c6410/start.o		(.text .rodata* .data .bss)
 	}
 
-	.oldboot __oldboot_ram_start : AT (0x800)
+	.oldboot __oldboot_ram_start : AT (__oldboot_location)
 	{
 	  src/cpu/s3c6410/boot_loader.little.o		(.text .rodata* .data .bss)
 	}
 
-	.jetqi __jetqi_ram_start : AT ( ADDR(.oldboot) + SIZEOF(.oldboot) )
+	.jetqi __jetqi_ram_start : AT ( __jetqi_location ) 
 	{
-/*	  src/cpu/s3c6410/start_qi.o		(.text .rodata* .data .bss) */
-/*	  src/cpu/s3c6410/jet.o			(.text .rodata* .data .bss) */
-/*	  src/cpu/s3c6410/serial-s3c64xx.o	(.text .rodata* .data .bss) */
-/*	  src/utils.o				(.text .rodata* .data .bss) */
-/*	  src/ctype.o				(.text .rodata* .data .bss) */
+	  src/cpu/s3c6410/pre_start.o		(.text .rodata* .data .bss)
+	  src/cpu/s3c6410/start_qi.o		(.text .rodata* .data .bss)
+	  src/cpu/s3c6410/jet.o			(.text .rodata* .data .bss)
+	  src/cpu/s3c6410/serial-s3c64xx.o	(.text .rodata* .data .bss)
+	  src/utils.o				(.text .rodata* .data .bss)
+	  src/ctype.o				(.text .rodata* .data .bss)
 	  *					(.steppingstone)
 	}
 
 	. = ALIGN(4);
 
+	__everything_else_location = __jetqi_location + ABSOLUTE(.) - ADDR(.jetqi);
 	__everything_else_start = __jetqi_ram_start + SIZEOF(.jetqi);
 
-	.everything_else __everything_else_start : AT ( ADDR(.jetqi) + SIZEOF(.jetqi ) )
+	.everything_else __everything_else_start : AT ( __everything_else_location )
 	{
 		*(.text .rodata* .data)
 	}
 
-	__bss_start = __system_ram_start + 0x03800000;
-	.bss_6410 __bss_start (NOLOAD) : AT (SIZEOF(.text) + SIZEOF(.everything_else))
+	__bss_start = __jetqi_ram_start + 0x0800000;
+	.bss_6410 __bss_start (NOLOAD) : AT (SIZEOF(.text) + SIZEOF(.oldboot) + SIZEOF(.jetqi) + SIZEOF(.everything_else))
 	{
 		* (.bss)
 	}

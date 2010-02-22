@@ -317,9 +317,6 @@ is_jtag:
  * working so we can't prep it from JTAG
  */
 
-_start_armboot:
-	.word 	start_qi
-
 _TEXT_BASE:
 	.word	TEXT_BASE
 
@@ -393,7 +390,7 @@ clbss_l:
 	b	_steppingstone_done
 
 _steppingstone_done:
-	ldr	pc, _start_armboot
+	ldr	pc, _TEXT_BASE
 
 /*
  * These are defined in the board-specific linker script.
@@ -411,7 +408,7 @@ _bss_end:
  * memory tests
  */
 _fill_start:
-	.fill   0x400-0xC0-0x10
+//		.fill   0x400-0xC0-0x10
 .globl _ss_stack
 _ss_stack:
 
