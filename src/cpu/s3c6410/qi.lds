@@ -30,25 +30,28 @@ SECTIONS
 	. = 0x00000000;
 
 	__system_ram_start = 0x50000000;
+	__oldboot_ram_start = 0x51400000;
+	__jetqi_ram_start = 0x53000000;
 	__steppingstone = 0x0c000000;
 
-	/* this text section is magically pulled from the SD Card
+	/* this text section is magically pulled from flash
 	 * and stored by the iRom at 0x0c000000, then it is jumped into
 	 * by the iRom.  So we arrange our early parts needed at 0 in the
 	 * output file, but set to run at 0x0c000000+
 	 */
 
-	.text
-		__steppingstone :
-		AT (0)
+	.text __steppingstone : AT (0)
 	{
 	  src/cpu/s3c6410/start.o		(.text .rodata* .data .bss)
-/*	} */
-/*	.oldboot */
-/*		__steppingstone + 0x800 : */
-/*		AT (0x800) */
-/*	{ */
+	}
+
+	.oldboot __oldboot_ram_start : AT (0x800)
+	{
 	  src/cpu/s3c6410/boot_loader.little.o		(.text .rodata* .data .bss)
+	}
+
+	.jetqi __jetqi_ram_start : AT ( ADDR(.oldboot) + SIZEOF(.oldboot) )
+	{
 /*	  src/cpu/s3c6410/start_qi.o		(.text .rodata* .data .bss) */
 /*	  src/cpu/s3c6410/jet.o			(.text .rodata* .data .bss) */
 /*	  src/cpu/s3c6410/serial-s3c64xx.o	(.text .rodata* .data .bss) */
@@ -58,17 +61,16 @@ SECTIONS
 	}
 
 	. = ALIGN(4);
-	.everything_else
-		__system_ram_start + 0x3000000 + SIZEOF(.text) : /*+ SIZEOF(.oldboot) : */
-		AT (SIZEOF(.text)) /* + SIZEOF(.oldboot)) */
+
+	__everything_else_start = __jetqi_ram_start + SIZEOF(.jetqi);
+
+	.everything_else __everything_else_start : AT ( ADDR(.jetqi) + SIZEOF(.jetqi ) )
 	{
 		*(.text .rodata* .data)
 	}
 
 	__bss_start = __system_ram_start + 0x03800000;
-	.bss_6410
-		__bss_start (NOLOAD) :
-		AT (SIZEOF(.text) + SIZEOF(.everything_else))
+	.bss_6410 __bss_start (NOLOAD) : AT (SIZEOF(.text) + SIZEOF(.everything_else))
 	{
 		* (.bss)
 	}
