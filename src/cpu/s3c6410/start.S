@@ -114,48 +114,53 @@ l_20:	mov	r0, #0
 	ldr	r1, [r0]			// load from INFORM2 to r1 
 	mov	pc, r1				// JUMP to adr in R1
 
-l_120:	ldr	r0, [pc, #656]	// 0x3b8	// load OneNAND SFR adr (0x70100000) in r0
-	ldr	r1, [pc, #656]	// 0x3bc	// 0x000040e0
-	str	r1, [r0]
-	ldr	r0, [pc, #652]	// 0x3c0	// =0x70100140
+l_120:	ldr	r0, [pc, #656]	// 0x3b8	// load OneNAND MEM_CFG0 reg adr (0x70100000) R/W Bank0 Memory Device Configuration Register in r0
+	ldr	r1, [pc, #656]	// 0x3bc	
+	str	r1, [r0] 			// store 0x000040e0 to MEM_CFG0
+	ldr	r0, [pc, #652]	// 0x3c0	// load OneNAND TRANS_SPARE0 reg adr (0x70100140) in r0
 	mov	r1, #1
-	str	r1, [r0]
+	str	r1, [r0]			// store 1 to TRANS_SPARE0
 	mov	r6, #4
-	ldr	r7, [pc, #640]	// 0x3c4	// =0x51400000
+	ldr	r7, [pc, #640]	// 0x3c4	// copy target = 0x51400000
 	mov	r4, #0
-	mov	r3, #1
-l_148:	mov	r2, #553648128	// 0x21000000
+	mov	r3, #1				// start at index 0x800 => copy from 0x21000800
+_copy_loop1:
+	mov	r2, #0x21000000
 	add	r2, r2, r4, lsl #12
-	mov	r8, #128	// 0x80
-	add	r2, r2, r3, lsl #6
-l_158:	ldm	r2, {r9, sl, fp, ip}		// MEMCOPY ????
-	stmia	r7!, {r9, sl, fp, ip}		// MEMCOPY ????
-	subs	r8, r8, #1
-	bne	l_158		// 0x158
+	mov	r8, #128	// 0x80		// loop2 counter = 0x80 ==> copy 2048 byte
+	add	r2, r2, r3, lsl #6		// r2 = 0x21000000 + (R4 << 12) + (R3 << 6)
+_copy_loop2:	
+	ldm	r2, {r9, sl, fp, ip}		// load 4*4 bytes from [R2]
+	stmia	r7!, {r9, sl, fp, ip}		// store 4*4 bytes to [R7]++
+	subs	r8, r8, #1			// decrement loop2 counter
+	bne	_copy_loop2		 	// END copy_loop2 
 	cmp	r3, #0
 	bne	l_1a0		// 0x1a0
 	ldr	r9, [r2]
 	lsl	r9, r9, #16
-	lsr	r9, r9, #16
-	ldr	r2, [pc, #496]	// 0x374
+	lsr	r9, r9, #16			// clear upper 16 bits of r9
+	ldr	r2, [pc, #496]	// 0x374 	// =0x0000ffff
 	cmp	r9, r2
 	beq	l_1a0		// 0x1a0
 	add	r6, r6, #1
-	sub	r7, r7, #2048	// 0x800
-	ldr	r0, [pc, #544]	// 0x3b8	// load OneNAND SFR adr (0x70100000) in r0
-	mov	r1, #1024	// 0x400
-	str	r1, [r0, #80]	// 0x50
-	b	l_1b8		// 0x1b8
-l_1a0:	ldr	r0, [pc, #528]	// 0x3b8
-	mov	r1, #1024	// 0x400
-	str	r1, [r0, #80]	// 0x50
+	sub	r7, r7, #0x800	
+	ldr	r0, [pc, #544]	// 0x3b8	// load OneNAND MEM_CFG0 reg adr (0x70100000) in r0
+	mov	r1, #0x400
+	str	r1, [r0, #0x50]			// store 0x400 in INT_ERR_ACK0 (0x70100050) Bank0 Int. Err. Ack. Reg.	
+	b	l_1b8		
+l_1a0:	
+	ldr	r0, [pc, #528]	// 0x3b8	// load OneNAND MEM_CFG0 reg adr (0x70100000) in r0
+	mov	r1, #0x400
+	str	r1, [r0, #0x50]	  		// store 0x400 in INT_ERR_ACK0 (0x70100050) Bank0 Int. Err. Ack. Reg.
 	add	r3, r3, #1
 	cmp	r3, #64	// 0x40
-	blt	l_148		// 0x148
-l_1b8:	add	r4, r4, #1
+	blt	_copy_loop1	// 0x148
+l_1b8:	
+	add	r4, r4, #1
 	mov	r3, #0
 	cmp	r4, r6
-	blt	l_148		// 0x148
+	blt	_copy_loop1	// 0x148
+
 	ldr	r0, [pc, #500]	// 0x3c4	// r0 = 0x51400000
 //	mov	pc, r0				// jump to 0x51400000
 	b	_modstart
@@ -261,6 +266,9 @@ l_340:	ldr	r1, [r0]
 	nop	{0}
 	mov	pc, lr		// RET
 
+/*
+ * Constants
+ */
 _35c:	.long	0x70000013
 _360:	.long	0x7e004000
 _364:	.long	0x71200014
@@ -297,29 +305,43 @@ _3dc:	.long	0x000158f8
 _3e0:	.long	0x00080034
 _3e4:	.long	0x00180034
 
+/* 
+ * If we are injected by JTAG, the script sets _istag content to nonzero 
+ */
+is_jtag:
+	.word	0
+
+/*
+ * These are defined in the board-specific linker script.
+ */
+.globl _bss_start
+_bss_start:
+	.word __bss_start
+
+.globl _bss_end
+_bss_end:
+	.word _end
+
+/* it's at a fixed address (+0x8) so we can breakpoint it in the JTAG script
+ * we need to go through this hassle because before this moment, SDRAM is not
+ * working so we can't prep it from JTAG
+ */
+_TEXT_BASE:
+	.word	TEXT_BASE
+
+/*
+ * More constants
+ */
 _keypad_base:
 	.long	0x7E00A000
 _gpio_base:
 	.long	0x7F008000
 _const_fff:
 	.long	0xfff
-//_const_111:
-//	.long	0x111
-//_keypad_row_const:
-//	.long	0x33333333
 
-/* if we are injected by JTAG, the script sets _istag content to nonzero */
-is_jtag:
-	.word	0
-
-/* it's at a fixed address (+0x8) so we can breakpoint it in the JTAG script
- * we need to go through this hassle because before this moment, SDRAM is not
- * working so we can't prep it from JTAG
+/*
+ * Modified bootcode start
  */
-
-_TEXT_BASE:
-	.word	TEXT_BASE
-
 _modstart:
 	ldr	r0, _gpio_base
 	ldr	r1, [r0,#0x810] // R1 = GPLCON0
@@ -366,50 +388,36 @@ _continue_ssboot:
 	mov	pc, r0				// jump to 0x51400000
 
 _second_phase:
-	mov	r0, #0x20000000			// approx 10 sec wait
-_waitloop:
-	subs	r0, r0, #1
-	cmp	r0, #0
-	bne	_waitloop
-	b	_continue_ssboot
+	b	_continue_ssboot		// skip second stage for now
 
+_init_stack:
 #define CFG_GBL_DATA_SIZE		128			/* size in bytes reserved for initial data */
 	ldr	r0, _TEXT_BASE		/* upper 128 KiB: relocated uboot   */
 	sub	r0, r0, #CFG_GBL_DATA_SIZE 	/* bdinfo                        */
 	sub	sp, r0, #12		/* leave 3 words for abort-stack    */
-clear_bss:
+
+_clear_bss:
 	ldr	r0, _bss_start		/* find start of bss segment        */
 	ldr	r1, _bss_end		/* stop here                        */
 	mov 	r2, #0x00000000		/* clear                            */
-clbss_l:
-	str	r2, [r0]			/* clear loop...                    */
+_clbss_l:
+	str	r2, [r0]		/* clear loop...                    */
 	add	r0, r0, #4
 	cmp	r0, r1
-	ble	clbss_l
+	ble	_clbss_l
 
-	b	_steppingstone_done
+_copy_second_stage:
+
+// memcopy from OneNAND to go here
 
 _steppingstone_done:
 	ldr	pc, _TEXT_BASE
 
 /*
- * These are defined in the board-specific linker script.
- */
-.globl _bss_start
-_bss_start:
-	.word __bss_start
-
-.globl _bss_end
-_bss_end:
-	.word _end
-
-/*
  * we have a stack in steppingstone because we can want to run full memory
  * memory tests
  */
-_fill_start:
-//		.fill   0x400-0xC0-0x10
+//		.fill   0x400 			// filled until 0x800 automatically by linker script
 .globl _ss_stack
-_ss_stack:
-
+#define _ss_stack 0x800
 
