@@ -114,7 +114,7 @@ l_20:	mov	r0, #0
 	ldr	r1, [r0]			// load from INFORM2 to r1 
 	mov	pc, r1				// JUMP to adr in R1
 
-l_120:	ldr	r0, [pc, #656]	// 0x3b8	// load OneNAND MEM_CFG0 reg adr (0x70100000) R/W Bank0 Memory Device Configuration Register in r0
+l_120:	ldr	r0, _MEM_CFG0	// 0x3b8	// load OneNAND MEM_CFG0 reg adr (0x70100000) R/W Bank0 Memory Device Configuration Register in r0
 	ldr	r1, [pc, #656]	// 0x3bc	
 	str	r1, [r0] 			// store 0x000040e0 to MEM_CFG0
 	ldr	r0, [pc, #652]	// 0x3c0	// load OneNAND TRANS_SPARE0 reg adr (0x70100140) in r0
@@ -144,12 +144,12 @@ _copy_loop2:
 	beq	l_1a0		// 0x1a0
 	add	r6, r6, #1
 	sub	r7, r7, #0x800	
-	ldr	r0, [pc, #544]	// 0x3b8	// load OneNAND MEM_CFG0 reg adr (0x70100000) in r0
+	ldr	r0, _MEM_CFG0	// 0x3b8	// load OneNAND MEM_CFG0 reg adr (0x70100000) in r0
 	mov	r1, #0x400
 	str	r1, [r0, #0x50]			// store 0x400 in INT_ERR_ACK0 (0x70100050) Bank0 Int. Err. Ack. Reg.	
 	b	l_1b8		
 l_1a0:	
-	ldr	r0, [pc, #528]	// 0x3b8	// load OneNAND MEM_CFG0 reg adr (0x70100000) in r0
+	ldr	r0, _MEM_CFG0	// 0x3b8	// load OneNAND MEM_CFG0 reg adr (0x70100000) in r0
 	mov	r1, #0x400
 	str	r1, [r0, #0x50]	  		// store 0x400 in INT_ERR_ACK0 (0x70100050) Bank0 Int. Err. Ack. Reg.
 	add	r3, r3, #1
@@ -292,7 +292,8 @@ _3a8:	.long	0x7e00f01c
 _3ac:	.long	0x7e00f120
 _3b0:	.long	0x7e00f904
 _3b4:	.long	0x7e00fa08
-_3b8:	.long	0x70100000
+_MEM_CFG0:
+	.long	0x70100000
 _3bc:	.long	0x000040e0
 _3c0:	.long	0x70100140
 _3c4:	.long	0x51400000
@@ -406,7 +407,55 @@ _clbss_l:
 	cmp	r0, r1
 	ble	_clbss_l
 
-_copy_second_stage:
+_second_stage_copy:
+	ldr	r0, _MEM_CFG0			// load OneNAND MEM_CFG0 reg adr (0x70100000) R/W Bank0 Memory Device Configuration Register in r0
+	ldr	r1, _3bc	
+	str	r1, [r0] 			// store 0x000040e0 to MEM_CFG0
+	ldr	r0, _3c0			// load OneNAND TRANS_SPARE0 reg adr (0x70100140) in r0
+	mov	r1, #1
+	str	r1, [r0]			// store 1 to TRANS_SPARE0
+
+	mov	r6, #0x4C  //4
+	ldr	r7, _TEXT_BASE			// copy target = 0x53000000
+	mov	r4, #0x48 //0				
+	mov	r3, #0	//1			// start at index 0<<6 + 48<<12 => copy from 0x21048000
+_sscopy_loop1:
+	mov	r2, #0x21000000
+	add	r2, r2, r4, lsl #12
+	mov	r8, #128	// 0x80		// loop2 counter = 0x80 ==> copy (16*128) = 2048 bytes
+	add	r2, r2, r3, lsl #6		// r2 = 0x21000000 + (R4 << 12) + (R3 << 6)
+_sscopy_loop2:	
+	ldmia	r2, {r9, sl, fp, ip}		// load 4*4 bytes from [R2]
+	stmia	r7!, {r9, sl, fp, ip}		// store 4*4 bytes to [R7]++
+	subs	r8, r8, #1			// decrement loop2 counter
+	bne	_sscopy_loop2		 	// END copy_loop2 
+
+	cmp	r3, #0
+	bne	_ss_loc1			// r3 <> 0 ? ==> jump to ss_loc1
+	ldr	r9, [r2]
+	lsl	r9, r9, #16
+	lsr	r9, r9, #16			// clear upper 16 bits of r9
+	ldr	r2, _374		 	// =0x0000ffff
+	cmp	r9, r2
+	beq	_ss_loc1			// R2 = 0x0000ffff? Yes: Continue loop
+	add	r6, r6, #1			// No: retry this block, increase loop limit
+	sub	r7, r7, #0x800	
+	ldr	r0, _MEM_CFG0			// load OneNAND MEM_CFG0 reg adr (0x70100000) in r0
+	mov	r1, #0x400
+	str	r1, [r0, #0x50]			// store 0x400 in INT_ERR_ACK0 (0x70100050) Bank0 Int. Err. Ack. Reg.	
+	b	_ss_loc2	
+_ss_loc1:	
+	ldr	r0, _MEM_CFG0			// load OneNAND MEM_CFG0 reg adr (0x70100000) in r0
+	mov	r1, #0x400
+	str	r1, [r0, #0x50]	  		// store 0x400 in INT_ERR_ACK0 (0x70100050) Bank0 Int. Err. Ack. Reg.
+	add	r3, r3, #1
+	cmp	r3, #64		// 0x40
+	blt	_sscopy_loop1			// copy 64x2048 bytes = 0x20000
+_ss_loc2:	
+	add	r4, r4, #1
+	mov	r3, #0
+	cmp	r4, r6				// r4 < r6?
+	blt	_sscopy_loop1			// yes: Loop
 
 // memcopy from OneNAND to go here
 

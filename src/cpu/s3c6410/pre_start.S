@@ -60,5 +60,5 @@ _continue_with_start_qi:
 _start_armboot:
 	.word 	start_qi
 _start_oldboot:
-	.word 	#0x51400000
+	.word 	0x51400000
 
