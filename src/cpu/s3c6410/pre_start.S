@@ -1,10 +1,6 @@
 /*
- * Original and derived works:
- * (C) Copyright 2007 OpenMoko, Inc.
- * (C) Copyright 2007 Chronolytics Inc. 
- * (C) Copyright 2007 David F. Carlson <dave at chronolytics dot com>
  *
- * Jet (GT-S8000/8003) modifications
+ * Jet (GT-S8000/8003) asm second sage start code
  * (C) Copiright 2010 Dopi711@googlemail.com
  *
  * This program is free software// you can redistribute it and/or
@@ -35,7 +31,7 @@
 .globl _pre_start, processor_id
 
 _pre_start:
-	ldr	pc, _start_armboot
+	b	_pre_start2
 
 _pre_start_1:
 	b	_pre_start_1
@@ -48,6 +44,21 @@ _pre_start_4:
 _pre_start_5:
 	b	_pre_start_5
 
+_pre_start2:
+
+_wait_10s:
+	mov	r0, #0x20000000			// approx 10 sec wait
+_waitloop:
+	subs	r0, r0, #1
+	cmp	r0, #0
+	bne	_waitloop
+
+_continue_with_start_qi:
+	ldr	pc, _start_oldboot
+//	ldr	pc, _start_armboot
+
 _start_armboot:
 	.word 	start_qi
+_start_oldboot:
+	.word 	#0x51400000
 
