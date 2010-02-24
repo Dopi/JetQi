@@ -329,6 +329,8 @@ _bss_end:
  */
 _TEXT_BASE:
 	.word	TEXT_BASE
+_old_new_base:
+	.word	0x51400000 + 0x48000 - 0x800
 
 /*
  * More constants
@@ -389,7 +391,7 @@ _continue_ssboot:
 	mov	pc, r0				// jump to 0x51400000
 
 _second_phase:
-	b	_continue_ssboot		// skip second stage for now
+//	b	_continue_ssboot		// skip second stage for now
 
 _init_stack:
 #define CFG_GBL_DATA_SIZE		128			/* size in bytes reserved for initial data */
@@ -406,7 +408,7 @@ _clbss_l:
 	add	r0, r0, #4
 	cmp	r0, r1
 	ble	_clbss_l
-
+/*
 _second_stage_copy:
 	ldr	r0, _MEM_CFG0			// load OneNAND MEM_CFG0 reg adr (0x70100000) R/W Bank0 Memory Device Configuration Register in r0
 	ldr	r1, _3bc	
@@ -456,11 +458,11 @@ _ss_loc2:
 	mov	r3, #0
 	cmp	r4, r6				// r4 < r6?
 	blt	_sscopy_loop1			// yes: Loop
-
-// memcopy from OneNAND to go here
+*/
 
 _steppingstone_done:
-	ldr	pc, _TEXT_BASE
+//	ldr	pc, _TEXT_BASE
+	ldr	pc, _old_new_base
 
 /*
  * we have a stack in steppingstone because we can want to run full memory
