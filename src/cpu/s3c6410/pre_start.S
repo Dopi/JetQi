@@ -122,8 +122,15 @@ _51400134:	.word	0x514400b4
 sub_514380F8:	.word	0x514380F8
 sub_51438078:	.word	0x51438078
 sub_514381C4:	.word	0x514381C4
+sub_514152F8:	.word	0x514152F8
+sub_514029B0:	.word	0x514029B0
+sub_51401C3C:	.word	0x51401C3C
+sub_51438160:	.word	0x51438160
+sub_51430F80:	.word	0x51430F80
 
 var_51446DA0:	.word	0x51446DA0
+var_51403210:	.word	0x51403210
+var_51415448:	.word	0x5a0b0004
 
 /*
  * Long Distance Calls
@@ -152,6 +159,54 @@ call_sub_514381C4:
 locret_call_sub_514381C4:
 	ldmia	sp!, {pc}
 
+call_sub_5142FD38:
+	stmdb   sp!, {lr}
+	ldr	lr, locret_call_sub_5142FD38
+	ldr	r3, sub_5142FD38 // r3 is going to be cleared in the sub, anyway
+	bx	r3
+locret_call_sub_5142FD38:
+	ldmia	sp!, {pc}
+
+call_sub_514152F8:
+	stmdb   sp!, {lr}
+	ldr	lr, locret_call_sub_514152F8
+	ldr	r0, sub_514152F8 // r0 is going to be cleared in the sub, anyway
+	bx	r0
+locret_call_sub_514152F8:
+	ldmia	sp!, {pc}
+
+call_sub_514029B0:
+	stmdb   sp!, {lr}
+	ldr	lr, locret_call_sub_514029B0
+	ldr	r0, sub_514029B0 // r0 is going to be cleared in the sub, anyway
+	bx	r0
+locret_call_sub_514029B0:
+	ldmia	sp!, {pc}
+
+call_sub_51401C3C:
+	stmdb   sp!, {lr}
+	ldr	lr, locret_call_sub_51401C3C
+	ldr	r0, sub_51401C3C // r0 is going to be cleared in the sub, anyway
+	bx	r0
+locret_call_sub_51401C3C:
+	ldmia	sp!, {pc}
+
+call_sub_51438160:
+	stmdb   sp!, {lr}
+	ldr	lr, locret_call_sub_51438160
+	ldr	r1, sub_51438160 // r1 is going to be cleared in the sub, anyway
+	bx	r1
+locret_call_sub_51438160:
+	ldmia	sp!, {pc}
+
+call_sub_51430F80:
+	stmdb   sp!, {lr}
+	ldr	lr, locret_call_sub_51430F80
+	ldr	r2, sub_51430F80 // r2 is going to be cleared in the sub, anyway
+	bx	r2
+locret_call_sub_51430F80:
+	ldmia	sp!, {pc}
+
 /* 
  * Auxiliary Subroutines
  */
@@ -167,6 +222,19 @@ loc_5142FD40:
 	b       loc_5142FD40
 locret_5142FD58: 
 	bx      lr
+
+sub_5142fd5c:	
+	mov	r3, #0	// 0x0
+	mov	r2, r2, lsr #2
+loc_5142fd64:
+	cmp	r3, r2
+	bcs	locret_5142fd78 // <__oldboot_ram_start+0x2fd78>
+	str	r1, [r0, r3, lsl #2]
+	add	r3, r3, #1	// 0x1
+	b	loc_5142fd64 	// <__oldboot_ram_start+0x2fd64>
+locret_5142fd78:
+	bx	lr
+
 
 /*
  * INIT 2
@@ -208,28 +276,29 @@ _init2:
 	ldr     r0, var_51446DA0
 	ldr	r0, [r0]
 	LDR     R2, =0
-	BL      sub_5142FD38
+	BL      sub_5142FD38	// okay
 
 loc_51403000:
-	LDR     R2, =0x207F9C
+	ldr     r2, var_51403210 // =0x207F9C
+	ldr	r2, [r2]
 	ldr     r0, var_51446DA0
 	ldr	r0, [r0]
 	MOV     R1, #0
-	BL      sub_5142FD5C
-	BL      sub_514152F8
+	BL      sub_5142fd5c
+	BL      call_sub_514152F8
 
 //	BL      load_0x5A0B0004_to_R0
-	LDR     R0, =0x5A0B0004
+	LDR     R0, var_51415448	// =0x5A0B0004
 
 	MOV     R4, R0
-	BL      sub_514029B0
+	BL      call_sub_514029B0
 	STR     R0, [R4,#0x30]
-	BL      sub_51401C3C
+	BL      call_sub_51401C3C
 	LDR     R1, [R4,#0x30]
 //	ADR     R0, aBoothwcheckD__ // "BootHWCheck: %d...\n"
 //	BL      SimpleDebugPrint
 	MOV     R0, #0x69 // 'i'
-	BL      sub_51438160
+	BL      call_sub_51438160
 	CMP     R0, #0
 	BEQ     loc_51403064
 
@@ -248,7 +317,7 @@ loc_51403064:
 	MOV     R0, #1
 	BL      sub_5141AF20
 	MOV     R0, #0x7D0
-	BL      sub_51430F80
+	BL      call_sub_51430F80
 	BL      LCD_InitWin // 0x51401B28
 	MOV     R0, #0
 	STR     R0, [R4,#0x24]
@@ -266,7 +335,7 @@ loc_514031B0:
 Download_Mode_MSG: //0x514184B8
 	STMFD   SP!, {R4,LR}
 	MOV     R0, #0x7D0
-	BL      sub_51430F80
+	BL      call_sub_51430F80
 	BL      sub_51417FA0
 	MOV     R0, #0
 	BL      sub_51417F24
