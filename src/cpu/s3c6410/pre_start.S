@@ -48,17 +48,13 @@ _pre_start2:
 	mrc	15, 0, r0, cr1, cr0, 2
 	orr	r0, r0, #0xf00000
 	mcr	15, 0, r0, cr1, cr0, 2
-//	fmrx	r1, fpexc
-	.word	0xeef81a10
+	.word	0xeef81a10		//	fmrx	r1, fpexc
 	orr	r1, r1, #0x40000000
-//	fmxr	fpexc, r1
-	.word	0xeee81a10
+	.word	0xeee81a10		//	fmxr	fpexc, r1
 	mov	r0, #0x3000000
-//	fmxr	fpscr, r0
-	.word	0xeee10a10
+	.word	0xeee10a10		//	fmxr	fpscr, r0
 	mov	r0, #0	// 0x0
 	mcr	15, 0, r0, cr9, cr2, 0
-	.word	
 	mov	r0, #0x4000
 	orr	r0, r0, #1	// 0x1
 	mcr	15, 0, r0, cr9, cr1, 0
@@ -122,38 +118,85 @@ _51400128:	.word	0x518fff00
 _5140012c:	.word	0x518ff900
 _51400130:	.word	0x514400d4
 _51400134:	.word	0x514400b4
+
 sub_514380F8:	.word	0x514380F8
+sub_51438078:	.word	0x51438078
+sub_514381C4:	.word	0x514381C4
+
 var_51446DA0:	.word	0x51446DA0
 
-_init2:
-	STMFD   SP!, {R3-R5,LR}
-	MOV     R1, #1
-	MOV     R0, #0x16
-//	BL      sub_514380F8
-	ldr	lr, [pc, #12]
-	ldr	r2, sub_514380F8
+/*
+ * Long Distance Calls
+ */
+call_sub_514380F8:
+	stmdb   sp!, {lr}
+	ldr	lr, locret_call_sub_514380F8
+	ldr	r2, sub_514380F8 // r2 is going to be cleared in the sub, anyway
 	bx	r2
+locret_call_sub_514380F8:
+	ldmia	sp!, {pc}
+
+call_sub_51438078:
+	stmdb   sp!, {lr}
+	ldr	lr, locret_call_sub_51438078
+	ldr	r4, sub_514380F8 // r4 is going to be cleared in the sub, anyway
+	bx	r4
+locret_call_sub_51438078:
+	ldmia	sp!, {pc}
+
+call_sub_514381C4:
+	stmdb   sp!, {lr}
+	ldr	lr, locret_call_sub_514381C4
+	ldr	r2, sub_514381C4 // r2 is going to be cleared in the sub, anyway
+	bx	r2
+locret_call_sub_514381C4:
+	ldmia	sp!, {pc}
+
+/* 
+ * Auxiliary Subroutines
+ */
+sub_5142FD38:
+	mov     r3, #0
+	mov     r12, r2,lsr#2
+loc_5142FD40:
+	cmp     R3, R12
+	bcs     locret_5142FD58
+	ldr     R2, [R1,R3,LSL#2]
+	str     R2, [R0,R3,LSL#2]
+	add     R3, R3, #1
+	b       loc_5142FD40
+locret_5142FD58: 
+	bx      lr
+
+/*
+ * INIT 2
+ */
+_init2:
+	stmdb   sp!, {r3-r5,lr}
 	MOV     R1, #1
 	MOV     R0, #0x16
-	BL      sub_51438078
+	BL      call_sub_514380F8
 	MOV     R1, #1
 	MOV     R0, #0x16
-	BL      sub_514380F8
+	BL      call_sub_51438078
+	MOV     R1, #1
+	MOV     R0, #0x16
+	BL      call_sub_514380F8
 	MOV     R1, #1
 	MOV     R0, #0xB0 // '¦'
-	BL      sub_514380F8
+	BL      call_sub_514380F8
 	MOV     R1, #1
 	MOV     R0, #0xB0 // '¦'
-	BL      sub_51438078
+	BL      call_sub_51438078
 	MOV     R1, #1
 	MOV     R0, #0xB0 // '¦'
-	BL      sub_514380F8
+	BL      call_sub_514380F8
 	MOV     R1, #2
 	MOV     R0, #0x69 // 'i'
-	BL      sub_514381C4
+	BL      call_sub_514381C4
 	MOV     R1, #0
 	MOV     R0, #0x69 // 'i'
-	BL      sub_51438078
+	BL      call_sub_51438078
 	ldr     r0, var_51446DA0
 	ldr	r0, [r0]
 	ldr     r1, var_51446DA0
