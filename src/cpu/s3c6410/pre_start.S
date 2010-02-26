@@ -111,6 +111,11 @@ _pre_start2:
 _init1_end:
 	b	_init1_end
 
+
+/*
+ * Variables
+ */
+
 _5140011c:	.word	0x71200014
 _51400120:	.word	0x71300014
 _51400124:	.word	0x7e004000
@@ -127,14 +132,22 @@ sub_514029B0:	.word	0x514029B0
 sub_51401C3C:	.word	0x51401C3C
 sub_51438160:	.word	0x51438160
 sub_51430F80:	.word	0x51430F80
+sub_51419D0C:	.word	0x51419D0C
+sub_5141AF20:	.word	0x5141AF20
+sub_51401B28:	.word	0x51401B28
+sub_51417FA0:	.word	0x51417FA0
+sub_51417F24:	.word	0x51417F24
+sub_514182D4:	.word	0x514182D4
 
 var_51446DA0:	.word	0x51446DA0
 var_51403210:	.word	0x51403210
 var_51415448:	.word	0x5a0b0004
 
+
 /*
  * Long Distance Calls
  */
+
 call_sub_514380F8:
 	stmdb   sp!, {lr}
 	ldr	lr, locret_call_sub_514380F8
@@ -207,9 +220,58 @@ call_sub_51430F80:
 locret_call_sub_51430F80:
 	ldmia	sp!, {pc}
 
+call_sub_51419D0C:
+	stmdb   sp!, {lr}
+	ldr	lr, locret_call_sub_51419D0C
+	ldr	r2, sub_51419D0C // r2 is going to be cleared in the sub, anyway
+	bx	r2
+locret_call_sub_51419D0C:
+	ldmia	sp!, {pc}
+
+call_sub_5141AF20:
+	stmdb   sp!, {lr}
+	ldr	lr, locret_call_sub_5141AF20
+	ldr	r2, sub_5141AF20 // r2 is going to be cleared in the sub, anyway
+	bx	r2
+locret_call_sub_5141AF20:
+	ldmia	sp!, {pc}
+	
+call_sub_51417FA0:
+	stmdb   sp!, {lr}
+	ldr	lr, locret_call_sub_51417FA0
+	ldr	r0, sub_51417FA0 // r0 is going to be cleared in the sub, anyway
+	bx	r0
+locret_call_sub_51417FA0:
+	ldmia	sp!, {pc}
+
+call_sub_51417F24:
+	stmdb   sp!, {lr}
+	ldr	lr, locret_call_sub_51417F24
+	ldr	r1, sub_51417F24 // r1 is going to be cleared in the sub, anyway
+	bx	r1
+locret_call_sub_51417F24:
+	ldmia	sp!, {pc}
+	
+LCD_InitWin:
+	stmdb   sp!, {lr}
+	ldr	lr, locret_LCD_InitWin
+	ldr	r1, sub_51401B28 // r1 is going to be cleared in the sub, anyway
+	bx	r1
+locret_LCD_InitWin:
+	ldmia	sp!, {pc}
+	
+LCD_printf:
+	stmdb   sp!, {lr}
+	ldr	lr, locret_LCD_printf
+	ldr	rXXX3?, sub_514182D4 // rXXX is going to be cleared in the sub, anyway
+	bx	rXXX
+locret_LCD_printf:
+	ldmia	sp!, {pc}
+
 /* 
  * Auxiliary Subroutines
  */
+
 sub_5142FD38:
 	mov     r3, #0
 	mov     r12, r2,lsr#2
@@ -222,6 +284,7 @@ loc_5142FD40:
 	b       loc_5142FD40
 locret_5142FD58: 
 	bx      lr
+
 
 sub_5142fd5c:	
 	mov	r3, #0	// 0x0
@@ -236,9 +299,31 @@ locret_5142fd78:
 	bx	lr
 
 
+sub_51433b64:
+	mrc     p15, 0, R0,c1,c0
+	bic     R0, R0, #0x1000000
+	mcr     p15, 0, R0,c1,c0
+	bx      lr
+
+
+sub_51433b74:
+	mrs     R0, CPSR
+	bic     R0, R0, #0x80
+	msr     CPSR_cxsf, R0
+	bx      lr
+
+
+sub_51433bb4:
+	mrc     p15, 0, R0,c1,c0
+	orr     R0, R0, #0x800
+	mcr     p15, 0, R0,c1,c0
+	bx      lr
+
+
 /*
  * INIT 2
  */
+
 _init2:
 	stmdb   sp!, {r3-r5,lr}
 	MOV     R1, #1
@@ -308,14 +393,14 @@ loc_51403000:
 
 	MOV     R1, SP
 	MOV     R0, #0xF
-	BL      sub_51419D0C
+	BL      call_sub_51419D0C
 //	ADR     R0, aNoBattery  ; "NO battery\n"
 //	BL      SimpleDebugPrint
 
 loc_51403064:
 //	BL      SelectBootingMode
 	MOV     R0, #1
-	BL      sub_5141AF20
+	BL      call_sub_5141AF20
 	MOV     R0, #0x7D0
 	BL      call_sub_51430F80
 	BL      LCD_InitWin // 0x51401B28
@@ -336,9 +421,9 @@ Download_Mode_MSG: //0x514184B8
 	STMFD   SP!, {R4,LR}
 	MOV     R0, #0x7D0
 	BL      call_sub_51430F80
-	BL      sub_51417FA0
+	BL      call_sub_51417FA0
 	MOV     R0, #0
-	BL      sub_51417F24
+	BL      call_sub_51417F24
 	MOV     R3, #0
 	MOV     R2, #0xF800
 	MOV     R1, #4
@@ -378,23 +463,6 @@ asc_jetdroid:
 	.ascii	"   \t    JetDroid mode  \t      "
 	.byte	0
 
-sub_51433b64:
-	mrc     p15, 0, R0,c1,c0
-	bic     R0, R0, #0x1000000
-	mcr     p15, 0, R0,c1,c0
-	bx      lr
-
-sub_51433b74:
-	mrs     R0, CPSR
-	bic     R0, R0, #0x80
-	msr     CPSR_cxsf, R0
-	bx      lr
-
-sub_51433bb4:
-	mrc     p15, 0, R0,c1,c0
-	orr     R0, R0, #0x800
-	mcr     p15, 0, R0,c1,c0
-	bx      lr
 
 
 _wait_10s:
@@ -409,4 +477,3 @@ _start_armboot:
 	.word 	start_qi
 _start_oldboot:
 	.word 	0x51400000
-
