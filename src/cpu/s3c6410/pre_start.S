@@ -115,7 +115,7 @@ _init1_end:
  * Variables
  */
 
-_oldstart:	.word	0x51403010 //0x51402FE0 //0x51402f7c // 0x51400000
+_oldstart:	.word	0x5140300C //0x51403010 //0x51402FE0 //0x51402f7c // 0x51400000
 
 _5140011c:	.word	0x71200014
 _51400120:	.word	0x71300014
@@ -140,6 +140,7 @@ sub_51417FA0:	.word	0x51417FA0
 sub_51417F24:	.word	0x51417F24
 sub_514182D4:	.word	0x514182D4
 sub_5141AB40:	.word	0x5141AB40
+sub_5142fd5c: 	.word	0x5142fd5c
 
 var_adr_51403204:	.word	0x51403204
 var_adr_51403208:	.word	0x51403208
@@ -183,6 +184,14 @@ call_sub_5142FD38:
 	ldr	r3, sub_5142FD38 // r3 is going to be cleared in the sub, anyway
 	bx	r3
 locret_call_sub_5142FD38:
+	ldmia	sp!, {pc}
+
+call_sub_5142fd5c:
+	stmdb   sp!, {lr}
+	adr	lr, locret_call_sub_5142fd5c
+	ldr	r3, sub_5142fd5c // r3 is going to be cleared in the sub, anyway
+	bx	r3
+locret_call_sub_5142fd5c:
 	ldmia	sp!, {pc}
 
 call_sub_514152F8:
@@ -299,7 +308,7 @@ locret_5142FD58:
 	bx      lr
 
 
-sub_5142fd5c:	
+real_sub_5142fd5c:	
 	mov	r3, #0	// 0x0
 	mov	r2, r2, lsr #2
 loc_5142fd64:
@@ -383,11 +392,11 @@ loc_51403000:
 	ldr     r0, var_adr_51403214 // =0x51446DA0 ???
 	ldr	r0, [r0]
 	mov     r1, #0
-	BL      sub_5142fd5c
 
-	ldr	r0,_oldstart
-	mov	pc, r0
+	ldr	r3,_oldstart
+	mov	pc, r3
 
+	BL      real_sub_5142fd5c
 	BL      call_sub_514152F8
 //	BL      load_0x5A0B0004_to_R0
 	LDR     R0, var_51415448	// =0x5A0B0004
