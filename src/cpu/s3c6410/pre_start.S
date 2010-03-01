@@ -115,7 +115,7 @@ _init1_end:
  * Variables
  */
 
-_oldstart:	.word	0x5140300C //0x51403010 //0x51402FE0 //0x51402f7c // 0x51400000
+_oldstart:	.word	0x51403010 //0x51402FE0 //0x51402f7c // 0x51400000
 
 _5140011c:	.word	0x71200014
 _51400120:	.word	0x71300014
@@ -147,6 +147,7 @@ var_adr_51403208:	.word	0x51403208
 var_adr_5140320c:	.word 	0x5140320c
 var_adr_51403210:	.word	0x51403210
 var_adr_51403214:	.word	0x51403214
+var_adr_51415448:	.word	0x51415448
 var_51415448:	.word	0x5a0b0004
 var_51402258:	.word	0x514449A8
 
@@ -178,6 +179,7 @@ call_sub_514381C4:
 locret_call_sub_514381C4:
 	ldmia	sp!, {pc}
 
+/*
 call_sub_5142FD38:
 	stmdb   sp!, {lr}
 	adr	lr, locret_call_sub_5142FD38
@@ -185,6 +187,7 @@ call_sub_5142FD38:
 	bx	r3
 locret_call_sub_5142FD38:
 	ldmia	sp!, {pc}
+*/
 
 call_sub_5142fd5c:
 	stmdb   sp!, {lr}
@@ -294,11 +297,11 @@ locret_LCD_printf:
  * Auxiliary Subroutines
  */
 
-sub_5142FD38:
+sub_5142fd38:
 	mov     r3, #0
 	mov     r12, r2,lsr#2
 loc_5142FD40:
-	cmp     R3, R12
+	cmp     r3, r12
 	bcs     locret_5142FD58
 	ldr     R2, [R1,R3,LSL#2]
 	str     R2, [R0,R3,LSL#2]
@@ -384,7 +387,7 @@ _init2:
 	ldr	r0, [r0]
 	ldr     r2, var_adr_5140320c
 	ldr	r2, [r2]
-	BL      sub_5142FD38	// okay
+	bl      sub_5142fd38	// okay
 
 loc_51403000:
 	ldr     r2, var_adr_51403210 // =0x207F9C
@@ -392,15 +395,15 @@ loc_51403000:
 	ldr     r0, var_adr_51403214 // =0x51446DA0 ???
 	ldr	r0, [r0]
 	mov     r1, #0
+	bl      real_sub_5142fd5c
 
-	ldr	r3,_oldstart
-	mov	pc, r3
+	ldr	r4,_oldstart
+	mov	pc, r4
 
-	BL      real_sub_5142fd5c
 	BL      call_sub_514152F8
 //	BL      load_0x5A0B0004_to_R0
-	LDR     R0, var_51415448	// =0x5A0B0004
-
+	ldr	r0, var_adr_51415448	// =0x5A0B0004
+	ldr	r0, [r0]
 	MOV     R4, R0
 	BL      call_sub_514029B0
 	STR     R0, [R4,#0x30]
