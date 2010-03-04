@@ -385,7 +385,7 @@ sub_51401c3c:	stmdb	sp!, {r2, r3, r4, r5, r6, r7, r8, lr}
 	bl	sub_5140146c
 	bl	sub_51403dc8
 	bl	5141b088
-	bl	5141a61c
+	bl	sub_5141a61c
 	mov	r1, #1
 	mov	r0, #175	// 0xaf
 	bl	sub_51438078
@@ -397,7 +397,7 @@ sub_51401c3c:	stmdb	sp!, {r2, r3, r4, r5, r6, r7, r8, lr}
 	mov	r0, #0	
 	bl	514019f4
 	mov	r0, #1	
-	bl	5141ade0
+	bl	sub_5141ade0
 _51401c90:
 	add	r0, pc, #252	// 0xfc		// !!!!!
 	bl	sub_51403564
@@ -1166,6 +1166,47 @@ _51419a80:
 	b	ret_51419a7c	// 0x51419aa4
 
 
+
+
+sub_51419c90:
+	stmdb	sp!, {r3, r4, r5, r6, r7, lr}
+	mov	r7, r1
+	ldr	r6, var_5141aa8c
+	add	r5, r0, r0, lsl #2
+	mov	r3, #1	
+	add	r4, r5, r6
+	ldrb	r0, [r6, r5]
+	ldrb	r1, [r4, #1]
+	mov	r2, sp
+	bl	51419978 
+	cmp	r0, #0	
+	beq	_51419cc8
+	mov	r0, #0	
+ret_51419cc4:
+	ldmia	sp!, {r3, r4, r5, r6, r7, pc}
+_51419cc8:
+	ldrb	r0, [r4, #3]
+	ldrb	r1, [sp]
+	and	r0, r0, r1
+	ldrb	r1, [r4, #4]
+	orr	r0, r0, r7, lsl r1
+	str	r0, [sp]
+	ldrb	r1, [r4, #1]
+	ldrb	r0, [r6, r5]
+	mov	r3, #1	
+	mov	r2, sp
+	bl	sub_51419a14 
+	cmp	r0, #0
+	beq	_51419d04
+	mov	r0, #0	
+	b	ret_51419cc4 
+_51419d04:
+	mov	r0, #1	
+	b	ret_51419cc4 	// 0x51419d08
+
+
+
+
 sub_51419d64:
 	stmdb	sp!, {r4, lr}
 	mov	ip, r1
@@ -1185,7 +1226,130 @@ _51419d98:
 	mov	r0, #1
 	b	ret_51419d94
 
+/*
+ *  5141A000
+ */
 
+sub_5141a61c:
+	stmdb	sp!, {r3, lr}
+	bl	514153bc 
+	cmp	r0, #6	
+	bcs	_5141a648 
+	mov	r1, #21	// 0x15
+	mov	r0, #155	// 0x9b
+	bl	sub_51419c90 
+	mov	r1, #1	
+	mov	r0, #152	// 0x98
+	bl	sub_51419c90 
+ret_5141a644:
+	ldmia	sp!, {ip, pc}
+_5141a648:
+	mov	r0, #14	// 0xe
+	str	r0, [sp]
+	mov	r2, #1	
+	mov	r1, sp
+	mov	r0, #58	// 0x3a
+	bl	sub_51419d64
+	b	ret_5141a644	// 0x5141a660
+
+
+sub_5141ade0:
+	stmdb	sp!, {r3, r4, r5, lr}
+	mov	r4, r0
+	mov	r0, #2	; 0x2
+	orr	r0, r0, r4, lsl #4
+	str	r0, [sp]
+	mov	r2, #1	
+	mov	r1, sp
+	mov	r0, #23	// 0x17
+	bl	sub_51419d64 
+	ldr	r5, var_5141aaa0
+	ldrb	r1, [r5, #1]
+	cmp	r1, #4	
+	bne	_5141ae20 
+	mov	r0, #150	// 0x96
+	bl	sub_51430f80 
+	b	_5141af18 
+_5141ae20:
+	cmp	r4, #0	
+	beq	_5141ae6c 
+	cmp	r4, #1	
+	beq	_5141aeb0 
+	cmp	r4, #2	
+	beq	_5141ae40 
+	cmp	r4, #3	
+	bne	_5141af0c 
+_5141ae40:
+	cmp	r1, #0	
+	beq	_5141aef4
+	cmp	r1, #1	
+	beq	_5141af00
+	cmp	r1, #2	
+	beq	_5141af18 
+	cmp	r1, #3	
+	beq	_5141af18 
+	add	r0, pc, #332	// 0x14c	// !!!! PC relative !!!! 0x5141ae60 + 0x14c
+	bl	sub_51403564
+	b	_5141af18 
+_5141ae6c:
+	cmp	r1, #0	
+	beq	_5141af18
+	cmp	r1, #1	
+	beq	_5141ae98 
+	cmp	r1, #2	
+	beq	_5141ae8c
+	cmp	r1, #3
+	bne	5141aea4 
+_5141ae8c:
+	mov	r0, #100	// 0x64
+	bl	sub_51430f80
+	b	_5141af18 
+_5141ae98:
+	mov	r0, #60	// 0x3c
+	bl	sub_51430f80
+	b	_5141af18 
+_5141aea4:
+	add	r0, pc, #264	// 0x108	// !!!! PC relative !!!! 0x5141aea4 + 0x108
+	bl	sub_51403564 
+	b	_5141af18 
+_5141aeb0:
+	cmp	r1, #0
+	beq	_5141aedc 
+	cmp	r1, #1	
+	beq	_5141af18 
+	cmp	r1, #2	
+	beq	_5141aed0 
+	cmp	r1, #3
+	bne	_5141aee8 
+_5141aed0:
+	mov	r0, #40	// 0x28
+	bl	sub_51430f80 
+	b	_5141af18 
+_5141aedc:
+	mov	r0, #60	// 0x3c
+	bl	sub_51430f80 
+	b	_5141af18 
+_5141aee8:
+	add	r0, pc, #196	// 0xc4		// !!!! PC relative !!!! 0x5141aee8 + 0xc4
+	bl	sub_51403564 
+	b	_5141af18 
+_5141aef4:
+	mov	r0, #100	// 0x64
+	bl	sub_51430f80 
+	b	_5141af18 
+_5141af00:
+	mov	r0, #40	// 0x28
+	bl	sub_51430f80 
+	b	_5141af18 
+_5141af0c:
+	mov	r1, r4
+	add	r0, pc, #156	// 0x9c		// !!!! PC relative !!!! 0x5141af10 + 0x9c
+	bl	sub_51403564 
+_5141af18:
+	strb	r4, [r5, #1]
+	ldmia	sp!, {r3, r4, r5, pc}	// 0x5141af1c
+
+ 
 
 /*
  *  5141B000
@@ -1201,10 +1365,10 @@ sub_5141b088:
 	bl	sub_51419d64
 	mov	r1, #1	// 0x1
 	mov	r0, #40	// 0x28
-	bl	51419c90
+	bl	sub_51419c90
 	mov	r1, #45	// 0x2d
 	mov	r0, #172	// 0xac
-	bl	51419c90 
+	bl	sub_51419c90 
 	str	r4, [sp]
 	mov	r2, #1	// 0x1
 	mov	r1, sp
@@ -1212,16 +1376,16 @@ sub_5141b088:
 	bl	sub_51419d64 
 	mov	r1, #45	// 0x2d
 	mov	r0, #178	// 0xb2
-	bl	51419c90 
+	bl	sub_51419c90 
 	mov	r1, #9	// 0x9
 	mov	r0, #137	// 0x89
-	bl	51419c90 
+	bl	sub_51419c90 
 	bl	514153bc 
 	cmp	r0, #4	// 0x4
 	bcs	_5141b100 
 	mov	r1, #7	// 0x7
 	mov	r0, #158	// 0x9e
-	bl	51419c90 
+	bl	sub_51419c90 
 _5141b100:
 	mov	r0, #19	// 0x13
 	str	r0, [sp]
@@ -1238,17 +1402,17 @@ _5141b100:
 	bcs	_5141b140
 	mov	r1, #7	// 0x7
 	mov	r0, #180	// 0xb4
-	bl	51419c90 
+	bl	sub_51419c90 
 _5141b140:
 	mov	r1, #46	// 0x2e
 	mov	r0, #131	// 0x83
-	bl	51419c90 
+	bl	sub_51419c90 
 	mov	r1, #7	// 0x7
 	mov	r0, #127	// 0x7f
-	bl	51419c90 
+	bl	sub_51419c90 
 	mov	r1, #9	// 0x9
 	mov	r0, #143	// 0x8f
-	bl	51419c90 
+	bl	sub_51419c90 
 	str	r4, [sp]
 	mov	r2, #1	// 0x1
 	mov	r1, sp
@@ -1256,7 +1420,7 @@ _5141b140:
 	bl	sub_51419d64 
 	mov	r1, #21	// 0x15
 	mov	r0, #52	// 0x34
-	bl	51419c90 
+	bl	sub_51419c90 
 	mov	r0, #6	// 0x6
 	str	r0, [sp]
 	mov	r2, #1	// 0x1
