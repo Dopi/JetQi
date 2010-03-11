@@ -486,7 +486,7 @@ _51401b54:
 	mov	r1, #0
 	mov	r0, #3
 	bl	sub_51438cec 
-	ldr	r4, sub_51401d44
+	ldr	r4, var_51401d44
 	bl	sub_5143dd4c 
 	mov	r0, #0	
 	str	r0, [sp, #4]
@@ -867,14 +867,14 @@ loc_51403000:
 
 	MOV     R1, SP
 	MOV     R0, #0xF
-	BL      sub_51419D0C
+	bl      sub_51419d0c
 //	ADR     R0, aNoBattery  // "NO battery\n"
 //	BL      SimpleDebugPrint
 
 loc_51403064:
 //	BL      SelectBootingMode
 	MOV     R0, #1
-	BL      sub_5141AF20
+	bl      sub_5141af20
 	MOV     R0, #0x7D0
 	BL      sub_51430f80
 	BL      LCD_InitWin // 0x51401B28
@@ -1127,9 +1127,16 @@ _51403730:	ldr	r0, [sp, #16]
 	bne	_51403578
 	ldmia	sp!, {r3, r4, r5}
 ret_51403744:
-	ldr	pc, [sp], #20
+	ldr	pc, [sp], #20	// 0x51403744
 
 
+
+var_51403a40:	.word	0x514449b8
+var_51403a44:	.word	0x51444c08
+var_51403a48:	.word	0x252e7525
+var_51403a4c:	.word	0x75252e75
+var_51403a50:	.word	0x0075252e
+var_51403a54:	.word	0x51454800
 
 sub_51403a58:
 	bx	lr
@@ -1137,63 +1144,63 @@ sub_51403a58:
 
 
 var_51403c70:	.word	0x514449bc
-//var_51403c74:	.word	0x444c4e4f
-//var_51403c78:	.word	0x6b68435f
-//var_51403c7c:	.word	0x74696e49
-//var_51403c80:	.word	0x42646142
-//var_51403c84:	.word	0x203a6b6c
-//var_51403c88:	.word	0x20646162
-//var_51403c8c:	.word	0x636f6c62
-//var_51403c90:	.word	0x3028206b
-//var_51403c94:	.word	0x29782578
-//var_51403c98:	.word	0x000a0d2e
-//var_51403c9c:	.word	0x51454810
-//var_51403ca0:	.word	0x65520a0d
-//var_51403ca4:	.word	0x6e696461
-//var_51403ca8:	.word	0x61662067
-//var_51403cac:	.word	0x64656c69
-//var_51403cb0:	.word	0x00000a0d
-//var_51403cb4:	.word	0x3d3d3d0a
-//var_51403cb8:	.word	0x3d3d3d3d
-//var_51403cbc:	.word	0x3d3d3d3d
-//var_51403cc0:	.word	0x3d3d3d3d
-//var_51403cc4:	.word	0x3d3d3d3d
-//var_51403cc8:	.word	0x3d3d3d3d
-//var_51403ccc:	.word	0x3d3d3d3d
-//var_51403cd0:	.word	0x3d3d3d3d
-//var_51403cd4:	.word	0x000a3d3d
-//var_51403cd8:	.word	0x6f42200a
-//var_51403cdc:	.word	0x6544746f
-//var_51403ce0:	.word	0x42677562
-//var_51403ce4:	.word	0x4e666675
-//var_51403ce8:	.word	0x57646e61
-//var_51403cec:	.word	0x65746972
-//var_51403cf0:	.word	0x00000a20
-//var_51403cf4:	.word	0xb007a61c
-//var_51403cf8:	.word	0x0001ff00
-//var_51403cfc:	.word	0x51474810
-//var_51403d00:	.word	0x444c4e4f
-//var_51403d04:	.word	0x6172455f
-//var_51403d08:	.word	0x203a6573
-//var_51403d0c:	.word	0x6c696166
-//var_51403d10:	.word	0x74206465
-//var_51403d14:	.word	0x7265206f
-//var_51403d18:	.word	0x20657361
-//var_51403d1c:	.word	0x636f6c62
-//var_51403d20:	.word	0x3028206b
-//var_51403d24:	.word	0x29782578
-//var_51403d28:	.word	0x000a0d2e
-//var_51403d2c:	.word	0x444c4e4f
-//var_51403d30:	.word	0x6972575f
-//var_51403d34:	.word	0x203a6574
-//var_51403d38:	.word	0x6c696166
-//var_51403d3c:	.word	0x74206465
-//var_51403d40:	.word	0x7277206f
-//var_51403d44:	.word	0x20657469
-//var_51403d48:	.word	0x636f6c62
-//var_51403d4c:	.word	0x3028206b
-//var_51403d50:	.word	0x29782578
-//var_51403d54:	.word	0x000a0d2e
+var_51403c74:	.word	0x444c4e4f
+var_51403c78:	.word	0x6b68435f
+var_51403c7c:	.word	0x74696e49
+var_51403c80:	.word	0x42646142
+var_51403c84:	.word	0x203a6b6c
+var_51403c88:	.word	0x20646162
+var_51403c8c:	.word	0x636f6c62
+var_51403c90:	.word	0x3028206b
+var_51403c94:	.word	0x29782578
+var_51403c98:	.word	0x000a0d2e
+var_51403c9c:	.word	0x51454810
+var_51403ca0:	.word	0x65520a0d
+var_51403ca4:	.word	0x6e696461
+var_51403ca8:	.word	0x61662067
+var_51403cac:	.word	0x64656c69
+var_51403cb0:	.word	0x00000a0d
+var_51403cb4:	.word	0x3d3d3d0a
+var_51403cb8:	.word	0x3d3d3d3d
+var_51403cbc:	.word	0x3d3d3d3d
+var_51403cc0:	.word	0x3d3d3d3d
+var_51403cc4:	.word	0x3d3d3d3d
+var_51403cc8:	.word	0x3d3d3d3d
+var_51403ccc:	.word	0x3d3d3d3d
+var_51403cd0:	.word	0x3d3d3d3d
+var_51403cd4:	.word	0x000a3d3d
+var_51403cd8:	.word	0x6f42200a
+var_51403cdc:	.word	0x6544746f
+var_51403ce0:	.word	0x42677562
+var_51403ce4:	.word	0x4e666675
+var_51403ce8:	.word	0x57646e61
+var_51403cec:	.word	0x65746972
+var_51403cf0:	.word	0x00000a20
+var_51403cf4:	.word	0xb007a61c
+var_51403cf8:	.word	0x0001ff00
+var_51403cfc:	.word	0x51474810
+var_51403d00:	.word	0x444c4e4f
+var_51403d04:	.word	0x6172455f
+var_51403d08:	.word	0x203a6573
+var_51403d0c:	.word	0x6c696166
+var_51403d10:	.word	0x74206465
+var_51403d14:	.word	0x7265206f
+var_51403d18:	.word	0x20657361
+var_51403d1c:	.word	0x636f6c62
+var_51403d20:	.word	0x3028206b
+var_51403d24:	.word	0x29782578
+var_51403d28:	.word	0x000a0d2e
+var_51403d2c:	.word	0x444c4e4f
+var_51403d30:	.word	0x6972575f
+var_51403d34:	.word	0x203a6574
+var_51403d38:	.word	0x6c696166
+var_51403d3c:	.word	0x74206465
+var_51403d40:	.word	0x7277206f
+var_51403d44:	.word	0x20657469
+var_51403d48:	.word	0x636f6c62
+var_51403d4c:	.word	0x3028206b
+var_51403d50:	.word	0x29782578
+var_51403d54:	.word	0x000a0d2e
 
 sub_51403d58:
 	mov	r1, r0
@@ -1382,12 +1389,178 @@ sub_514153bc:
 	ldr	r0, [r0, #48]
 	bx	lr	// 0x514153c4
 
+
+
+
 var_5141543c:	.word	0x5a0b0000
 var_51415440:	.word	0xb0078aed
 var_51415444:	.word	0xb00717e3
 var_51415448:	.word	0x5a0b0004
 
 
+
+var_514158fc:	.word	0x51445180
+var_51415900:	.word	0x000186a0
+var_51415904:	.word	0x00002710
+var_51415908:	.word	0x65736572
+var_5141590c:	.word	0x53462074
+var_51415910:	.word	0x38343941
+var_51415914:	.word	0x00000a30
+var_51415918:	.word	0x39415346
+var_5141591c:	.word	0x20303834
+var_51415920:	.word	0x33307830
+var_51415924:	.word	0x67655220
+var_51415928:	.word	0x65747369
+var_5141592c:	.word	0x203d2072
+var_51415930:	.word	0x0a0d7825
+var_51415934:	.word	0x00000000
+var_51415938:	.word	0x39415346
+var_5141593c:	.word	0x20303834
+var_51415940:	.word	0x41307830
+var_51415944:	.word	0x67655220
+var_51415948:	.word	0x65747369
+var_5141594c:	.word	0x203d2072
+var_51415950:	.word	0x0a0d7825
+var_51415954:	.word	0x00000000
+var_51415958:	.word	0x39415346
+var_5141595c:	.word	0x20303834
+var_51415960:	.word	0x42307830
+var_51415964:	.word	0x67655220
+var_51415968:	.word	0x65747369
+var_5141596c:	.word	0x203d2072
+var_51415970:	.word	0x0a0d7825
+var_51415974:	.word	0x00000000
+var_51415978:	.word	0x39415346
+var_5141597c:	.word	0x20303834
+var_51415980:	.word	0x37307830
+var_51415984:	.word	0x67655220
+var_51415988:	.word	0x65747369
+var_5141598c:	.word	0x203d2072
+var_51415990:	.word	0x0a0d7825
+var_51415994:	.word	0x00000000
+
+
+
+sub_51415a68:
+	stmdb	sp!, {r2, r3, r4, r5, r6, lr}
+	mov	r5, #0
+	str	r5, [sp, #4]
+	bl	sub_51415374
+	mov	r4, r0
+	mov	r1, #1	
+	mov	r0, #181	// 0xb5
+	bl	sub_51438078
+	mov	r1, #1	
+	mov	r0, #181	// 0xb5
+	bl	sub_514380f8
+	ldr	r0, [r4, #48]
+	ldr	r4, var_51415ca8
+	ldr	r6, var_51415ca4
+	cmp	r0, #2	
+	bcc	_51415b24
+	ldr	r0, [r4]
+	ldr	r0, [r0, #320]
+	ldr	r1, [r4]
+	bic	r0, r0, #0xc000000
+	orr	r0, r0, #0x4000000
+	str	r0, [r1, #320]
+	ldr	r0, [r4]
+	ldr	r0, [r0, #328]
+	ldr	r1, [r4]
+	bic	r0, r0, #0xc000000
+	str	r0, [r1, #328]
+	ldr	r0, [r4]
+	ldr	r0, [r0, #324]
+	ldr	r1, [r4]
+	orr	r0, r0, #0x2000
+	str	r0, [r1, #324]
+	mov	r0, r6
+	bl	sub_51430f80
+	ldr	r0, [r4]
+	ldr	r0, [r0, #324]
+	ldr	r1, [r4]
+	bic	r0, r0, #0x2000
+	str	r0, [r1, #324]
+	mov	r0, r6
+	bl	sub_51430f80
+	ldr	r0, [r4]
+	ldr	r0, [r0, #324]
+	ldr	r1, [r4]
+	orr	r0, r0, #0x2000
+	str	r0, [r1, #324]
+	b	_51415b9c
+_51415b24:
+	ldr	r0, [r4]
+	ldr	r0, [r0, #288]
+	ldr	r1, [r4]
+	bic	r0, r0, #48	// 0x30
+	orr	r0, r0, #16	// 0x10
+	str	r0, [r1, #288]
+	ldr	r0, [r4]
+	ldr	r0, [r0, #296]
+	ldr	r1, [r4]
+	bic	r0, r0, #48	// 0x30
+	str	r0, [r1, #296]
+	ldr	r0, [r4]
+	ldr	r0, [r0, #292]
+	ldr	r1, [r4]
+	orr	r0, r0, #4
+	str	r0, [r1, #292]
+	mov	r0, r6
+	bl	sub_51430f80 
+	ldr	r0, [r4]
+	ldr	r0, [r0, #292]
+	ldr	r1, [r4]
+	bic	r0, r0, #4
+	str	r0, [r1, #292]
+	mov	r0, r6
+	bl	sub_51430f80
+	ldr	r0, [r4]
+	ldr	r0, [r0, #292]
+	ldr	r1, [r4]
+	orr	r0, r0, #4
+	str	r0, [r1, #292]
+_51415b9c:
+	ldr	r0, var_51415cac
+	ldr	r0, [r0]
+	cmp	r0, #0	
+	beq	_51415bb4
+	mov	r0, #1	
+	bl	sub_5142fd80
+_51415bb4:
+	ldr	r3, var_51415cb0
+	mov	r2, #156	// 0x9c
+	mov	r1, #155	// 0x9b
+	mov	r0, #1	
+	bl	sub_5142fd7c
+	mov	r0, #208	// 0xd0
+	strb	r0, [sp, #4]
+	strb	r5, [sp, #5]
+	mov	r3, #2	
+	str	r3, [sp]
+	add	r3, sp, #4
+	mov	r2, #220	// 0xdc
+	mov	r1, #112	// 0x70
+	mov	r0, #1	
+	bl	sub_5142ff88
+	strb	r5, [sp, #4]
+	mov	r0, #1	
+	strb	r0, [sp, #5]
+	mov	r3, #2	
+	str	r3, [sp]
+	add	r3, sp, #4	
+	mov	r2, #221	// 0xdd
+	mov	r1, #112	// 0x70
+	bl	sub_5142ff88
+	mov	r0, #1000	// 0x3e8
+	bl	sub_51430f80
+	mov	r1, #30	// 0x1e
+	ldr	r0, sub_51415cb4
+	bl	sub_51415998
+	mov	r0, #1	
+	bl	5142fd80
+ret_51415c30:
+	ldmia	sp!, {r2, r3, r4, r5, r6, pc}
 
 
 /*
@@ -1460,7 +1633,7 @@ sub_51416498:
 	ldr	r0, [r0]
 	orr	r1, r1, #0x80
 	str	r1, [r0, #324]
-	b	_514166a0 <__oldboot_ram_start+0x166a0>
+	b	_514166a0
 _514165a0:
 	ldr	r1, [r0]
 	ldr	r1, [r1, #256]
@@ -1530,7 +1703,7 @@ _514166a0:
 	ldr	r0, var_51416c10
 ret_514166a4:
 	ldmia	sp!, {r4, lr}
-514166a8:	ea006a34 	b	sub_51430f80
+	b	sub_51430f80
 
 sub_514166ac:
 	stmdb	sp!, {r4, r5, r6, lr}
@@ -1899,6 +2072,31 @@ _51416b14:
 ret_51416c00:
 	ldmia	sp!, {r4, r5, r6, lr}
 
+sub_51416c04:
+	ldr	r0, var_51416c58
+	b	sub_51430f80
+
+var_51416c0c:	.word	0x514431e4
+var_51416c10:	.word	0x00002710
+var_51416c14:	.word	0x00005208
+var_51416c18:	.word	0x00001770
+var_51416c1c:	.word	0x0000ee48
+var_51416c20:	.word	0x0000a028
+var_51416c24:	.word	0x00031128
+var_51416c28:	.word	0x00006590
+var_51416c2c:	.word	0x00007208
+var_51416c30:	.word	0x00007031
+var_51416c34:	.word	0x00007032
+var_51416c38:	.word	0x00007012
+var_51416c3c:	.word	0x00007015
+var_51416c40:	.word	0x00007016
+var_51416c44:	.word	0x00007019
+var_51416c48:	.word	0x0000701a
+var_51416c4c:	.word	0x00007022
+var_51416c50:	.word	0x00007026
+var_51416c54:	.word	0x0000701d
+var_51416c58:	.word	0x0003d090
+
 
 
 /*
@@ -2121,6 +2319,86 @@ sub_514176dc:
 	mov	r0, #0
 	bx	lr	// 0x51417710
 
+var_51417714:	.word	0x000072a1
+var_51417718:	.word	0x00033450
+var_5141771c:	.word	0x51445db0
+var_51417720:	.word	0x51445324
+var_51417724:	.word	0x00007243
+var_51417728:	.word	0x00007039
+var_5141772c:	.word	0x00004e20
+var_51417730:	.word	0x51445330
+var_51417734:	.word	0x514453d8
+var_51417738:	.word	0x51445528
+var_5141773c:	.word	0x514455d0
+var_51417740:	.word	0x51445720
+var_51417744:	.word	0x514457c8
+var_51417748:	.word	0x51445870
+var_5141774c:	.word	0x514459c0
+var_51417750:	.word	0x51445b10
+var_51417754:	.word	0x00007203
+var_51417758:	.word	0x00007014
+var_5141775c:	.word	0x51445a68
+var_51417760:	.word	0x00007234
+var_51417764:	.word	0x51445d08
+var_51417768:	.word	0x51445c60
+var_5141776c:	.word	0x51445bb8
+var_51417770:	.word	0x51445918
+var_51417774:	.word	0x51445678
+var_51417778:	.word	0x51445480
+var_5141777c:	.word	0x00007201
+var_51417780:	.word	0x74108000
+
+
+
+sub_51417f24:
+	stmdb	sp!, {r3, lr}
+	ldr	r3, var_514181b4
+	str	r0, [sp]
+	mov	r0, #0	
+	mov	r1, #0	
+	sub	r2, r3, #320	// 0x140
+	bl	51417ef4 
+ret_51417f40:
+	ldmia	sp!, {ip, pc}
+
+sub_51417f44:	
+	stmdb	sp!, {r4, lr}
+	bl	sub_51415374
+	ldr	r0, [r0, #48]
+	cmp	r0, #2
+	beq	_51417f60
+	cmp	r0, #3	
+	bne	_51417f84
+_51417f60:
+	mov	r1, #1	
+	mov	r0, #148	// 0x94
+	bl	sub_51438078
+	mov	r1, #0	
+	mov	r0, #148	// 0x94
+	bl	sub_514380f8
+	ldmia	sp!, {r4, lr}
+	add	r0, pc, #564	// 0x234	// !!!! PC relative 0x51417f7c + 0x234
+	b	sub_51403564
+_51417f84:
+	mov	r1, #1
+	mov	r0, #148	// 0x94
+	bl	sub_51438078
+	ldmia	sp!, {r4, lr}
+	mov	r1, #1
+	mov	r0, #148	// 0x94
+	b	sub_514380f8 
+	stmdb	sp!, {r4, lr}
+	bl	sub_51415374 
+	mov	r4, r0
+	bl	sub_51417f44 
+	ldr	r0, [r4, #48]
+	cmp	r0, #4
+	bcs	ret_51417fc4 
+	ldmia	sp!, {r4, lr}
+	b	sub_51415a68
+ret_51417fc4:
+	ldmia	sp!, {r4, pc}
+
 
 /*
  *   51418000
@@ -2248,8 +2526,138 @@ _51419a80:
 	mov	r0, #1	
 	b	ret_51419a7c	// 0x51419aa4
 
+sub_51419aa8:
+	stmdb	sp!, {r1, r2, r3, r4, r5, r6, r7, r8, r9, lr}
+	mov	r7, r0
+	mov	r8, r1
+	mov	r9, r2
+	mov	r4, #0
+	ldr	r6, var_51419bd0
+_51419ac0:
+	mov	r3, r6
+	mov	r2, #141	// 0x8d
+	mov	r1, #140	// 0x8c
+	mov	r0, #0
+	bl	sub_5142fd7c
+	mov	r5, r0
+	mov	r2, #0	
+	stmib	sp, {r2, r9}
+	mov	r2, r7
+	mov	r3, #0	
+	mov	r1, #208	// 0xd0
+	mov	r0, #0
+	str	r8, [sp]
+	bl	sub_5142ff1c
+	orr	r5, r0, r5
+	mov	r0, #0
+	bl	sub_5142fd80
+	orr	r0, r0, r5
+	cmp	r0, #0	
+	bne	_51419b18
+	mov	r0, #0	
+ret_51419b14:
+	ldmia	sp!, {r1, r2, r3, r4, r5, r6, r7, r8, r9, pc}
+_51419b18:
+	mov	r1, r4
+	add	r0, pc, #292	// 0x124	// !!!! PC relative 0x51419b1c + 0x124
+	bl	sub_51403564
+	add	r4, r4, #1
+	cmp	r4, #10	// 0xa
+	blt	_51419ac0
+	mov	r0, #1	
+	b	ret_51419b14
 
+sub_51419b38:
+	stmdb	sp!, {r3, r4, r5, r6, r7, r8, r9, lr}
+	mov	r7, r0
+	mov	r8, r1
+	mov	r9, r2
+	mov	r4, #0
+	ldr	r6, var_51419bd0
+_51419b50:
+	mov	r3, r6
+	mov	r2, #141	// 0x8d
+	mov	r1, #140	// 0x8c
+	mov	r0, #0	
+	bl	sub_5142fd7c
+	mov	r5, r0
+	mov	r3, r8
+	mov	r2, r7
+	mov	r1, #208	// 0xd0
+	mov	r0, #0
+	str	r9, [sp]
+	bl	sub_5142ff88
+	orr	r5, r0, r5
+	mov	r0, #0
+	bl	sub_5142fd80
+	orr	r0, r0, r5
+	cmp	r0, #0	
+	bne	_51419ba0
+	mov	r0, #0	
+ret_51419b9c:
+	ldmia	sp!, {r3, r4, r5, r6, r7, r8, r9, pc}
+_51419ba0:
+	mov	r1, r4
+	add	r0, pc, #192	// 0xc0		// !!!! PC relative 0x51419ba4 + 0xc0
+	bl	sub_51403564
+	add	r4, r4, #1
+	cmp	r4, #10	// 0xa
+	blt	_51419b50
+	mov	r0, #1	
+	b	ret_51419b9c
+	mov	r0, #0	
+	bx	lr
+	mov	r0, #0	
+	bx	lr	// 0x51419bcc
 
+var_51419bd0:	.word	0x00061a80
+var_51419bd4:	.word	0x63696d70
+var_51419bd8:	.word	0x6165725f
+var_51419bdc:	.word	0x2e2e2e64
+var_51419be0:	.word	0x20433249
+var_51419be4:	.word	0x6c696166
+var_51419be8:	.word	0x6c73202c
+var_51419bec:	.word	0x5f657661
+var_51419bf0:	.word	0x72646461
+var_51419bf4:	.word	0x7830203a
+var_51419bf8:	.word	0x722c7825
+var_51419bfc:	.word	0x203a6765
+var_51419c00:	.word	0x78257830
+var_51419c04:	.word	0x25207e20
+var_51419c08:	.word	0x000a2064
+var_51419c0c:	.word	0x63696d70
+var_51419c10:	.word	0x6972775f
+var_51419c14:	.word	0x2e2e6574
+var_51419c18:	.word	0x4332492e
+var_51419c1c:	.word	0x69616620
+var_51419c20:	.word	0x73202c6c
+var_51419c24:	.word	0x6576616c
+var_51419c28:	.word	0x6464615f
+var_51419c2c:	.word	0x30203a72
+var_51419c30:	.word	0x2c782578
+var_51419c34:	.word	0x3a676572
+var_51419c38:	.word	0x25783020
+var_51419c3c:	.word	0x207e2078
+var_51419c40:	.word	0x0a206425
+var_51419c44:	.word	0x00000000
+var_51419c48:	.word	0x63696d70
+var_51419c4c:	.word	0x6374725f
+var_51419c50:	.word	0x6165725f
+var_51419c54:	.word	0x2e2e2e64
+var_51419c58:	.word	0x20433249
+var_51419c5c:	.word	0x6c696166
+var_51419c60:	.word	0x207e7e7e
+var_51419c64:	.word	0x0a206425
+var_51419c68:	.word	0x00000000
+var_51419c6c:	.word	0x63696d70
+var_51419c70:	.word	0x6374725f
+var_51419c74:	.word	0x6972775f
+var_51419c78:	.word	0x2e2e6574
+var_51419c7c:	.word	0x4332492e
+var_51419c80:	.word	0x69616620
+var_51419c84:	.word	0x7e7e7e6c
+var_51419c88:	.word	0x20642520
+var_51419c8c:	.word	0x0000000a
 
 sub_51419c90:
 	stmdb	sp!, {r3, r4, r5, r6, r7, lr}
@@ -2287,8 +2695,31 @@ _51419d04:
 	mov	r0, #1	
 	b	ret_51419cc4 	// 0x51419d08
 
-
-
+sub_51419d0c:
+	stmdb	sp!, {r3, r4, r5, lr}
+	mov	r5, r1
+	ldr	r2, var_5141aa8c 
+	add	r0, r0, r0, lsl #2
+	mov	r3, #1
+	add	r4, r0, r2
+	ldrb	r0, [r2, r0]
+	ldrb	r1, [r4, #1]
+	mov	r2, sp
+	bl	sub_51419978
+	cmp	r0, #0
+	beq	_51419d44
+	mov	r0, #0	
+ret_51419d40:
+	ldmia	sp!, {r3, r4, r5, pc}
+_51419d44:
+	ldrb	r0, [r4, #2]
+	ldrb	r1, [sp]
+	and	r0, r0, r1
+	ldrb	r1, [r4, #4]
+	mov	r0, r0, lsr r1
+	strb	r0, [r5]
+	mov	r0, #1	
+	b	ret_51419d40	// 0x51419d60
 
 sub_51419d64:
 	stmdb	sp!, {r4, lr}
@@ -2334,6 +2765,26 @@ _5141a648:
 	mov	r0, #58	// 0x3a
 	bl	sub_51419d64
 	b	ret_5141a644	// 0x5141a660
+
+
+
+
+var_5141aa8c:	.word	0x514422c4
+var_5141aa90:	.word	0x51442140
+var_5141aa94:	.word	0x51442bf0
+var_5141aa98:	.word	0x0000019f
+var_5141aa9c:	.word	0x00000101
+var_5141aaa0:	.word	0x51445e1c
+var_5141aaa4:	.word	0x00000132
+var_5141aaa8:	.word	0x6978616d
+var_5141aaac:	.word	0x77705f6d
+var_5141aab0:	.word	0x656b5f72
+var_5141aab4:	.word	0x74735f79
+var_5141aab8:	.word	0x73757461
+var_5141aabc:	.word	0x69616620
+var_5141aac0:	.word	0x000a736c
+
+
 
 
 sub_5141ade0:
@@ -2432,6 +2883,27 @@ _5141af18:
 	strb	r4, [r5, #1]
 	ldmia	sp!, {r3, r4, r5, pc}	// 0x5141af1c
 
+sub_5141af20:
+	stmdb	sp!, {r3, lr}
+	orr	r0, r0, #14
+	str	r0, [sp]
+	bl	sub_514153bc
+	cmp	r0, #4	
+	bcs	_5141af58
+	mov	r2, #1	
+	mov	r1, sp
+	mov	r0, #61	// 0x3d
+	bl	sub_51419d64
+	mov	r2, #1
+	mov	r1, sp
+	mov	r0, #72	// 0x48
+	bl	sub_51419d64
+_5141af58:
+	mov	r2, #1
+	mov	r1, sp
+	mov	r0, #46	// 0x2e
+	bl	sub_51419d64
+	ldmia	sp!, {ip, pc}	// 0x5141af68
  
 
 /*
@@ -2597,6 +3069,29 @@ sub_5142fbe4:
 	cmppl	r4, ip, lsr #2
 	cmppl	sp, r0, ror r9
 	bx	lr	// 0x5142fbec
+
+
+
+var_5142fcec:	.word	0x5143234c
+var_5142fcf0:	.word	0x514323f4
+var_5142fcf4:	.word	0x514324f8
+var_5142fcf8:	.word	0x51432698
+var_5142fcfc:	.word	0x51432d54
+var_5142fd00:	.word	0x51432edc
+var_5142fd04:	.word	0x51432da4
+var_5142fd08:	.word	0x51432210
+var_5142fd0c:	.word	0x51433578
+var_5142fd10:	.word	0x51432208
+var_5142fd14:	.word	0x514335fc
+var_5142fd18:	.word	0x51433620
+var_5142fd1c:	.word	0x51433638
+var_5142fd20:	.word	0x51432550
+var_5142fd24:	.word	0x514326dc
+var_5142fd28:	.word	0x514337c0
+var_5142fd2c:	.word	0x5143393c
+var_5142fd30:	.word	0x51433b00
+var_5142fd34:	.word	0x51649170
+
 
 
 
@@ -3278,7 +3773,65 @@ _51430654:
 	mov	r0, #0	
 	b	ret_51430600	// 0x514306ac
 
-
+var_514306b0:	.word	0x4332495b
+var_514306b4:	.word	0x4950475f
+var_514306b8:	.word	0x694c5f4f
+var_514306bc:	.word	0x435f656e
+var_514306c0:	.word	0x69666e6f
+var_514306c4:	.word	0x4c435367
+var_514306c8:	.word	0x6f4e205d
+var_514306cc:	.word	0x704f2074
+var_514306d0:	.word	0x64656e65
+var_514306d4:	.word	0x6843203a
+var_514306d8:	.word	0x29642528
+var_514306dc:	.word	0x00000a20
+var_514306e0:	.word	0x4332495b
+var_514306e4:	.word	0x4950475f
+var_514306e8:	.word	0x694c5f4f
+var_514306ec:	.word	0x535f656e
+var_514306f0:	.word	0x44537465
+var_514306f4:	.word	0x4e205d41
+var_514306f8:	.word	0x4f20746f
+var_514306fc:	.word	0x656e6570
+var_51430700:	.word	0x43203a64
+var_51430704:	.word	0x64252868
+var_51430708:	.word	0x000a2029
+var_5143070c:	.word	0x4332495b
+var_51430710:	.word	0x4950475f
+var_51430714:	.word	0x694c5f4f
+var_51430718:	.word	0x535f656e
+var_5143071c:	.word	0x43537465
+var_51430720:	.word	0x4e205d4c
+var_51430724:	.word	0x4f20746f
+var_51430728:	.word	0x656e6570
+var_5143072c:	.word	0x43203a64
+var_51430730:	.word	0x64252868
+var_51430734:	.word	0x000a2029
+var_51430738:	.word	0x4332495b
+var_5143073c:	.word	0x4950475f
+var_51430740:	.word	0x694c5f4f
+var_51430744:	.word	0x475f656e
+var_51430748:	.word	0x44537465
+var_5143074c:	.word	0x4e205d41
+var_51430750:	.word	0x4f20746f
+var_51430754:	.word	0x656e6570
+var_51430758:	.word	0x43203a64
+var_5143075c:	.word	0x64252868
+var_51430760:	.word	0x000a2029
+var_51430764:	.word	0x00000137
+var_51430768:	.word	0x4332495b
+var_5143076c:	.word	0x4950475f
+var_51430770:	.word	0x6f435f4f
+var_51430774:	.word	0x7469646e
+var_51430778:	.word	0x5f6e6f69
+var_5143077c:	.word	0x72617453
+var_51430780:	.word	0x4e205d74
+var_51430784:	.word	0x4f20746f
+var_51430788:	.word	0x656e6570
+var_5143078c:	.word	0x43203a64
+var_51430790:	.word	0x64252868
+var_51430794:	.word	0x000a2029
+var_51430798:	.word	0x000186a0
 
 sub_5143079c:
 	stmdb	sp!, {r4, r5, r6, lr}
@@ -3438,6 +3991,48 @@ _51430978:
 	mov	r0, #0
 	b	_51430974	// 0x514309cc
 
+var_514309d0:	.word	0x00000179
+var_514309d4:	.word	0x514302dc
+var_514309d8:	.word	0x514302f0
+var_514309dc:	.word	0x4332495b
+var_514309e0:	.word	0x4950475f
+var_514309e4:	.word	0x6f435f4f
+var_514309e8:	.word	0x7469646e
+var_514309ec:	.word	0x5f6e6f69
+var_514309f0:	.word	0x706f7453
+var_514309f4:	.word	0x6f4e205d
+var_514309f8:	.word	0x704f2074
+var_514309fc:	.word	0x64656e65
+var_51430a00:	.word	0x6843203a
+var_51430a04:	.word	0x29642528
+var_51430a08:	.word	0x00000a20
+var_51430a0c:	.word	0x4332495b
+var_51430a10:	.word	0x4950475f
+var_51430a14:	.word	0x6f435f4f
+var_51430a18:	.word	0x7469646e
+var_51430a1c:	.word	0x5f6e6f69
+var_51430a20:	.word	0x74697257
+var_51430a24:	.word	0x74694265
+var_51430a28:	.word	0x6f4e205d
+var_51430a2c:	.word	0x704f2074
+var_51430a30:	.word	0x64656e65
+var_51430a34:	.word	0x6843203a
+var_51430a38:	.word	0x29642528
+var_51430a3c:	.word	0x00000a20
+var_51430a40:	.word	0x000001fe
+var_51430a44:	.word	0x4332495b
+var_51430a48:	.word	0x4950475f
+var_51430a4c:	.word	0x6f435f4f
+var_51430a50:	.word	0x7469646e
+var_51430a54:	.word	0x5f6e6f69
+var_51430a58:	.word	0x64616552
+var_51430a5c:	.word	0x5d746942
+var_51430a60:	.word	0x746f4e20
+var_51430a64:	.word	0x65704f20
+var_51430a68:	.word	0x3a64656e
+var_51430a6c:	.word	0x28684320
+var_51430a70:	.word	0x20296425
+var_51430a74:	.word	0x0000000a
 
 sub_51430a78:
 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, lr}
@@ -3607,8 +4202,47 @@ _51430c78:
 	mov	r0, #0	
 	b	ret_51430c74	// 0x51430cd0
 
-
-
+var_51430cd4:	.word	0x00000233
+var_51430cd8:	.word	0x4332495b
+var_51430cdc:	.word	0x4950475f
+var_51430ce0:	.word	0x6f435f4f
+var_51430ce4:	.word	0x7469646e
+var_51430ce8:	.word	0x5f6e6f69
+var_51430cec:	.word	0x41746547
+var_51430cf0:	.word	0x205d6b63
+var_51430cf4:	.word	0x20746f4e
+var_51430cf8:	.word	0x6e65704f
+var_51430cfc:	.word	0x203a6465
+var_51430d00:	.word	0x25286843
+var_51430d04:	.word	0x0a202964
+var_51430d08:	.word	0x00000000
+var_51430d0c:	.word	0x4332495b
+var_51430d10:	.word	0x4950475f
+var_51430d14:	.word	0x6f435f4f
+var_51430d18:	.word	0x7469646e
+var_51430d1c:	.word	0x5f6e6f69
+var_51430d20:	.word	0x41746553
+var_51430d24:	.word	0x205d6b63
+var_51430d28:	.word	0x20746f4e
+var_51430d2c:	.word	0x6e65704f
+var_51430d30:	.word	0x203a6465
+var_51430d34:	.word	0x25286843
+var_51430d38:	.word	0x0a202964
+var_51430d3c:	.word	0x00000000
+var_51430d40:	.word	0x000002ae
+var_51430d44:	.word	0x4332495b
+var_51430d48:	.word	0x4950475f
+var_51430d4c:	.word	0x6f435f4f
+var_51430d50:	.word	0x7469646e
+var_51430d54:	.word	0x5f6e6f69
+var_51430d58:	.word	0x4e746553
+var_51430d5c:	.word	0x5d6b6341
+var_51430d60:	.word	0x746f4e20
+var_51430d64:	.word	0x65704f20
+var_51430d68:	.word	0x3a64656e
+var_51430d6c:	.word	0x28684320
+var_51430d70:	.word	0x20296425
+var_51430d74:	.word	0x0000000a
 
 sub_51430d78:
 	stmdb	sp!, {r4, r5, r6, lr}
@@ -3836,7 +4470,7 @@ _514311dc:
 	add	r1, r3, r0, lsl #5
 	addls	pc, pc, fp, lsl #2	// JUMPTABLE
 _51431220:
-	b	ret_5143126c:
+	b	ret_5143126c
 	b	_5143123c
 	b	_51431270
 	b	_514312a4
@@ -4159,6 +4793,7 @@ ret_51431630:
 
 
 
+
 sub_51431694:
 	stmdb	sp!, {r4, r5, r6, r7, r8, lr}
 	ldr	r3, var_514319c4
@@ -4241,14 +4876,28 @@ _51431798:
 
 
 
+var_514319c4:	.word	0x51649438
 var_514319c8:	.word	0x70100000
-var_514319cc:	.word	0x70180000 
-var_514319d0:	.word	0x51649338 
-var_514319d4:	.word	0x000001ff 
-var_514319d8:	.word	0x000003ff 
-var_514319dc:	.word	0x000007ff 
+var_514319cc:	.word	0x70180000
+var_514319d0:	.word	0x51649338
+var_514319d4:	.word	0x000001ff
+var_514319d8:	.word	0x000003ff
+var_514319dc:	.word	0x000007ff
 var_514319e0:	.word	0x00000fff
-
+var_514319e4:	.word	0x0303c884
+var_514319e8:	.word	0x51446144
+var_514319ec:	.word	0x4f5b0a0a
+var_514319f0:	.word	0x5d444c43
+var_514319f4:	.word	0x7272455b
+var_514319f8:	.word	0x5d64253a
+var_514319fc:	.word	0x736f4c20
+var_51431a00:	.word	0x61702065
+var_51431a04:	.word	0x6e656974
+var_51431a08:	.word	0x77206563
+var_51431a0c:	.word	0x69746961
+var_51431a10:	.word	0x4920676e
+var_51431a14:	.word	0x0a20544e
+var_51431a18:	.word	0x00000a0a
 
 
 
@@ -4422,6 +5071,8 @@ ret_51432204:
 	ldmia	sp!, {r4, r5, pc}
 
 
+
+
 sub_5143234c:
 	stmdb	sp!, {r3, r4, r5, r6, r7, r8, r9, sl, fp, lr}
 	mov	sl, r0
@@ -4548,9 +5199,51 @@ _514324e8:
 	b	ret_514324c0	// 0x514324f4
 
 
+
+
+var_51432a9c:	.word	0x51649238
+var_51432aa0:	.word	0x800a0000
+var_51432aa4:	.word	0x51431b3c
+var_51432aa8:	.word	0x51431694
+var_51432aac:	.word	0x514317a0
+var_51432ab0:	.word	0x514318ac
+var_51432ab4:	.word	0xaaaaaaaa
+var_51432ab8:	.word	0x514431e4
+var_51432abc:	.word	0x00003fff
+var_51432ac0:	.word	0x51649318
+var_51432ac4:	.word	0x51446154
+var_51432ac8:	.word	0x80120000
+
+
+
 /*
  *  51433000
  */ 
+
+var_51433a7c:	.word	0x51649338
+var_51433a80:	.word	0x80090000
+var_51433a84:	.word	0x514319ec
+var_51433a88:	.word	0x51446144
+var_51433a8c:	.word	0x80030000
+var_51433a90:	.word	0x51649438
+var_51433a94:	.word	0x70100000
+var_51433a98:	.word	0x70180000
+var_51433a9c:	.word	0x80010000
+var_51433aa0:	.word	0x800d0000
+var_51433aa4:	.word	0x80070000
+var_51433aa8:	.word	0x00008005
+var_51433aac:	.word	0x0303c938
+var_51433ab0:	.word	0x80020000
+
+sub_51433ab4:
+	stmdb	sp!, {r4, lr}
+	bl	sub_51431694
+	mov	r0, #0
+	ldmia	sp!, {r4, pc}
+	ldr	r1, var_51433a90
+	add	r0, r1, r0, lsl #4
+	ldr	r0, [r0, #4]
+	bx	lr	// 0x51433ad0
 
 sub_51433ad4:
 	ldr	r1, var_51433a90
@@ -4567,6 +5260,16 @@ sub_51433ae8:
 	mov	r0, r0, lsl #6
 	bx	lr		// 0x51433afc
 
+
+
+
+var_51433b50:	.word	0x51649238
+
+sub_51433b54:
+	mrc	15, 0, r0, cr1, cr0, 0
+	orr	r0, r0, #0x1000000
+	mcr	15, 0, r0, cr1, cr0, 0
+	bx	lr	// 0x51433b60
 
 sub_51433b64:
 	mrc     p15, 0, R0,c1,c0
@@ -4635,7 +5338,8 @@ sub_51433cd4:
 	mov	pc, lr	// 0x51433cd4
 
 
-
+var_51433db4:	.word	0x7e00f900
+var_51433db8:	.word	0x7e00f020
 
 sub_51433dbc:
 	stmdb	sp!, {r4, lr}
@@ -5241,6 +5945,30 @@ _514344f4:
 	mov	r0, r4
 	ldmia	sp!, {r4, pc}	// 0x514344f8
 
+
+
+
+var_514347c4:	.word	0x7e00f000
+var_514347c8:	.word	0x5359535b
+var_514347cc:	.word	0x5d4e4f43
+var_514347d0:	.word	0x7272455b
+var_514347d4:	.word	0x3353205d
+var_514347d8:	.word	0x31343643
+var_514347dc:	.word	0x79535f30
+var_514347e0:	.word	0x6e6f4373
+var_514347e4:	.word	0x4373495f
+var_514347e8:	.word	0x6b636f6c
+var_514347ec:	.word	0x69746147
+var_514347f0:	.word	0x2928676e
+var_514347f4:	.word	0x44202d20
+var_514347f8:	.word	0x63697665
+var_514347fc:	.word	0x44492065
+var_51434800:	.word	0x00000a20
+var_51434804:	.word	0x51446d48
+
+
+
+
 /*
  *  51435000
  */
@@ -5329,8 +6057,8 @@ _51435c24:
 sub_51435c54:
 	stmdb	sp!, {r4, lr}
 	mov	r4, #0
-	ldr	r2, sub_51435d90
-	ldr	r3, sub_51435d80 
+	ldr	r2, var_51435d90
+	ldr	r3, var_51435d80 
 	cmp	r1, #62	// 0x3e
 	beq	_51435c88 
 	cmp	r1, #63	// 0x3f
@@ -5798,7 +6526,7 @@ _514366b4:
 _514366cc:
 	cmp	r4, #1	
 	bls	_514366e4
-	ldr	r2, ´var_51436918 <__oldboot_ram_start+0x36918>
+	ldr	r2, var_51436918
 	sub	r1, pc, #644	// 0x284	// !!!! PC relative 0x514366d8 - 0x284
 	add	r0, pc, #568	// 0x238	// !!!! PC relative 0x514366dc - 0x238
 	bl	sub_51403564
@@ -5812,7 +6540,7 @@ _514366e4:
 
 _514366fc:
 	cmp	r4, #7	
-	bls	51436714
+	bls	_51436714
 	ldr	r2, var_5143692c
 	sub	r1, pc, #692	// 0x2b4	// !!!! PC relative 0x51436708 - 0x2b4
 	add	r0, pc, #540	// 0x21c	// !!!! PC relative 0x5143670c - 0x21c
@@ -5843,11 +6571,56 @@ _51436744:
 _5143675c:
 	add	r0, pc, #480	// 0x1e0
 	bl	sub_51403564
-	ldr	r0, var_1435d48
+	ldr	r0, var_51435d48
 	ldr	r1, [r0]
 	orr	r1, r1, #0x200000
 	str	r1, [r0]
 	b	ret_51436408 	// 0x51436774
+
+
+
+
+
+var_514368e0:	.word	0x00000796
+var_514368e4:	.word	0x0000079e
+var_514368e8:	.word	0x000007ad
+var_514368ec:	.word	0x000007b6
+var_514368f0:	.word	0x000007c6
+var_514368f4:	.word	0x000007da
+var_514368f8:	.word	0x000007f1
+var_514368fc:	.word	0x000007fd
+var_51436900:	.word	0x69746172
+var_51436904:	.word	0x3d3c206f
+var_51436908:	.word	0x33783020
+var_5143690c:	.word	0x00000000
+var_51436910:	.word	0x00000818
+var_51436914:	.word	0x0000082c
+var_51436918:	.word	0x00000835
+var_5143691c:	.word	0x69746172
+var_51436920:	.word	0x3d3c206f
+var_51436924:	.word	0x31783020
+var_51436928:	.word	0x00000000
+var_5143692c:	.word	0x0000083f
+var_51436930:	.word	0x69746172
+var_51436934:	.word	0x3d3c206f
+var_51436938:	.word	0x37783020
+var_5143693c:	.word	0x00000000
+var_51436940:	.word	0x0000084a
+var_51436944:	.word	0x5359535b
+var_51436948:	.word	0x5d4e4f43
+var_5143694c:	.word	0x7272455b
+var_51436950:	.word	0x3353205d
+var_51436954:	.word	0x31343643
+var_51436958:	.word	0x79535f30
+var_5143695c:	.word	0x6e6f4373
+var_51436960:	.word	0x7672445f
+var_51436964:	.word	0x7465535f
+var_51436968:	.word	0x6b6c435f
+var_5143696c:	.word	0x20766944
+var_51436970:	.word	0x6c43202d
+var_51436974:	.word	0x206b636f
+var_51436978:	.word	0x0a204449
+var_5143697c:	.word	0x00000000
 
 
 
@@ -5933,124 +6706,124 @@ _51436a68:
 
 _51436b7c:
 	ldr	r2, var_51435d48
-51436b80:	e3510003 	cmp	r1, #3
-51436b84:	e5922004 	ldr	r2, [r2, #4]
-51436b88:	e3c22701 	bic	r2, r2, #0x40000
-51436b8c:	0a00000e 	beq	_51436bcc
-51436b90:	e3510007 	cmp	r1, #7
-51436b94:	0a000009 	beq	_51436bc0
-51436b98:	e3510008 	cmp	r1, #8
-51436b9c:	0a000005 	beq	_51436bb8
-51436ba0:	e3510009 	cmp	r1, #9
-51436ba4:	1a00000b 	bne	_51436bd8
-51436ba8:	e3a04003 	mov	r4, #3
-51436bac:	e3800701 	orr	r0, r0, #0x40000
-51436bb0:	e5850004 	str	r0, [r5, #4]
-51436bb4:	ea000009 	b	_51436be0
+	cmp	r1, #3
+	ldr	r2, [r2, #4]
+	bic	r2, r2, #0x40000
+	beq	_51436bcc
+	cmp	r1, #7
+	beq	_51436bc0
+	cmp	r1, #8
+	beq	_51436bb8
+	cmp	r1, #9
+	bne	_51436bd8
+	mov	r4, #3
+	orr	r0, r0, #0x40000
+	str	r0, [r5, #4]
+	b	_51436be0
 _51436bb8:
 	str	r2, [r5, #4]
-51436bbc:	ea000007 	b	_51436be0
+	b	_51436be0
 _51436bc0:
 	mov	r4, #1
-51436bc4:	e5852004 	str	r2, [r5, #4]
-51436bc8:	ea000004 	b	_51436be0
+	str	r2, [r5, #4]
+	b	_51436be0
 _51436bcc:
 	mov	r4, #2
-51436bd0:	e5852004 	str	r2, [r5, #4]
-51436bd4:	ea000001 	b	_51436be0
+	str	r2, [r5, #4]
+	b	_51436be0
 _51436bd8:
 	add	r0, pc, #356	// 0x164	// !!!! PC relative 0x51436bd8 + 0x164
-51436bdc:	ebff3260 	bl	sub_51403564
+	bl	sub_51403564
 _51436be0:
 	ldr	r0, [r6, #28]
-51436be4:	e3c00703 	bic	r0, r0, #0xc0000
-51436be8:	e1800904 	orr	r0, r0, r4, lsl #18
-51436bec:	e586001c 	str	r0, [r6, #28]
-51436bf0:	ea000130 	b	_514370b8 
+	bic	r0, r0, #0xc0000
+	orr	r0, r0, r4, lsl #18
+	str	r0, [r6, #28]
+	b	_514370b8 
 
 _51436bf4:
 	ldr	r2, var_51435d48
-51436bf8:	e3510003 	cmp	r1, #3
-51436bfc:	e5922004 	ldr	r2, [r2, #4]
-51436c00:	e3c22601 	bic	r2, r2, #0x100000
-51436c04:	0a00000e 	beq	_51436c44
-51436c08:	e3510007 	cmp	r1, #7
-51436c0c:	0a000009 	beq	_51436c38
-51436c10:	e3510008 	cmp	r1, #8
-51436c14:	0a000005 	beq	_51436c30
-51436c18:	e3510009 	cmp	r1, #9
-51436c1c:	1a00000b 	bne	_51436c50
-51436c20:	e3a04003 	mov	r4, #3
-51436c24:	e3800601 	orr	r0, r0, #0x100000
-51436c28:	e5850004 	str	r0, [r5, #4]
-51436c2c:	ea000009 	b	_51436c58
+	cmp	r1, #3
+	ldr	r2, [r2, #4]
+	bic	r2, r2, #0x100000
+	beq	_51436c44
+	cmp	r1, #7
+	beq	_51436c38
+	cmp	r1, #8
+	beq	_51436c30
+	cmp	r1, #9
+	bne	_51436c50
+	mov	r4, #3
+	orr	r0, r0, #0x100000
+	str	r0, [r5, #4]
+	b	_51436c58
 _51436c30:
 	str	r2, [r5, #4]
-51436c34:	ea000007 	b	_51436c58
+	b	_51436c58
 _51436c38:
 	mov	r4, #1
-51436c3c:	e5852004 	str	r2, [r5, #4]
-51436c40:	ea000004 	b	_51436c58
+	str	r2, [r5, #4]
+	b	_51436c58
 _51436c44:
 	mov	r4, #2
-51436c48:	e5852004 	str	r2, [r5, #4]
-51436c4c:	ea000001 	b	_51436c58
+	str	r2, [r5, #4]
+	b	_51436c58
 _51436c50:
 	add	r0, pc, #236	// 0xec		// !!!! PC relative 0x51436c50 + 0xec
-51436c54:	ebff3242 	bl	sub_51403564
+	bl	sub_51403564
 _51436c58:
 	ldr	r0, [r6, #28]
-51436c5c:	e3c00603 	bic	r0, r0, #0x300000
-51436c60:	e1800a04 	orr	r0, r0, r4, lsl #20
-51436c64:	e586001c 	str	r0, [r6, #28]
-51436c68:	ea000112 	b	_514370b8
+	bic	r0, r0, #0x300000
+	orr	r0, r0, r4, lsl #20
+	str	r0, [r6, #28]
+	b	_514370b8
 
 _51436c6c:
 	ldr	r2, var_51435d48
-51436c70:	e3510003 	cmp	r1, #3
-51436c74:	e5922004 	ldr	r2, [r2, #4]
-51436c78:	e3c22501 	bic	r2, r2, #0x400000
-51436c7c:	0a00000e 	beq	_51436cbc
-51436c80:	e3510007 	cmp	r1, #7
-51436c84:	0a000009 	beq	_51436cb0
-51436c88:	e3510008 	cmp	r1, #8
-51436c8c:	0a000005 	beq	_51436ca8
-51436c90:	e3510009 	cmp	r1, #9
-51436c94:	1a00000b 	bne	_51436cc8
-51436c98:	e3a04003 	mov	r4, #3
-51436c9c:	e3800501 	orr	r0, r0, #0x400000
-51436ca0:	e5850004 	str	r0, [r5, #4]
-51436ca4:	ea000009 	b	_51436cd0
+	cmp	r1, #3
+	ldr	r2, [r2, #4]
+	bic	r2, r2, #0x400000
+	beq	_51436cbc
+	cmp	r1, #7
+	beq	_51436cb0
+	cmp	r1, #8
+	beq	_51436ca8
+	cmp	r1, #9
+	bne	_51436cc8
+	mov	r4, #3
+	orr	r0, r0, #0x400000
+	str	r0, [r5, #4]
+	b	_51436cd0
 _51436ca8:
 	str	r2, [r5, #4]
-51436cac:	ea000007 	b	_51436cd0
+	b	_51436cd0
 _51436cb0:
 	mov	r4, #1
-51436cb4:	e5852004 	str	r2, [r5, #4]
-51436cb8:	ea000004 	b	_51436cd0
-51436cbc:	e3a04002 	mov	r4, #2
-51436cc0:	e5852004 	str	r2, [r5, #4]
-51436cc4:	ea000001 	b	_51436cd0 
+	str	r2, [r5, #4]
+	b	_51436cd0
+	mov	r4, #2
+	str	r2, [r5, #4]
+	b	_51436cd0 
 _51436cc8:
 	add	r0, pc, #116	// 0x74		// !!!! PC relative 0x51436cc8 + 0x74
-51436ccc:	ebff3224 	bl	sub_51403564 
+	bl	sub_51403564 
 _51436cd0:
 	ldr	r0, [r6, #28]
-51436cd4:	e3c00503 	bic	r0, r0, #0xc00000
-51436cd8:	e1800b04 	orr	r0, r0, r4, lsl #22
-51436cdc:	e586001c 	str	r0, [r6, #28]
-51436ce0:	ea0000f4 	b	_514370b8
+	bic	r0, r0, #0xc00000
+	orr	r0, r0, r4, lsl #22
+	str	r0, [r6, #28]
+	b	_514370b8
 
 _51436ce4:
 	cmp	r1, #8
-51436ce8:	0a00002a 	beq	_51436d98
-51436cec:	ca00001d 	bgt	_51436d68
-51436cf0:	e3510003 	cmp	r1, #3
-51436cf4:	0a000021 	beq	_51436d80
-51436cf8:	e3510007 	cmp	r1, #7
-51436cfc:	1a000023 	bne	_51436d90
-51436d00:	e3a04001 	mov	r4, #1
-51436d04:	ea000023 	b	_51436d98
+	beq	_51436d98
+	bgt	_51436d68
+	cmp	r1, #3
+	beq	_51436d80
+	cmp	r1, #7
+	bne	_51436d90
+	mov	r4, #1
+	b	_51436d98	// 0x51436d04
 
 var_51436d08:	.word	0x5359535b
 var_51436d0c:	.word	0x5d4e4f43
@@ -6359,6 +7132,69 @@ ret_514370dc:
 /*
  *  51437000
  */
+var_5143736c:	.word	0x51446d48
+var_51437370:	.word	0x5359535b
+var_51437374:	.word	0x5d4e4f43
+var_51437378:	.word	0x7272455b
+var_5143737c:	.word	0x3353205d
+var_51437380:	.word	0x31343643
+var_51437384:	.word	0x79535f30
+var_51437388:	.word	0x6e6f4373
+var_5143738c:	.word	0x7672445f
+var_51437390:	.word	0x7465535f
+var_51437394:	.word	0x6b6c435f
+var_51437398:	.word	0x20637253
+var_5143739c:	.word	0x6c43202d
+var_514373a0:	.word	0x206b636f
+var_514373a4:	.word	0x0a204449
+var_514373a8:	.word	0x00000000
+var_514373ac:	.word	0x5359535b
+var_514373b0:	.word	0x5d4e4f43
+var_514373b4:	.word	0x4d373220
+var_514373b8:	.word	0x58207a48
+var_514373bc:	.word	0x6c61742d
+var_514373c0:	.word	0x63736f20
+var_514373c4:	.word	0x616c6c69
+var_514373c8:	.word	0x20726f74
+var_514373cc:	.word	0x636f6c63
+var_514373d0:	.word	0x6e65206b
+var_514373d4:	.word	0x656c6261
+var_514373d8:	.word	0x00000a20
+var_514373dc:	.word	0x7e00f000
+var_514373e0:	.word	0x5359535b
+var_514373e4:	.word	0x5d4e4f43
+var_514373e8:	.word	0x7272455b
+var_514373ec:	.word	0x3353205d
+var_514373f0:	.word	0x31343643
+var_514373f4:	.word	0x79535f30
+var_514373f8:	.word	0x6e6f4373
+var_514373fc:	.word	0x7672445f
+var_51437400:	.word	0x7465475f
+var_51437404:	.word	0x6b6c435f
+var_51437408:	.word	0x20637253
+var_5143740c:	.word	0x5953202d
+var_51437410:	.word	0x4e4f4353
+var_51437414:	.word	0x4d53485f
+var_51437418:	.word	0x2030434d
+var_5143741c:	.word	0x0000000a
+var_51437420:	.word	0x5359535b
+var_51437424:	.word	0x5d4e4f43
+var_51437428:	.word	0x7272455b
+var_5143742c:	.word	0x3353205d
+var_51437430:	.word	0x31343643
+var_51437434:	.word	0x79535f30
+var_51437438:	.word	0x6e6f4373
+var_5143743c:	.word	0x7672445f
+var_51437440:	.word	0x7465475f
+var_51437444:	.word	0x6b6c435f
+var_51437448:	.word	0x20637253
+var_5143744c:	.word	0x5953202d
+var_51437450:	.word	0x4e4f4353
+var_51437454:	.word	0x4d53485f
+var_51437458:	.word	0x2031434d
+var_5143745c:	.word	0x0000000a
+
+
 
 sub_514376ec:
 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, lr}
@@ -7145,6 +7981,147 @@ _51438394:	.word 	0x000001eb
 
 
 
+var_51438628:	.word	0x5164a828
+var_5143862c:	.word	0x5c637273
+var_51438630:	.word	0x6f697067
+var_51438634:	.word	0x6972645f
+var_51438638:	.word	0x5f726576
+var_5143863c:	.word	0x746e6965
+var_51438640:	.word	0x0000632e
+var_51438644:	.word	0x4f495047
+var_51438648:	.word	0x4e49455f
+var_5143864c:	.word	0x554e5f54
+var_51438650:	.word	0x203c204d
+var_51438654:	.word	0x4f495047
+var_51438658:	.word	0x58414d5f
+var_5143865c:	.word	0x4e49455f
+var_51438660:	.word	0x554e5f54
+var_51438664:	.word	0x0000004d
+var_51438668:	.word	0x00000119
+var_5143866c:	.word	0x746e4975
+var_51438670:	.word	0x65707954
+var_51438674:	.word	0x203d3c20
+var_51438678:	.word	0x68746f42
+var_5143867c:	.word	0x6764455f
+var_51438680:	.word	0x00000065
+var_51438684:	.word	0x0000011a
+var_51438688:	.word	0x6c6c6143
+var_5143868c:	.word	0x6b636162
+var_51438690:	.word	0x636e7546
+var_51438694:	.word	0x6e6f6974
+var_51438698:	.word	0x203d2120
+var_5143869c:	.word	0x4c4c554e
+var_514386a0:	.word	0x00000000
+var_514386a4:	.word	0x514437c0
+var_514386a8:	.word	0x4950475b
+var_514386ac:	.word	0x455b5d4f
+var_514386b0:	.word	0x205d7272
+var_514386b4:	.word	0x4f495047
+var_514386b8:	.word	0x4e49455f
+var_514386bc:	.word	0x554e5f54
+var_514386c0:	.word	0x000a204d
+var_514386c4:	.word	0x514443a8
+var_514386c8:	.word	0x00000156
+var_514386cc:	.word	0x746c4675
+var_514386d0:	.word	0x74646957
+var_514386d4:	.word	0x3d3c2068
+var_514386d8:	.word	0x33783020
+var_514386dc:	.word	0x00000046
+var_514386e0:	.word	0x4950475b
+var_514386e4:	.word	0x455b5d4f
+var_514386e8:	.word	0x205d7272
+var_514386ec:	.word	0x544e4945
+var_514386f0:	.word	0x69462030
+var_514386f4:	.word	0x7265746c
+var_514386f8:	.word	0x70795420
+var_514386fc:	.word	0x000a2065
+var_51438700:	.word	0x746c4665
+var_51438704:	.word	0x65707954
+var_51438708:	.word	0x203d3c20
+var_5143870c:	.word	0x466e4565
+var_51438710:	.word	0x0000544c
+var_51438714:	.word	0x0000016e
+var_51438718:	.word	0x746c4675
+var_5143871c:	.word	0x74646957
+var_51438720:	.word	0x3d3c2068
+var_51438724:	.word	0x37783020
+var_51438728:	.word	0x00000046
+
+
+
+var_51438a08:	.word	0x4950475b
+var_51438a0c:	.word	0x455b5d4f
+var_51438a10:	.word	0x205d7272
+var_51438a14:	.word	0x544e4945
+var_51438a18:	.word	0x20397e31
+var_51438a1c:	.word	0x746c6946
+var_51438a20:	.word	0x54207265
+var_51438a24:	.word	0x20657079
+var_51438a28:	.word	0x0000000a
+var_51438a2c:	.word	0x5164aa34
+var_51438a30:	.word	0x4950475b
+var_51438a34:	.word	0x455b5d4f
+var_51438a38:	.word	0x205d7272
+var_51438a3c:	.word	0x52534948
+var_51438a40:	.word	0x45202d20
+var_51438a44:	.word	0x5f544e49
+var_51438a48:	.word	0x204d554e
+var_51438a4c:	.word	0x0a206425
+var_51438a50:	.word	0x00000000
+var_51438a54:	.word	0x51446d54
+var_51438a58:	.word	0x7f008000
+
+
+
+
+sub_51438b94:
+	stmdb	sp!, {r4, lr}
+	ldr	r0, var_51438a54 
+	mov	r1, #0
+	strb	r1, [r0]
+	ldr	r0, var_51438a2c
+	str	r1, [r0]
+	str	r1, [r0, #4]
+	str	r1, [r0, #8]
+	str	r1, [r0, #12]
+	str	r1, [r0, #16]
+	str	r1, [r0, #20]
+	mov	r0, #0
+	ldr	r2, var_51438628
+_51438bc8:
+	str	r1, [r2, r0, lsl #2]
+	add	r0, r0, #1	
+	and	r0, r0, #255	// 0xff
+	cmp	r0, #127	// 0x7f
+	bcc	_51438bc8
+	sub	r1, pc, #392	// 0x188	// !!!! PC relative 0x51438bdc - 0x188
+	mov	r0, #0	
+	bl	sub_51401880
+	mov	r0, #0	
+	bl	sub_514014f4
+	sub	r1, pc, #412	// 0x19c	// !!!! PC relative 0x51438bf0 - 0x19c
+	mov	r0, #1	
+	bl	sub_51401880
+	mov	r0, #1	
+	bl	sub_514014f4
+	sub	r1, pc, #432	// 0x1b0	// !!!! PC relative 0x51438c04 - 0x1b0
+	mov	r0, #32	// 0x20
+	bl	sub_51401880
+	mov	r0, #32	// 0x20
+	bl	sub_514014f4
+	sub	r1, pc, #452	// 0x1c4	// !!!! PC relative 0x51438c18 - 0x1c4
+	mov	r0, #33	// 0x21
+	bl	sub_51401880
+	mov	r0, #33	// 0x21
+	bl	sub_514014f4
+	sub	r1, pc, #472	// 0x1d8	// !!!! PC relative 0x51438c2c - 0x1d8
+	mov	r0, #53	// 0x35
+	bl	sub_51401880
+	ldmia	sp!, {r4, lr}
+	mov	r0, #53	// 0x35
+	b	sub_514014f4	// 0x51438c40
+
+
 
 sub_51438cc8:
 	mov	r1, r0
@@ -7199,9 +8176,30 @@ _51438d58:
 	ldmia	sp!, {r4, r5, r6, r7, r8, pc}	// 0x51438d68
 
 
+
 /*
  *  51439000
  */ 
+ 
+var_514390b8:	.word	0x514431e4
+var_514390bc:	.word	0x4950475b
+var_514390c0:	.word	0x455b5d4f
+var_514390c4:	.word	0x205d5252
+var_514390c8:	.word	0x36433353
+var_514390cc:	.word	0x5f303134
+var_514390d0:	.word	0x4f495047
+var_514390d4:	.word	0x7465535f
+var_514390d8:	.word	0x76697244
+var_514390dc:	.word	0x72745365
+var_514390e0:	.word	0x74676e65
+var_514390e4:	.word	0x20292868
+var_514390e8:	.word	0x0000000a
+var_514390ec:	.word	0xff000f00
+var_514390f0:	.word	0x00555051
+var_514390f4:	.word	0x015555d5
+var_514390f8:	.word	0x000aaaaa
+
+
 
 
 sub_514392d0:
@@ -7333,7 +8331,8 @@ sub_5143945c:
 	mvn	r0, #0	
 ret_5143949c:
 	ldmia	sp!, {r4, r5, r6, r7, r8, r9, sl, pc}
-_514394a0:	e3540000 	cmp	r4, #0
+_514394a0:
+	cmp	r4, #0
 	beq	_514394b8
 	cmp	r4, #1
 	beq	_514394b8
@@ -7387,7 +8386,7 @@ _51439548:
 	smulbb	r7, r4, r0
 	ldr	lr, var_5143a2b4
 	ldr	r6, var_514393dc 
-	cmp	r4, #0	0
+	cmp	r4, #0
 	mov	r8, #0	
 	add	r5, r9, #44	// 0x2c
 	add	r0, r9, r7, lsl #2
@@ -7409,7 +8408,7 @@ _514395a4:
 	ldrb	r1, [lr, #463]
 	mov	r3, lr
 	cmp	r1, #0	
-	beq	514395bc 
+	beq	_514395bc 
 	mvn	r0, #2
 	b	ret_5143949c
 _514395bc:
@@ -8148,6 +9147,15 @@ _51439ff8:
  *  5143a000
  */
 
+var_5143a2b0:	.word	0x00010020
+var_5143a2b4:	.word	0x5164eb4c
+var_5143a2b8:	.word	0x5164aad8
+var_5143a2bc:	.word	0x00010005
+var_5143a2c0:	.word	0x76300000
+var_5143a2c4:	.word	0x7e00f000
+var_5143a2c8:	.word	0x00020002
+
+
 
 sub_5143a4f0:
 	stmdb	sp!, {r4, lr}
@@ -8513,17 +9521,17 @@ _5143ac5c:
 	mov	r3, #0
 _5143ac64:
 	cmp	r0, #1
-	bne	5143ac74
+	bne	_5143ac74
 	mov	r1, #320	// 0x140 ==> W1KEYCON0 (Color key control register)
 	b	_5143ac98
 _5143ac74:
 	cmp	r0, #2	
-	bne	5143ac84
+	bne	_5143ac84
 	mov	r1, #328	// 0x148 ==> W2KEYCON0 (Color key control register)
 	b	_5143ac98
 _5143ac84:
 	cmp	r0, #3	
-	bne	5143ac94
+	bne	_5143ac94
 	mov	r1, #336	// 0x150 ==> W3KEYCON0 (Color key control register)
 	b	_5143ac98
 _5143ac94:
@@ -8884,8 +9892,66 @@ _5143b134:
 	str	r0, [r1]
 	b	ret_5143b114	// 0x5143b138
 
-
-
+var_5143b13c:	.word	0x0001000b
+var_5143b140:	.word	0x0001000c
+var_5143b144:	.word	0x74108000
+var_5143b148:	.word	0x0001000e
+var_5143b14c:	.word	0x00010045
+var_5143b150:	.word	0x0001003f
+var_5143b154:	.word	0x00010042
+var_5143b158:	.word	0x0001002b
+var_5143b15c:	.word	0x5164abb4
+var_5143b160:	.word	0x0001002a
+var_5143b164:	.word	0x00010029
+var_5143b168:	.word	0x00010028
+var_5143b16c:	.word	0x00010036
+var_5143b170:	.word	0x00000000
+var_5143b174:	.word	0x00000000
+var_5143b178:	.word	0x0001001d
+var_5143b17c:	.word	0x80000000
+var_5143b180:	.word	0x41974b22
+var_5143b184:	.word	0x000411aa
+var_5143b188:	.word	0x3d3d3d0a
+var_5143b18c:	.word	0x3d3d3d3d
+var_5143b190:	.word	0x3d3d3d3d
+var_5143b194:	.word	0x3d3d3d3d
+var_5143b198:	.word	0x3d3d3d3d
+var_5143b19c:	.word	0x3d3d3d3d
+var_5143b1a0:	.word	0x3d3d3d3d
+var_5143b1a4:	.word	0x3d3d3d3d
+var_5143b1a8:	.word	0x00000a3d
+var_5143b1ac:	.word	0x44434c20
+var_5143b1b0:	.word	0x756f5320
+var_5143b1b4:	.word	0x20656372
+var_5143b1b8:	.word	0x204b4c43
+var_5143b1bc:	.word	0x4d203e2d
+var_5143b1c0:	.word	0x284c4c50
+var_5143b1c4:	.word	0x0a296425
+var_5143b1c8:	.word	0x00000000
+var_5143b1cc:	.word	0x5143a85c
+var_5143b1d0:	.word	0x00000000
+var_5143b1d4:	.word	0x4166e360
+var_5143b1d8:	.word	0x00000000
+var_5143b1dc:	.word	0x4179bfcc
+var_5143b1e0:	.word	0x5164ed24
+var_5143b1e4:	.word	0x00000000
+var_5143b1e8:	.word	0x3ff00000
+var_5143b1ec:	.word	0x00000000
+var_5143b1f0:	.word	0x3fe00000
+var_5143b1f4:	.word	0x00000000
+var_5143b1f8:	.word	0x40240000
+var_5143b1fc:	.word	0x9999999a
+var_5143b200:	.word	0x3fb99999
+var_5143b204:	.word	0x6b6c4375
+var_5143b208:	.word	0x206c6156
+var_5143b20c:	.word	0x7830203d
+var_5143b210:	.word	0x2c207825
+var_5143b214:	.word	0x6c437520
+var_5143b218:	.word	0x7269446b
+var_5143b21c:	.word	0x30203d20
+var_5143b220:	.word	0x20782578
+var_5143b224:	.word	0x0000000a
+var_5143b228:	.word	0x00010051
 
 sub_5143b22c:
 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, lr}
@@ -8895,7 +9961,7 @@ sub_5143b22c:
 	mov	r8, r0
 	mov	r0, #30	// 0x1e
 	bl	sub_51433dbc 
-	ldr	r7, sub_5143a83c
+	ldr	r7, var_5143a83c
 	cmp	r0, #1	
 	beq	_5143b274
 	ldr	r0, var_5143b56c
@@ -9119,12 +10185,89 @@ sub_5143b550:
 	str	r0, [r1]
 	bx	lr	// 0x5143b568
 
+var_5143b56c:	.word	0x00010011
+var_5143b570:	.word	0x0018f9df
+var_5143b574:	.word	0x00020011
+var_5143b578:	.word	0x7e00f000
+var_5143b57c:	.word	0x3d3d3d3d
+var_5143b580:	.word	0x3d3d3d3d
+var_5143b584:	.word	0x3d3d3d3d
+var_5143b588:	.word	0x3d3d3d3d
+var_5143b58c:	.word	0x3d3d3d3d
+var_5143b590:	.word	0x3d3d3d3d
+var_5143b594:	.word	0x3d3d3d3d
+var_5143b598:	.word	0x3d3d3d3d
+var_5143b59c:	.word	0x3d3d3d3d
+var_5143b5a0:	.word	0x3d3d3d3d
+var_5143b5a4:	.word	0x0000000a
+var_5143b5a8:	.word	0x64695675
+var_5143b5ac:	.word	0x526e6f63
+var_5143b5b0:	.word	0x3d206765
+var_5143b5b4:	.word	0x25783020
+var_5143b5b8:	.word	0x202c2078
+var_5143b5bc:	.word	0x6b6c4375
+var_5143b5c0:	.word	0x206c6156
+var_5143b5c4:	.word	0x7830203d
+var_5143b5c8:	.word	0x000a7825
+var_5143b5cc:	.word	0x00010013
+var_5143b5d0:	.word	0x5143aac0
+var_5143b5d4:	.word	0x514431e4
+var_5143b5d8:	.word	0x0001000d
+var_5143b5dc:	.word	0x5164eb4c
 
 
 
 /*
  *  5143c000
  */
+
+var_5143c28c:	.word	0x00010012
+var_5143c290:	.word	0x00020012
+var_5143c294:	.word	0x51446d5c
+var_5143c298:	.word	0x00010014
+var_5143c29c:	.word	0x00020014
+var_5143c2a0:	.word	0x00010039
+var_5143c2a4:	.word	0x77100000
+var_5143c2a8:	.word	0x00010015
+var_5143c2ac:	.word	0x00010016
+var_5143c2b0:	.word	0x00010017
+var_5143c2b4:	.word	0x5164ac2c
+var_5143c2b8:	.word	0x00010018
+var_5143c2bc:	.word	0x00010019
+var_5143c2c0:	.word	0x0001001a
+var_5143c2c4:	.word	0x0001001b
+var_5143c2c8:	.word	0x0001001c
+var_5143c2cc:	.word	0x57600000
+var_5143c2d0:	.word	0x20657355
+var_5143c2d4:	.word	0x7420666f
+var_5143c2d8:	.word	0x20736968
+var_5143c2dc:	.word	0x636e7566
+var_5143c2e0:	.word	0x6e6f6974
+var_5143c2e4:	.word	0x20736920
+var_5143c2e8:	.word	0x72706544
+var_5143c2ec:	.word	0x74616365
+var_5143c2f0:	.word	0x3a3a6465
+var_5143c2f4:	.word	0x206f4420
+var_5143c2f8:	.word	0x20746f6e
+var_5143c2fc:	.word	0x20657375
+var_5143c300:	.word	0x73696874
+var_5143c304:	.word	0x49504120
+var_5143c308:	.word	0x0000200a
+var_5143c30c:	.word	0x646e694b
+var_5143c310:	.word	0x7520796c
+var_5143c314:	.word	0x53206573
+var_5143c318:	.word	0x4d5f5041
+var_5143c31c:	.word	0x6f6c6c61
+var_5143c320:	.word	0x20292863
+var_5143c324:	.word	0x20646e61
+var_5143c328:	.word	0x5f504153
+var_5143c32c:	.word	0x65657246
+var_5143c330:	.word	0x69202928
+var_5143c334:	.word	0x6574736e
+var_5143c338:	.word	0x200a6461
+var_5143c33c:	.word	0x00000000
+
+
 
 sub_5143c5e8:
 	stmdb	sp!, {r4, r5, r6, lr}
@@ -9146,7 +10289,7 @@ _5143c620:
 	bl	sub_5143a534
 	cmp	r0, #0
 	bne	_5143c634
-	ldr	r0, sub_5143d220
+	ldr	r0, var_5143d220
 	str	r0, [r6, #16]
 _5143c634:
 	cmp	r4, #0	
@@ -9155,7 +10298,7 @@ _5143c634:
 	b	_5143c678
 _5143c644:
 	cmp	r4, #1	// 0x1
-	bne	_5143c654>
+	bne	_5143c654
 	mov	r0, #36	// 0x24
 	b	_5143c678
 _5143c654:
@@ -9220,6 +10363,70 @@ _5143c6f0:
 /*
  *  5143d000
  */
+
+var_5143d210:	.word	0x0001001e
+var_5143d214:	.word	0x0001001f
+var_5143d218:	.word	0x5164aa4c
+var_5143d21c:	.word	0x00010022
+var_5143d220:	.word	0x000a0022
+var_5143d224:	.word	0x5164ac90
+var_5143d228:	.word	0x00010023
+var_5143d22c:	.word	0x00010024
+var_5143d230:	.word	0x00010025
+var_5143d234:	.word	0x77100020
+var_5143d238:	.word	0x00010026
+var_5143d23c:	.word	0x77100024
+var_5143d240:	.word	0x00010027
+var_5143d244:	.word	0x51446d98
+var_5143d248:	.word	0x0001002c
+var_5143d24c:	.word	0x0001002d
+var_5143d250:	.word	0x0001002e
+var_5143d254:	.word	0x5164abb4
+var_5143d258:	.word	0x0001002f
+var_5143d25c:	.word	0x00010031
+var_5143d260:	.word	0x0000ffff
+var_5143d264:	.word	0x00010032
+var_5143d268:	.word	0x00010033
+var_5143d26c:	.word	0x00010034
+var_5143d270:	.word	0x00010035
+
+
+
+var_5143db00:	.word	0x00010037
+var_5143db04:	.word	0x51446d5c
+var_5143db08:	.word	0x77100000
+var_5143db0c:	.word	0x00010038
+var_5143db10:	.word	0x0001003a
+var_5143db14:	.word	0x0001003b
+var_5143db18:	.word	0x0001003c
+var_5143db1c:	.word	0x5164eb4c
+var_5143db20:	.word	0x514431e4
+var_5143db24:	.word	0x0001003d
+var_5143db28:	.word	0x00010040
+var_5143db2c:	.word	0x00010041
+var_5143db30:	.word	0x00020041
+var_5143db34:	.word	0x00010043
+var_5143db38:	.word	0x3849200a
+var_5143db3c:	.word	0x6e492030
+var_5143db40:	.word	0x72726574
+var_5143db44:	.word	0x20747075
+var_5143db48:	.word	0x74756f52
+var_5143db4c:	.word	0x2e656e69
+var_5143db50:	.word	0x00000a20
+var_5143db54:	.word	0x00010044
+var_5143db58:	.word	0x4946200a
+var_5143db5c:	.word	0x49204f46
+var_5143db60:	.word	0x7265746e
+var_5143db64:	.word	0x74707572
+var_5143db68:	.word	0x756f5220
+var_5143db6c:	.word	0x656e6974
+var_5143db70:	.word	0x000a202e
+var_5143db74:	.word	0x00010046
+var_5143db78:	.word	0x00010047
+var_5143db7c:	.word	0x00010048
+
+
+
  
 sub_5143dd4c:
 	stmdb	sp!, {r4, lr}
@@ -9247,11 +10454,38 @@ _5143dd80:
 
 
 
+
+/*
+ *  5143e000
+ */
+
+var_5143e060:	.word	0x00010049
+var_5143e064:	.word	0x0001004a
+var_5143e068:	.word	0x00010050
+var_5143e06c:	.word	0x0001004c
+var_5143e070:	.word	0x6f727245
+var_5143e074:	.word	0x6d492072
+var_5143e078:	.word	0x20656761
+var_5143e07c:	.word	0x62207369
+var_5143e080:	.word	0x65676769
+var_5143e084:	.word	0x68742072
+var_5143e088:	.word	0x74206e61
+var_5143e08c:	.word	0x62206568
+var_5143e090:	.word	0x65666675
+var_5143e094:	.word	0x553a3a72
+var_5143e098:	.word	0x76206573
+var_5143e09c:	.word	0x75747269
+var_5143e0a0:	.word	0x73206c61
+var_5143e0a4:	.word	0x65657263
+var_5143e0a8:	.word	0x00000a6e
+var_5143e0ac:	.word	0x0001004d
+var_5143e0b0:	.word	0x0001004e
+
+
+
 /*
  *  5143f000
  */
-
-
 
 _5143f0b8:
 	subs	r2, r2, #32	// 0x20
