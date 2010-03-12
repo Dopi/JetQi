@@ -3966,6 +3966,63 @@ var_5141b1a8:
 	.word	0x00000bb8
 
 
+
+/*
+ *  51420000
+ */
+
+sub_51420b24:
+	stmdb	sp!, {r4, r5, r6, lr}
+	mov	ip, r0
+	mov	r3, r2
+	ldr	r0, var_5142069c
+	cmp	ip, #2
+	bcs	ret_51420b58 
+	add	r2, ip, ip, lsl #3
+	ldr	ip, var_514211c8 
+	add	r2, ip, r2, lsl #4
+	ldr	ip, [r2]
+	cmp	ip, #1
+	beq	_51420b5c 
+	add	r0, r0, #0xb0000
+ret_51420b58:
+	ldmia	sp!, {r4, r5, r6, pc}
+_51420b5c:
+	ldr	r2, [r2, #136]
+	mov	r4, #0	
+	mov	ip, #0	
+	cmp	r3, #0	
+	beq	ret_51420b58
+	mov	r0, #0
+	ldr	lr, [r2, #12]
+	cmp	lr, #0
+	bls	_51420bb8 
+_51420b80:
+	add	r5, r2, r0, lsl #4
+	ldr	r5, [r5, #16]
+	cmp	r5, r1
+	bne	_51420bac 
+	add	r0, r2, r0, lsl #4
+	add	r1, r0, #16	// 0x10
+	mov	r0, r3
+	mov	r2, #16	// 0x10
+	bl	5142fadc
+	mov	ip, #1
+	b	_51420bb8 
+	add	r0, r0, #1
+	cmp	lr, r0
+	bhi	_51420b80
+_51420bb8:
+	cmp	ip, #0	
+	bne	_51420bc4
+	ldr	r4, var_514211cc
+_51420bc4:
+	mov	r0, r4
+	b	ret_51420b58	// 0x51420bc8
+
+
+
+
 /* 
  *  5142F000
  */
