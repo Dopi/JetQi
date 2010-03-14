@@ -24,6 +24,8 @@
 
 #include <s3c6410.h>
 
+#define TEST_OBOOT	0
+
 #define TEXT_BASE 0x53000000
 
 #define RET		bx	lr
@@ -110,7 +112,11 @@ _pre_start2:
 	ldr	r9, var_51400134
 	ldmia	r9!, {r0, r1, r2, r3, r4, r5, r6, r7}
 	stmia	r8!, {r0, r1, r2, r3, r4, r5, r6, r7}
+#if TEST_OBOOT
 	b	_init2
+#else
+	b	_init_start_qi
+#endif
 _init1_end:
 	b	_init1_end
 
@@ -906,7 +912,7 @@ _init2:
 	ldr	r0, var_51403204
 	ldr	r1, var_51403208	/// correct????
 	cmp	R0, R1
-	BEQ	loc_51403000
+	beq	loc_51403000
 
 	add	r1, r0, #0
 	ldr	r0, var_51403208
@@ -918,10 +924,6 @@ loc_51403000:
 	ldr	r0, var_51403214 // =0x51446DA0 ???
 	mov	r1, #0
 	bl	sub_5142fd5c
-
-//	ldr	r4,_oldstart
-//	mov	pc, r4
-
 	bl	sub_514152f8
 	bl	sub_51415374	// load_0x5A0B0004_to_R0
 	mov	r4, r0
@@ -963,7 +965,7 @@ loc_51403064:
 loc_514031B0:
 	MOV     R1, #0
 	MOV     R0, #2
-	bl      sub_0x5141ab40	// I2C_something
+	bl      sub_5141ab40	// I2C_something
 	bl	Download_Mode_MSG
 //	BL      sub_514131A0
 //	B       loc_514030E8
@@ -975,11 +977,8 @@ loc_514031B0:
 //	BL      Baseband_Init
 
 _continue_with_start_qi:
-	b	_continue_with_start_qi
-//	ldr	pc, _start_oldboot
-//	ldr	pc, _start_armboot
-
-_oldstart:	.word	0x51403010 //0x51402FE0 //0x51402f7c // 0x51400000
+	b	_init_start_qi
+//	b	_continue_with_start_qi
 
 /*
  *  
@@ -1415,7 +1414,7 @@ sub_51403f40:
 	mov	r2, #8	
 	add	r1, pc, #724	// 0x2d4
 	ldr	r0, var_5140429c
-	bl	5142fadc 
+	bl	sub_5142fadc 
 	mov	r0, #0x11000
 	ldr	r1, var_5140429c
 	str	r0, [r1, #8]
@@ -1459,8 +1458,13 @@ sub_51403f40:
 	str	r0, [r1, #8]
 	mov	r0, #16	// 0x10
 	str	r0, [r1, #12]
-	bl	5141dc50 
-	mov	r4, r0
+	bl	sub_5141dc50 
+	mov	r4, r0	// 0x51404070
+
+/*
+ *  51414000
+ */
+
 _51404074:
 	cmp	r4, #0
 	beq	_51404094
@@ -1474,7 +1478,7 @@ _51404090:
 	b	_5140408c
 _51404094:
 	mov	r0, #0
-	bl	5141e174
+	bl	sub_5141e174
 	cmp	r0, #0
 	bne	_514040ac
 	cmp	r5, #0
@@ -1486,7 +1490,7 @@ _514040ac:
 	mov	r2, #0
 	ldr	r1, var_5140429c
 	mov	r0, #0
-	bl	5141df9c 
+	bl	sub_5141df9c 
 	mov	r4, r0
 	mov	r0, #0
 	ldr	r1, var_514042a8
@@ -1500,7 +1504,7 @@ _514040e8:
 	b	_514040e4 
 _514040ec:
 	mov	r0, #0
-	bl	5141e174 
+	bl	sub_5141e174 
 	mov	r4, r0
 	cmp	r4, #0
 	beq	_5140410c
@@ -1513,33 +1517,33 @@ _5140410c:
 	add	r2, sp, #48	// 0x30
 	mov	r1, #3
 	mov	r0, #0
-	bl	51420b24 
+	bl	sub_51420b24 
 	add	r2, sp, #16	// 0x10
 	mov	r1, #0x10000000
 	mov	r0, #0
-	bl	51420b24 
+	bl	sub_51420b24 
 	add	r2, sp, #32	// 0x20
 	mov	r1, #8
 	mov	r0, #0
-	bl	51420b24 
+	bl	sub_51420b24 
 	mov	r2, sp
 	mov	r1, #0x10000001
 	mov	r0, #0
-	bl	51420b24 
+	bl	sub_51420b24 
 	ldr	r1, var_514042ac
 	ldr	r0, [sp, #24]
 	ldr	r1, [r1, #8]
 	cmp	r0, r1
 	beq	_514041bc
 	mov	r0, #0
-	bl	5141e294 
+	bl	sub_5141e294 
 	mov	r0, #1
 	ldr	r1, var_514042a8
 	str	r0, [r1]
 	mov	r2, #0
 	ldr	r1, var_5140429c
 	mov	r0, #0
-	bl	5141df9c 
+	bl	sub_5141df9c 
 	mov	r4, r0
 	mov	r0, #0
 	ldr	r1, var_514042a8
@@ -1551,7 +1555,7 @@ _514041a0:
 	b	_514041a0	// infinite loop
 _514041a4:
 	mov	r0, #0
-	bl	5141e174 
+	bl	sub_5141e174 
 	cmp	r0, #0
 	beq	_51404254
 	nop	
@@ -1575,14 +1579,14 @@ _514041bc:
 	beq	_51404254
 _514041f8:
 	mov	r0, #0
-	bl	5141e294 
+	bl	sub_5141e294 
 	mov	r0, #1
 	ldr	r1, var_514042a8
 	str	r0, [r1]
 	mov	r2, #1
 	ldr	r1, var_5140429c
 	mov	r0, #0
-	bl	5141df9c 
+	bl	sub_5141df9c 
 	mov	r4, r0
 	mov	r0, #0
 	ldr	r1, var_514042a8
@@ -1594,7 +1598,7 @@ _51404238:
 	b	_51404238	// infinite loop
 _5140423c:
 	mov	r0, #0
-	bl	5141e174 
+	bl	sub_5141e174 
 	cmp	r0, #0
 	beq	_51404254
 	nop	
@@ -1607,16 +1611,30 @@ _51404254:
 	mov	r2, #255	// 0xff
 	mov	r1, #1936	// 0x790
 	ldr	r0, var_514042b8
-	bl	5143f0a8
+	bl	sub_5143f0a8
 	mov	r1, #0
 	ldr	r0, var_514042b8
-	bl	514211e0
+	bl	sub_514211e0
 	mov	r4, r0
 _51404280:
 	mov	r0, #0
 	add	sp, sp, #64	// 0x40
 	ldmia	sp!, {r4, r5, r6, pc}	// 0x51404288
 
+var_5140428c:	.word	0x514449e0
+var_51404290:	.word	0x50525358
+var_51404294:	.word	0x49545241
+var_51404298:	.word	0x00000000
+var_5140429c:	.word	0x51494810
+var_514042a0:	.word	0x00000438
+var_514042a4:	.word	0x000007c2
+var_514042a8:	.word	0x514449dc
+var_514042ac:	.word	0x51494830
+var_514042b0:	.word	0x51494840
+var_514042b4:	.word	0x51494850
+var_514042b8:	.word	0x51495210
+
+sub_514042bc:	// MISSING
 
 /*
  *  51415000
@@ -1751,7 +1769,7 @@ var_5141598c:	.word	0x203d2072
 var_51415990:	.word	0x0a0d7825
 var_51415994:	.word	0x00000000
 
-
+sub_51415998:	// MISSING
 
 sub_51415a68:
 	stmdb	sp!, {r2, r3, r4, r5, r6, lr}
@@ -1867,12 +1885,33 @@ _51415bb4:
 	mov	r0, #1000	// 0x3e8
 	bl	sub_51430f80
 	mov	r1, #30	// 0x1e
-	ldr	r0, sub_51415cb4
+	ldr	r0, var_51415cb4
 	bl	sub_51415998
 	mov	r0, #1	
 	bl	sub_5142fd80
 ret_51415c30:
 	ldmia	sp!, {r2, r3, r4, r5, r6, pc}
+
+
+/*
+_51415c7c:	bx	lr
+_51415c80:	bx	lr
+_51415c84:	bx	lr
+_51415c88:	bx	lr
+_51415c8c:	bx	lr
+_51415c90:	bx	lr
+_51415c94:	bx	lr
+_51415c98:	bx	lr
+_51415c9c:	bx	lr
+*/
+var_51415ca0:	.word	0x51445184
+var_51415ca4:	.word	0x00001388
+var_51415ca8:	.word	0x514431e4
+var_51415cac:	.word	0x51445328
+var_51415cb0:	.word	0x0000c350
+var_51415cb4:	.word	0x5144518c
+var_51415cb8:	.word	0x000186a0
+var_51415cbc:	.word	0x514452f4
 
 
 
@@ -2447,10 +2486,10 @@ sub_514171bc:
 _514171d0:
 	bne	_514171dc
 	cmp	r4, #5
-	bgt	_514173d0
+	bgt	ret_514173d0
 _514171dc:
 	cmp	r4, #11	// 0xb
-	bcs	_514173d0
+	bcs	ret_514173d0
 	ldr	r5, var_51417720
 	ldr	r0, [r5, #4]
 	cmp	r0, #0
@@ -2915,7 +2954,9 @@ _51417f84:
 	ldmia	sp!, {r4, lr}
 	mov	r1, #1
 	mov	r0, #148	// 0x94
-	b	sub_514380f8 
+	b	sub_514380f8 	// 0x51417f9c
+
+sub_51417fa0:
 	stmdb	sp!, {r4, lr}
 	bl	sub_51415374 
 	mov	r4, r0
@@ -2983,7 +3024,7 @@ sub_51418068:
 	ldr	r1, var_514181e4
 	add	r0, r0, #1872	// 0x750
 	mov	r2, #2224	// 0x8b0
-	bl	514042bc 
+	bl	sub_514042bc 
 	mov	r0, #0
 	bl	sub_51403f40 
 	cmp	r0, #0	
@@ -3004,7 +3045,7 @@ sub_51418068:
 	ldr	r2, [ip, #4072]
 	add	r1, r0, #0x8500000
 	mov	r0, r4
-	bl	514042bc 
+	bl	sub_514042bc 
 	add	ip, sp, #0x5e000
 	ldr	r0, [ip, #4084]
 	sxth r3,r0
@@ -3032,12 +3073,12 @@ _51418118:
 	ldr	r1, [ip, #1880]
 	ldr	r2, [ip, #1884]
 	add	r1, r1, #0x8500000
-	bl	514042bc 
+	bl	sub_514042bc 
 	b	_51418110
 _51418144:
 	ldr	r2, var_514181f0
 	ldr	r1, var_514181f4
-	bl	5143f0a8 
+	bl	sub_5143f0a8 
 	b	_51418110
 _51418154:
 	mov	r0, #0	
@@ -3047,7 +3088,7 @@ _51418154:
 	ldr	r2, [ip, #4044]
 	add	r1, r0, #0x8500000
 	mov	r0, r4
-	bl	514042bc
+	bl	sub_514042bc
 	add	ip, sp, #0x5e000
 	ldr	r0, [ip, #4056]
 	sxth r3,r0
@@ -3228,8 +3269,8 @@ asc_jetdroid:
 Download_Mode_MSG: //0x514184B8
 	STMFD   SP!, {R4,LR}
 	MOV     R0, #0x7D0
-	BL      sub_51430f80
-	BL      sub_51417fa0
+	bl	sub_51430f80
+	bl	sub_51417fa0
 	MOV     R0, #0
 	BL      sub_51417f24
 	MOV     R3, #0
@@ -3968,8 +4009,35 @@ var_5141b1a8:
 
 
 /*
+ *  5141d000
+ */
+
+sub_5141dc50:	// MISSING
+
+sub_5141df9c:	// MISSING
+
+
+/*
+ *  5141e000
+ */
+
+sub_5141e174:	// MISSING
+
+sub_5141e294:	// MISSING
+
+/*
  *  51420000
  */
+
+var_5142069c:	.word	0x80060000
+var_514206a0:	.word	0x80050000
+var_514206a4:	.word	0x80130000
+var_514206a8:	.word	0x515d1e40
+var_514206ac:	.word	0x0000aaaa
+var_514206b0:	.word	0x00005555
+var_514206b4:	.word	0x80110000
+
+
 
 sub_51420b24:
 	stmdb	sp!, {r4, r5, r6, lr}
@@ -4006,9 +4074,10 @@ _51420b80:
 	add	r1, r0, #16	// 0x10
 	mov	r0, r3
 	mov	r2, #16	// 0x10
-	bl	5142fadc
+	bl	sub_5142fadc
 	mov	ip, #1
 	b	_51420bb8 
+_51420bac:
 	add	r0, r0, #1
 	cmp	lr, r0
 	bhi	_51420b80
@@ -4020,6 +4089,23 @@ _51420bc4:
 	mov	r0, r4
 	b	ret_51420b58	// 0x51420bc8
 
+
+
+/*
+ *  51421000
+ */
+var_514211bc:	.word	0x80090000
+var_514211c0:	.word	0x80030000
+var_514211c4:	.word	0x80140000
+var_514211c8:	.word	0x515d1d20
+var_514211cc:	.word	0x80070000
+var_514211d0:	.word	0x80080000
+var_514211d4:	.word	0x515d1ef0
+var_514211d8:	.word	0x80010000
+
+_514211dc:	.word	0xeafff27e	//	b	5141dbdc
+
+sub_514211e0:	// MISSING
 
 
 
@@ -4089,7 +4175,7 @@ var_5142fd30:	.word	0x51433b00
 var_5142fd34:	.word	0x51649170
 
 
-
+sub_5142fadc:	// MISSING
 
 sub_5142fc84:
 	ldr	r0, var_5142fd34
@@ -4985,7 +5071,7 @@ _51430978:
 	mov	r0, r5
 	bl	sub_51430f80
 	mov	r0, #0
-	b	_51430974	// 0x514309cc
+	b	ret_51430974	// 0x514309cc
 
 var_514309d0:	.word	0x00000179
 var_514309d4:	.word	0x514302dc
@@ -5146,7 +5232,7 @@ _51430bd4:
 	bl	sub_51430f80
 	mov	r1, #0
 	mov	r0, r5
-	bl	aub_514304cc
+	bl	sub_514304cc
 	mov	r0, r6
 	bl	sub_51430f80 
 	mov	r0, #0	
@@ -5278,7 +5364,7 @@ _51430dc8:
 	mov	r0, r5
 	bl	sub_51430468 
 	mov	r0, #0
-	b	ret_51430dc0´	// 0x51430dfc
+	b	ret_51430dc0	// 0x51430dfc
 
 sub_51430e00:
 	stmdb	sp!, {r3, r4, r5, r6, r7, r8, r9, lr}
@@ -5406,10 +5492,63 @@ _51430fb0:
 	bne	_51430f98 
 	bx	lr	// 0x51430fb8
 
+sub_51430fbc:	// MISSING
+
 /*
  *  51431000
  */
  
+sub_514310b8:
+	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, lr}
+	mov	r4, r0
+	ldr	r7, var_514311a0
+	ldr	r8, var_514311a4
+	add	r6, r7, r4, lsl #3
+	ldr	r0, [r6, #4]
+	cmp	r0, #0
+	beq	_514310e0
+	str	r4, [r8]
+ret_514310dc:
+	ldmia	sp!, {r4, r5, r6, r7, r8, r9, sl, pc}
+_514310e0:
+	mov	r0, #4
+	bl	sub_514376ec
+	mov	r5, r0
+	cmp	r4, #0
+	bne	_51431124
+	str	r5, [r7, r4, lsl #3]
+	mov	r0, #10	// 0xa
+	str	r0, [r6, #4]
+	str	r4, [r8]
+	mov	r5, #100	// 0x64
+	mov	r4, #1
+_5143110c:
+	mul	r0, r4, r5
+	bl	sub_51430fbc
+	add	r4, r4, #1
+	cmp	r4, #4
+	bls	_5143110c
+	b	ret_514310dc
+_51431124:
+	str	r5, [r7, r4, lsl #3]
+	ldr	r0, [r7, #4]
+	ldr	r1, [r7]
+	mul	r0, r5, r0
+	bl	sub_5143fee8
+	mov	r9, r0
+	str	r0, [r6, #4]
+	ldr	r0, [r7, #4]
+	ldr	r1, [r7]
+	mul	r0, r5, r0
+	bl	sub_5143fee8
+	cmp	r1, #0
+	beq	_51431160
+	add	r0, r9, #1
+	str	r0, [r6, #4]
+_51431160:
+	str	r4, [r8]
+	b	ret_514310dc	// 0x51431164
+
 sub_51431168:
 	ldr	r0, var_514311a4
 	mov	r3, #0
@@ -5425,7 +5564,7 @@ _51431180:
 	cmp	r0, #8
 	bcc	_51431180
 	mov	r0, #0	// 0x0
-	b	_514310b8
+	b	sub_514310b8
 
 var_514311a0:	.word	0x516491f8
 var_514311a4:	.word	0x51446140
@@ -5541,6 +5680,7 @@ _5143130c:
 	str	r4, [r1, #20]
 	str	sl, [r1, #24]
 	b	ret_5143126c
+_5143132c:
 	str	r7, [r2, #224]
 	str	r9, [r2, #240]
 	cmp	lr, #0
@@ -5900,9 +6040,9 @@ var_51431a18:	.word	0x00000a0a
 sub_51431fb8:
 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, lr}
 	cmp	r2, #0	
-	beq	_514320fc 
+	beq	ret_514320fc 
 	cmp	r3, #0	
-	beq	_514320fc 
+	beq	ret_514320fc 
 	ldr	r5, var_51432a9c
 	rsb	lr, r0, r0, lsl #3
 	mov	r4, #2	
@@ -7186,7 +7326,7 @@ sub_51435e20:
 	ldr	r1, var_51435d80
 	ldr	r1, [r1, #28]
 	tst	r1, #4
-	beq	_51435e38
+	beq	ret_51435e38
 	mov	r1, #64	// 0x40
 	b	sub_51435c54
 ret_51435e38:
@@ -7299,6 +7439,20 @@ _514362c8:
 	b	_514366fc
 	b	ret_51436408
 	b	_5143672c	// 0x514363d8
+
+_514363dc:
+	cmp	r4, #15	// 0xf
+	bls	_514363f4
+	ldr	r2, var_51436478
+	add	r1, pc, #108	// 0x6c		// !!!! PC relative 0x514363e8 + 0x6c
+	add	r0, pc, #136	// 0x88		// !!!! PC relative 0x514363ec + 0x88
+	bl	sub_51403564
+_514363f4:
+	and	r0, r4, #15	// 0xf
+	ldr	r1, [r5, #32]
+	bic	r1, r1, #0xf00000
+	orr	r0, r1, r0, lsl #20
+	str	r0, [r5, #32]	// 0x51436404
 
 ret_51436408:
 	ldmia	sp!, {r4, r5, r6, pc}
@@ -7797,6 +7951,7 @@ _51436cb0:
 	mov	r4, #1
 	str	r2, [r5, #4]
 	b	_51436cd0
+_51436cbc:
 	mov	r4, #2
 	str	r2, [r5, #4]
 	b	_51436cd0 
@@ -7923,6 +8078,7 @@ _51436e48:
 _51436e50:
 	mov	r4, #2
 	b	_51436e34
+_51436e58:
 	cmp	r1, #3
 	beq	_51436e94
 	cmp	r1, #7
@@ -7943,6 +8099,7 @@ _51436e8c:
 _51436e94:
 	mov	r4, #2
 	b	_51436e78
+_51436e9c:
 	ldr	r2, var_5143736c
 	cmp	r1, #3
 	ldr	r2, [r2, #4]
@@ -8056,6 +8213,7 @@ _51436fec:
 _51437000:
 	mov	r4, #1
 	b	_51436fec 
+_51437008:
 	cmp	r1, #1
 	beq	_51437028 
 	cmp	r1, #4
@@ -8088,6 +8246,7 @@ _5143705c:
 	orr	r0, r0, r4, lsl #1
 	str	r0, [r6, #28]
 	b	_514370b8
+_51437070:
 	cmp	r1, #3
 	beq	_51437090
 	cmp	r1, #6
@@ -8529,7 +8688,7 @@ _51437b70:
 	mov	r0, r4
 	bl	sub_5143fee8
 	mov	r9, r0
-	b	sub_51437f64
+	b	_51437f64
 _51437b8c:
 	add	r0, pc, #344	// 0x158	// !!!! PC relative 0x5137b8c + 0x158
 	bl	sub_51403564
@@ -10375,7 +10534,7 @@ sub_5143a924:
 	mov	r0, #30	// 0x1e
 	bl	sub_51433dbc
 	cmp	r0, #1	
-	beq	ret_5143a958
+	beq	_5143a958
 	ldr	r0, var_5143a83c
 	ldr	r1, var_5143b13c
 	str	r1, [r0, #16]
@@ -10966,6 +11125,7 @@ sub_5143b22c:
 	add	r0, r0, #1	
 	str	r0, [r7, #20]
 	mvn	r0, #0	
+_5143b26c:
 	add	sp, sp, #20	// 0x14
 ret_5143b270:
 	ldmia	sp!, {r4, r5, r6, r7, r8, r9, pc}
@@ -11109,7 +11269,7 @@ _5143b44c:
 	cmp	r4, #5	
 	bcc	_5143b418
 	mov	r0, #0	
-	b	ret_5143b26c	// 0x5143b478
+	b	_5143b26c	// 0x5143b478
 
 sub_5143b47c:
 	stmdb	sp!, {r3, r4, r5, lr}
@@ -11483,6 +11643,12 @@ var_5143e0b0:	.word	0x0001004e
  *  5143f000
  */
 
+sub_5143f0a8:
+	and	r3, r2, #255	// 0xff
+	orr	r2, r3, r3, lsl #8
+	orr	r2, r2, r2, lsl #16
+	b	_5143f180	// 0x5143f0b4
+
 _5143f0b8:
 	subs	r2, r2, #32	// 0x20
 	stmdb	sp!, {r4, lr}
@@ -11543,6 +11709,7 @@ _5143f13c:
 	mov	pc, lr
 _5143f17c:
 	mov	r2, #0	
+_5143f180:
 	cmp	r1, #4	
 	bcc	_5143f1ac
 	ands	ip, r0, #3
@@ -11791,6 +11958,11 @@ _waitloop:
 	cmp	r0, #0
 	bne	_waitloop
 	bx	lr
+
+_init_start_qi:
+	bl	_wait_10s
+//	ldr	pc, _start_armboot
+	ldr	pc, _start_oldboot
 
 _start_armboot:
 	.word 	start_qi
