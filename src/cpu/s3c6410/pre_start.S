@@ -11960,7 +11960,8 @@ _waitloop:
 	bx	lr
 
 _init_start_qi:
-	bl	_wait_10s
+	b	_init_start_qi
+//	bl	_wait_10s
 //	ldr	pc, _start_armboot
 	ldr	pc, _start_oldboot
 
