@@ -375,7 +375,7 @@ var_514018b4:	.word	0x000d0a20
 sub_514018b8:
 	stmdb	sp!, {r4, lr}
 	add	r0, pc, #504	// 0x1f8	// PC rel 0x514018bc + 0x1f8 = 0x51401ab4
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _514018c4:
 	b	_514018c4
 
@@ -470,7 +470,7 @@ _51401a0c:
 	add	r1, pc, #196	// 0xc4		// PC rel 0x51401a0c + 0xc4 = 0x51401ad0
 _51401a10:
 	add	r0, pc, #196	// 0xc4		// PC rel 0x51401a10 + 0xc4 = 0x51401ad4
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	mov	r1, #1	
 	mov	r0, #115	// 0x73
 	bl	sub_51438078 
@@ -504,14 +504,14 @@ _51401a74:
 	add	r1, pc, #92	// 0x5c	// PC rel 0x51401a74 + 0x5c = 0x51401ad0
 _51401a78:
 	add	r0, pc, #112	// 0x70	// PC rel 0x51401a78 + 0x70 = 0x51401ae4
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 	mov	r1, #1	
 	mov	r0, #180	// 0xb4
 	bl	sub_51438078 
 	cmp	r4, #0
 	beq	ret_51401aac
 	add	r0, pc, #104	// 0x68	// PC rel 0x51401a94 + 0x68 = 0x51401afc
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	ldmia	sp!, {r4, lr}
 	mov	r1, #0
 	mov	r0, #180	// 0xb4
@@ -590,7 +590,7 @@ _51401b54:
 	cmp	r0, #0	
 	beq	_51401bc8 
 	add	r0, pc, #392	// 0x188	// !!!! PC relative 0x51401bb8 + 0x188
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51401bc0:
 	add	sp, sp, #40	// 0x28
 	ldmia	sp!, {r4, pc}
@@ -607,7 +607,7 @@ sub_51401bd8:
 	cmp	r0, #0
 	beq	_51401bfc 
 	add	r0, pc, #376	// 0x178	// !!!! PC relative 0x51401bec + 0x178
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 	mov	r0, #0	
 ret_51401bf8:
 	ldmia	sp!, {r4, pc}
@@ -617,7 +617,7 @@ _51401bfc:
 	cmp	r0, #0	
 	beq	_51401c1c
 	add	r0, pc, #364	// 0x16c	// !!!! PC relative 0x51401c0c + 0x16c
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 	mov	r0, #0	
 	b	ret_51401bf8 
 _51401c1c:
@@ -653,25 +653,25 @@ sub_51401c3c:	stmdb	sp!, {r2, r3, r4, r5, r6, r7, r8, lr}
 	bl	sub_5141ade0
 _51401c90:
 	add	r0, pc, #252	// 0xfc		// !!!! PC relative 0x51401c90 + 0xfc
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	mov	r0, #24	// 0x18
 	bl	sub_5141b008
 _51401ca0:
 	add	r0, pc, #260	// 0x104	// !!!! PC relative 0x51401ca0 + 0x104
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	mov	r1, #0
 	mov	r0, #4
 	bl	sub_514362b4
 	bl	sub_51431168
 _51401cb8:
 	add	r0, pc, #260	// 0x104	// !!!! PC relative 0x51401cb8 + 0x104
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	ldr	r0, var_51401de8
 	ldr	r0, [r0]
 	ldr	r1, [r0, #2308]		// !!!!
 _51401ccc:
 	add	r0, pc, #280	// 0x118	// !!!! PC relative 0x51401ccc + 0x118
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	mov	r0, #67	// 0x43
 	bl	sub_514376ec
 	mov	r4, r0
@@ -693,13 +693,13 @@ _51401d10:
 	mov	r2, r7
 	str	r4, [sp, #4]
 	str	r5, [sp]
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 	bl	sub_51401bd8
 	cmp	r0, #0	
 	bne	ret_51401d40
 _51401d34:
 	add	r0, pc, #284	// 0x11c	// PC rel 0x51401d34 + 0x11c = 0x51401e50
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	bl	sub_514018b8
 ret_51401d40:
 	ldmia	sp!, {r2, r3, r4, r5, r6, r7, r8, pc}	// 0x51401d40
@@ -1062,6 +1062,7 @@ _51403360:
 	and	r0, r0, #255	// 0xff
 	b	sub_51403294 	// 0x5140336c
 
+SimpleDebugPrint:
 sub_51403564:
 	stmdb	sp!, {r0, r1, r2, r3}
 	stmdb	sp!, {r3, r4, r5, lr}
@@ -1681,7 +1682,7 @@ sub_51415668:
 	mov	r2, #101	// 0x65
 	mov	r1, #100	// 0x64
 	mov	r0, #3	
-	bl	sub_5142fd7c
+	bl	j_I2C_GPIO_Line_Open
 	ldr	r0, var_51415904
 	cmp	r4, #0	
 	beq	_514156cc 
@@ -1712,7 +1713,7 @@ ret_514156e4:
 
 _514156e8:
 	mov	r0, #3	
-	b	sub_5142fd80 	// 0x514156ec
+	b	j_I2C_GPIO_Line_Close 	// 0x514156ec
 
 sub_514153bc:
 	ldr	r0, var_51415448
@@ -1856,13 +1857,13 @@ _51415b9c:
 	cmp	r0, #0	
 	beq	_51415bb4
 	mov	r0, #1	
-	bl	sub_5142fd80
+	bl	j_I2C_GPIO_Line_Close
 _51415bb4:
 	ldr	r3, var_51415cb0
 	mov	r2, #156	// 0x9c
 	mov	r1, #155	// 0x9b
 	mov	r0, #1	
-	bl	sub_5142fd7c
+	bl	j_I2C_GPIO_Line_Open
 	mov	r0, #208	// 0xd0
 	strb	r0, [sp, #4]
 	strb	r5, [sp, #5]
@@ -1872,7 +1873,7 @@ _51415bb4:
 	mov	r2, #220	// 0xdc
 	mov	r1, #112	// 0x70
 	mov	r0, #1	
-	bl	sub_5142ff88
+	bl	I2C_GPIO_tx2
 	strb	r5, [sp, #4]
 	mov	r0, #1	
 	strb	r0, [sp, #5]
@@ -1881,14 +1882,14 @@ _51415bb4:
 	add	r3, sp, #4	
 	mov	r2, #221	// 0xdd
 	mov	r1, #112	// 0x70
-	bl	sub_5142ff88
+	bl	I2C_GPIO_tx2
 	mov	r0, #1000	// 0x3e8
 	bl	sub_51430f80
 	mov	r1, #30	// 0x1e
 	ldr	r0, var_51415cb4
 	bl	sub_51415998
 	mov	r0, #1	
-	bl	sub_5142fd80
+	bl	j_I2C_GPIO_Line_Close
 ret_51415c30:
 	ldmia	sp!, {r2, r3, r4, r5, r6, pc}
 
@@ -2946,7 +2947,7 @@ _51417f60:
 	bl	sub_514380f8
 	ldmia	sp!, {r4, lr}
 	add	r0, pc, #564	// 0x234	// !!!! PC relative 0x51417f7c + 0x234 = 0x514181b0
-	b	sub_51403564
+	b	SimpleDebugPrint
 _51417f84:
 	mov	r1, #1
 	mov	r0, #148	// 0x94
@@ -3362,7 +3363,7 @@ _51419994:
 	mov	r2, #141	// 0x8d
 	mov	r1, #140	// 0x8c
 	mov	r0, #0	
-	bl	sub_5142fd7c 
+	bl	j_I2C_GPIO_Line_Open 
 	mov	r5, r0
 	mov	r2, #0
 	stmib	sp, {r2, sl}
@@ -3371,10 +3372,10 @@ _51419994:
 	mov	r1, r7
 	mov	r0, #0	
 	str	r9, [sp]
-	bl	sub_5142ff1c 
+	bl	I2C_GPIO_tx1 
 	orr	r5, r0, r5
 	mov	r0, #0	
-	bl	sub_5142fd80 
+	bl	j_I2C_GPIO_Line_Close 
 	orr	r0, r0, r5
 	cmp	r0, #0	
 	bne	_514199ec
@@ -3386,7 +3387,7 @@ _514199ec:
 	mov	r2, r8
 	mov	r1, r7
 	add	r0, pc, #468	// 0x1d4	// !!!! PC relative 0x514199f8 + 0x1d4
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	add	r4, r4, #1
 	cmp	r4, #10	// 0xa
 	blt	_51419994
@@ -3406,17 +3407,17 @@ _51419a30:
 	mov	r2, #141	// 0x8d
 	mov	r1, #140	// 0x8c
 	mov	r0, #0	
-	bl	sub_5142fd7c 
+	bl	j_I2C_GPIO_Line_Open 
 	mov	r5, r0
 	mov	r3, r9
 	mov	r2, r8
 	mov	r1, r7
 	mov	r0, #0	
 	str	sl, [sp]
-	bl	sub_5142ff88
+	bl	I2C_GPIO_tx2
 	orr	r5, r0, r5
 	mov	r0, #0	
-	bl	sub_5142fd80
+	bl	j_I2C_GPIO_Line_Close
 	orr	r0, r0, r5
 	cmp	r0, #0	
 	bne	_51419a80 
@@ -3428,7 +3429,7 @@ _51419a80:
 	mov	r2, r8
 	mov	r1, r7
 	add	r0, pc, #376	// 0x178	// !!!! PC relative 0x51419a8c + 0x178
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	add	r4, r4, #1
 	cmp	r4, #10	// 0xa
 	blt	_51419a30 
@@ -3447,7 +3448,7 @@ _51419ac0:
 	mov	r2, #141	// 0x8d
 	mov	r1, #140	// 0x8c
 	mov	r0, #0
-	bl	sub_5142fd7c
+	bl	j_I2C_GPIO_Line_Open
 	mov	r5, r0
 	mov	r2, #0	
 	stmib	sp, {r2, r9}
@@ -3456,10 +3457,10 @@ _51419ac0:
 	mov	r1, #208	// 0xd0
 	mov	r0, #0
 	str	r8, [sp]
-	bl	sub_5142ff1c
+	bl	I2C_GPIO_tx1
 	orr	r5, r0, r5
 	mov	r0, #0
-	bl	sub_5142fd80
+	bl	j_I2C_GPIO_Line_Close
 	orr	r0, r0, r5
 	cmp	r0, #0	
 	bne	_51419b18
@@ -3469,7 +3470,7 @@ ret_51419b14:
 _51419b18:
 	mov	r1, r4
 	add	r0, pc, #292	// 0x124	// !!!! PC relative 0x51419b1c + 0x124
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	add	r4, r4, #1
 	cmp	r4, #10	// 0xa
 	blt	_51419ac0
@@ -3488,17 +3489,17 @@ _51419b50:
 	mov	r2, #141	// 0x8d
 	mov	r1, #140	// 0x8c
 	mov	r0, #0	
-	bl	sub_5142fd7c
+	bl	j_I2C_GPIO_Line_Open
 	mov	r5, r0
 	mov	r3, r8
 	mov	r2, r7
 	mov	r1, #208	// 0xd0
 	mov	r0, #0
 	str	r9, [sp]
-	bl	sub_5142ff88
+	bl	I2C_GPIO_tx2
 	orr	r5, r0, r5
 	mov	r0, #0
-	bl	sub_5142fd80
+	bl	j_I2C_GPIO_Line_Close
 	orr	r0, r0, r5
 	cmp	r0, #0	
 	bne	_51419ba0
@@ -3508,7 +3509,7 @@ ret_51419b9c:
 _51419ba0:
 	mov	r1, r4
 	add	r0, pc, #192	// 0xc0		// !!!! PC relative 0x51419ba4 + 0xc0
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	add	r4, r4, #1
 	cmp	r4, #10	// 0xa
 	blt	_51419b50
@@ -3803,7 +3804,7 @@ _5141ae40:
 	cmp	r1, #3	
 	beq	_5141af18 
 	add	r0, pc, #332	// 0x14c	// !!!! PC relative !!!! 0x5141ae60 + 0x14c
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	b	_5141af18 
 _5141ae6c:
 	cmp	r1, #0	
@@ -3824,7 +3825,7 @@ _5141ae98:
 	b	_5141af18 
 _5141aea4:
 	add	r0, pc, #264	// 0x108	// !!!! PC relative !!!! 0x5141aea4 + 0x108
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 	b	_5141af18 
 _5141aeb0:
 	cmp	r1, #0
@@ -3845,7 +3846,7 @@ _5141aedc:
 	b	_5141af18 
 _5141aee8:
 	add	r0, pc, #196	// 0xc4		// !!!! PC relative !!!! 0x5141aee8 + 0xc4
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 	b	_5141af18 
 _5141aef4:
 	mov	r0, #100	// 0x64
@@ -3858,7 +3859,7 @@ _5141af00:
 _5141af0c:
 	mov	r1, r4
 	add	r0, pc, #156	// 0x9c		// !!!! PC relative !!!! 0x5141af10 + 0x9c
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 _5141af18:
 	strb	r4, [r5, #1]
 	ldmia	sp!, {r3, r4, r5, pc}	// 0x5141af1c
@@ -4230,13 +4231,17 @@ _5142fd64:
 ret_5142fd78:
 	bx	lr
 
-sub_5142fd7c:
-	b	sub_514300a8
+/*
+ * I2C_GPIO
+ */
 
-sub_5142fd80:
-	b	sub_514301e0 
+j_I2C_GPIO_Line_Open:	// sub_5142fd7c:
+	b	I2C_GPIO_Line_Open
 
-sub_5142fd84:
+j_I2C_GPIO_Line_Close:	// sub_5142fd80:
+	b	I2C_GPIO_Line_Close 
+
+I2C_GPIO_Read_Write:	// sub_5142fd84:
 	stmdb	sp!, {r3, r4, r5, r6, r7, r8, r9, sl, fp, lr}
 	mov	r9, r2
 	ldr	r7, [sp, #40]
@@ -4248,19 +4253,19 @@ sub_5142fd84:
 	cmp	r7, #0
 	beq	_5142fe38
 	mov	r0, fp
-	bl	sub_514305b8
+	bl	I2C_GPIO_Condition_Start
 	and	r1, r8, #254	// 0xfe
 	mov	r0, fp
-	bl	sub_51430d78 
+	bl	I2C_GPIO_Condition_WriteByte 
 	mov	r1, sp
 	mov	r0, fp
-	bl	sub_51430a78 
+	bl	I2C_GPIO_Condition_GetAck 
 	ldrb	r0, [sp]
 	cmp	r0, #0	
 	beq	_5142fdec 
 	mov	r1, r8
 	add	r0, pc, #520	// 0x208	// !!!! PC relative 0x5142fddc + 0x208
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	mvn	r5, #0	
 	b	_5142fec0
 _5142fdec:
@@ -4269,16 +4274,16 @@ _5142fdec:
 _5142fdf4:
 	ldrb	r1, [r9, r4]
 	mov	r0, fp
-	bl	sub_51430d78
+	bl	I2C_GPIO_Condition_WriteByte
 	mov	r1, sp
 	mov	r0, fp
-	bl	sub_51430a78 
+	bl	I2C_GPIO_Condition_GetAck 
 	ldrb	r0, [sp]
 	cmp	r0, #0	
 	beq	_5142fe2c 
 	mov	r1, r4
 	add	r0, pc, #508	// 0x1fc	// !!!! PC relative 0x5142fe1c + 0x1fc
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 	mvn	r5, #0	
 	b	_5142fec0 
 _5142fe2c:
@@ -4290,19 +4295,19 @@ _5142fe38:
 	cmp	r6, #0	
 	beq	_5142fec0 
 	mov	r0, fp
-	bl	sub_514305b8
+	bl	I2C_GPIO_Condition_Start
 	orr	r1, r8, #1
 	mov	r0, fp
-	bl	sub_51430d78 
+	bl	I2C_GPIO_Condition_WriteByte 
 	mov	r1, sp
 	mov	r0, fp
-	bl	sub_51430a78
+	bl	I2C_GPIO_Condition_GetAck
 	ldrb	r0, [sp]
 	cmp	r0, #0	
 	beq	_5142fe80 
 	mov	r1, r8
 	add	r0, pc, #472	// 0x1d8	// !!!! PC relative 0x5142fe70 + 0x1d8
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	mvn	r5, #0
 	b	_5142fec0 
 _5142fe80:
@@ -4312,15 +4317,15 @@ _5142fe80:
 _5142fe8c:
 	add	r1, sl, r4
 	mov	r0, fp
-	bl	sub_51430e00 
+	bl	I2C_GPIO_Condition_ReadByte 
 	cmp	r4, r7
 	beq	_5142feac 
 	mov	r0, fp
-	bl	sub_51430b8c 
+	bl	I2C_GPIO_Condition_SetAck 
 	b	_5142feb4 
 _5142feac:
 	mov	r0, fp
-	bl	sub_51430c30 
+	bl	I2C_GPIO_Condition_SetNAck 
 _5142feb4:
 	add	r4, r4, #1	
 _5142feb8:
@@ -4328,7 +4333,7 @@ _5142feb8:
 	bcc	_5142fe8c 
 _5142fec0:
 	mov	r0, fp
-	bl	sub_5143079c 
+	bl	I2C_GPIO_Condition_Stop 
 	mov	r0, r5
 ret_5142fecc:
 	ldmia	sp!, {r3, r4, r5, r6, r7, r8, r9, sl, fp, pc}
@@ -4344,14 +4349,11 @@ sub_5142fef8:
 	mov	r2, #2	
 	strd	r2, [sp]
 	add	r2, sp, #8	
-	bl	sub_5142fd84 
+	bl	I2C_GPIO_Read_Write 
 ret_5142ff18:
 	ldmia	sp!, {r2, r3, ip, pc}
 
-
-
-
-sub_5142ff1c:
+I2C_GPIO_tx1:	// sub_5142ff1c:
 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, lr}
 	sub	sp, sp, #32	// 0x20
 	mov	r6, r0
@@ -4364,7 +4366,7 @@ sub_5142ff1c:
 	cmp	r4, #16	// 0x10
 	bls	_5142ff50 
 	add	r0, pc, #308	// 0x134	// !!!! PC relative 0x5142ff48 + 0x134
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _5142ff50:
 	strb	r5, [sp, #12]
 	mov	r2, r4
@@ -4377,12 +4379,12 @@ _5142ff50:
 	mov	r3, r9
 	mov	r1, r7
 	mov	r0, r6
-	bl	sub_5142fd84
+	bl	I2C_GPIO_Read_Write
 	add	sp, sp, #32	// 0x20
 ret_5142ff84:
 	ldmia	sp!, {r4, r5, r6, r7, r8, r9, sl, pc}
 
-sub_5142ff88:
+I2C_GPIO_tx2:	// sub_5142ff88:
 	stmdb	sp!, {r4, r5, r6, r7, r8, lr}
 	sub	sp, sp, #32	// 0x20
 	mov	r6, r0
@@ -4393,7 +4395,7 @@ sub_5142ff88:
 	cmp	r4, #16	// 0x10
 	bls	_5142ffb4
 	add	r0, pc, #208	// 0xd0		// !!!! PC relative 0x5142ffac + 0xd0
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _5142ffb4:
 	strb	r5, [sp, #12]
 	mov	r2, r4
@@ -4406,7 +4408,7 @@ _5142ffb4:
 	add	r2, sp, #12	// 0xc
 	mov	r1, r7
 	mov	r0, r6
-	bl	sub_5142fd84
+	bl	I2C_GPIO_Read_Write
 	add	sp, sp, #32	// 0x20
 ret_5142ffe8:
 	ldmia	sp!, {r4, r5, r6, r7, r8, pc}
@@ -4416,7 +4418,7 @@ ret_5142ffe8:
  *  51430000
  */
 
-sub_514300a8:
+I2C_GPIO_Line_Open:	// sub_514300a8:
 	stmdb	sp!, {r4, r5, r6, r7, r8, lr}
 	.word	0xed2d8b02	//	fstmdbd	sp!, {d8}
 	mov	r5, r0
@@ -4428,7 +4430,7 @@ sub_514300a8:
 	mov	r2, #67	// 0x43
 	add	r1, pc, #520	// 0x208	// !!!! PC relative 0x514300cc + 0x208
 	add	r0, pc, #536	// 0x218	// !!!! PC relative 0x514300d0 + 0x218
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _514300d8:
 	ldr	r3, var_51430314
 	add	r1, r5, r5, lsl #1
@@ -4451,7 +4453,7 @@ _514300d8:
 	strb	r2, [r3, r1, lsl #2]
 	mov	r1, r5
 	add	r0, pc, #488	// 0x1e8	// !!!! PC relative 0x51430128 + 0x1e8
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	mov	r0, #0
 _51430134:
 	.word	0xecbd8b02	//	fldmiad	sp!, {d8}
@@ -4459,7 +4461,7 @@ _51430134:
 _5143013c:
 	mov	r1, r5
 	add	r0, pc, #512	// 0x200	// !!!! PC relative 0x51430140 + 0x200
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	mvn	r0, #0	
 	b	_51430134
 _51430150:
@@ -4502,7 +4504,7 @@ _51430150:
 	mov	r0, #0	
 	b	_51430134	// 0x514301dc
 
-sub_514301e0:
+I2C_GPIO_Line_Close:	// sub_514301e0:
 	stmdb	sp!, {r4, lr}
 	mov	r4, r0
 	cmp	r4, #6
@@ -4510,7 +4512,7 @@ sub_514301e0:
 	mov	r2, #117	// 0x75
 	add	r1, pc, #224	// 0xe0	// !!!! PC relative 0x514301f4 + 0xe0
 	add	r0, pc, #240	// 0xf0	// !!!! PC relative 0x514301f8 + 0xf0
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51430200:
 	ldr	r2, var_51430314
 	add	r0, r4, r4, lsl #1
@@ -4519,7 +4521,7 @@ _51430200:
 	bne	_51430228 
 	mov	r1, r4
 	add	r0, pc, #368	// 0x170	// !!!! PC relative 0x51430218 + 0x170 
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 	mvn	r0, #0
 ret_51430224:
 	ldmia	sp!, {r4, pc}
@@ -4552,7 +4554,7 @@ _51430288:
 	mov	r0, #0
 	b	ret_51430224 // 0x5143028c
 
-sub_51430290:
+I2C_GPIO_Line_ConfigSDA:	// sub_51430290:
 	stmdb	sp!, {r4, r5, r6, lr}
 	mov	r4, r0
 	mov	r5, r1
@@ -4561,7 +4563,7 @@ sub_51430290:
 	mov	r2, #156	// 0x9c
 	add	r1, pc, #44	// 0x2c	// !!!! PC relative !!!! 0x514302a8 + 0x2c
 	add	r0, pc, #60	// 0x3c	// !!!! PC relative !!!! 0x514302ac + 0x3c
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _514302b4:
 	ldr	r1, var_51430314
 	add	r0, r4, r4, lsl #1
@@ -4570,7 +4572,7 @@ _514302b4:
 	bne	_514303ec
 	mov	r1, r4
 	add	r0, pc, #232	// 0xe8	// !!!! PC relative !!!! 0x514302cc + 0xe8
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	mvn	r0, #0
 ret_514302d8:
 	ldmia	sp!, {r4, r5, r6, pc}
@@ -4652,7 +4654,7 @@ _514303ec:
 	mov	r0, #0
 	b	ret_514302d8	// 0x51430400
 
-sub_51430404:
+I2C_GPIO_Line_ConfigSCL:	// sub_51430404:
 	stmdb	sp!, {r4, r5, r6, lr}
 	mov	r4, r0
 	mov	r5, r1
@@ -4661,7 +4663,7 @@ sub_51430404:
 	mov	r2, #181	// 0xb5
 	sub	r1, pc, #328	// 0x148	// !!!! PC relative !!!!! 0x5143041c + 0x148
 	sub	r0, pc, #312	// 0x138	// !!!! PC relative !!!!! 0x51430420 + 0x138
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51430428:
 	ldr	r1, var_51430314
 	add	r0, r4, r4, lsl #1
@@ -4670,7 +4672,7 @@ _51430428:
 	bne	_51430450 
 	mov	r1, r4
 	add	r0, pc, #616	// 0x268	// !!!! PC relative !!!!! 0x51430440 + 0x268
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	mvn	r0, #0	
 ret_5143044c:
 	ldmia	sp!, {r4, r5, r6, pc}
@@ -4683,7 +4685,7 @@ _51430450:
 _51430464:
 	b	ret_5143044c 
 
-sub_51430468:
+I2C_GPIO_Line_SetSDA:	// sub_51430468:
 	stmdb	sp!, {r4, r5, r6, lr}
 	mov	r4, r0
 	mov	r5, r1
@@ -4692,7 +4694,7 @@ sub_51430468:
 	mov	r2, #206	// 0xce
 	sub	r1, pc, #428	// 0x1ac	// !!!! PC relative !!!!! 0x51430480 +0x1ac
 	sub	r0, pc, #412	// 0x19c	// !!!! PC relative !!!!! 0x51430484 +0x19c
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _5143048c:
 	ldr	r1, var_51430314
 	add	r0, r4, r4, lsl #1
@@ -4701,7 +4703,7 @@ _5143048c:
 	bne	_514304b4 
 	mov	r1, r4
 	add	r0, pc, #564	// 0x234	// !!!! PC relative !!!!! 0x514304a4 +0x234
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	mvn	r0, #0	
 ret_514304b0:
 	ldmia	sp!, {r4, r5, r6, pc}
@@ -4713,7 +4715,7 @@ _514304b4:
 	mov	r0, #0
 	b	ret_514304b0 	// 0x514304c8
 
-sub_514304cc:
+I2C_GPIO_Line_SetSCL:	// sub_514304cc:
 	stmdb	sp!, {r4, r5, r6, lr}
 	mov	r4, r0
 	mov	r5, r1
@@ -4722,7 +4724,7 @@ sub_514304cc:
 	mov	r2, #231	
 	sub	r1, pc, #528	// 0x210	// !!!! PC relative !!!!! 0x514304e4 +0x210
 	sub	r0, pc, #512	// 0x200	// !!!! PC relative !!!!! 0x514304e8 +0x200
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _514304f0:
 	ldr	r1, var_51430314
 	add	r0, r4, r4, lsl #1
@@ -4731,7 +4733,7 @@ _514304f0:
 	bne	_51430518 
 	mov	r1, r4
 	add	r0, pc, #508	// 0x1fc	// !!!! PC relative !!!!! 0x51430508 +0x1fc
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 	mvn	r0, #0	
 ret_51430514:	
 	ldmia	sp!, {r4, r5, r6, pc}
@@ -4743,7 +4745,7 @@ _51430518:
 	mov	r0, #0	
 	b	ret_51430514 	// 0x5143052c
 
-sub_51430530:
+I2C_GPIO_Line_GetSDA:	// sub_51430530:
 	stmdb	sp!, {r4, r5, r6, lr}
 	mov	r4, r0
 	mov	r5, r1
@@ -4752,7 +4754,7 @@ sub_51430530:
 	mov	r2, #256	// 0x100
 	sub	r1, pc, #628	// 0x274	// !!!! PC relative !!!! 0x51430548 + 0x274
 	sub	r0, pc, #612	// 0x264	// !!!! PC relative !!!! 0x5143054c + 0x264
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51430554:
 	ldr	r1, var_51430314
 	add	r0, r4, r4, lsl #1
@@ -4761,7 +4763,7 @@ _51430554:
 	bne	_5143057c
 	mov	r1, r4
 	add	r0, pc, #452	// 0x1c4	// !!!! PC relative !!!! 0x5143056c + 0x452
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	mvn	r0, #0	
 ret_51430578:
 	ldmia	sp!, {r4, r5, r6, pc}
@@ -4786,7 +4788,7 @@ _514305a0:
 ret_514305b4:
 	bx	lr
 
-sub_514305b8:
+I2C_GPIO_Condition_Start:	// sub_514305b8:
 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, lr}
 	mov	r8, r0
 	mov	r4, #0
@@ -4795,7 +4797,7 @@ sub_514305b8:
 	ldr	r2, var_51430764
 	sub	r1, pc, #764	// 0x2fc	// !!!! PC relative !!!!! 0x514305d0 + 0x2fc
 	sub	r0, pc, #748	// 0x2ec	// !!!! PC relative !!!!! 0x514305d4 + 0x2ec
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _514305dc:
 	ldr	r1, var_51430314
 	add	r0, r8, r8, lsl #1
@@ -4804,7 +4806,7 @@ _514305dc:
 	bne	_51430604
 	mov	r1, r8
 	add	r0, pc, #364	// 0x16c	// !!!! PC relative !!!!! 0x514305f4 + 0x16c
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 	mvn	r0, #0	
 ret_51430600:
 	ldmia	sp!, {r4, r5, r6, r7, r8, r9, sl, pc}
@@ -4813,10 +4815,10 @@ _51430604:
 	ldr	r5, [r7, #8]
 	mov	r1, #1	
 	mov	r0, r8
-	bl	sub_51430468
+	bl	I2C_GPIO_Line_SetSDA
 	mov	r1, #0	
 	mov	r0, r8
-	bl	sub_51430404 
+	bl	I2C_GPIO_Line_ConfigSCL 
 	ldr	r9, var_51430798
 	mov	sl, r5, lsr #1
 _5143062c:
@@ -4833,23 +4835,23 @@ _5143062c:
 _51430654:
 	mov	r1, #1	
 	mov	r0, r8
-	bl	sub_514304cc 
+	bl	I2C_GPIO_Line_SetSCL 
 	mov	r1, #1	
 	mov	r0, r8
-	bl	sub_51430404 
+	bl	I2C_GPIO_Line_ConfigSCL 
 	mov	r1, #1	
 	mov	r0, r8
-	bl	sub_514304cc 
+	bl	I2C_GPIO_Line_SetSCL 
 	mov	r0, r5
 	bl	sub_51430f80 
 	mov	r1, #0	
 	mov	r0, r8
-	bl	sub_51430468 
+	bl	I2C_GPIO_Line_SetSDA 
 	mov	r0, sl
 	bl	sub_51430f80 
 	mov	r1, #0	
 	mov	r0, r8
-	bl	sub_514304cc 
+	bl	I2C_GPIO_Line_SetSCL 
 	mov	r0, sl
 	bl	sub_51430f80 
 	mov	r0, #0	
@@ -4915,7 +4917,7 @@ var_51430790:	.word	0x64252868
 var_51430794:	.word	0x000a2029
 var_51430798:	.word	0x000186a0
 
-sub_5143079c:
+I2C_GPIO_Condition_Stop:	// sub_5143079c:
 	stmdb	sp!, {r4, r5, r6, lr}
 	mov	r4, r0
 	cmp	r4, #6
@@ -4923,7 +4925,7 @@ sub_5143079c:
 	ldr	r2, var_514309d0
 	ldr	r1, var_514309d4 
 	ldr	r0, var_514309d8
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 _514307bc:
 	ldr	r1, var_51430314 
 	add	r0, r4, r4, lsl #1
@@ -4932,7 +4934,7 @@ _514307bc:
 	bne	_514307e4
 	mov	r1, r4
 	add	r0, pc, #512	// 0x200	// !!!! PC relative !!!!! 0x514307d4 +0x200
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	mvn	r0, #0
 ret_514307e0:
 	ldmia	sp!, {r4, r5, r6, pc}
@@ -4941,24 +4943,24 @@ _514307e4:
 	ldr	r5, [r0, #8]
 	mov	r1, #0
 	mov	r0, r4
-	bl	sub_51430468
+	bl	I2C_GPIO_Line_SetSDA
 	mov	r5, r5, lsr #1
 	mov	r0, r5
 	bl	sub_51430f80 
 	mov	r1, #1	
 	mov	r0, r4
-	bl	sub_514304cc
+	bl	I2C_GPIO_Line_SetSCL
 	mov	r0, r5
 	bl	sub_51430f80 
 	mov	r1, #1	
 	mov	r0, r4
-	bl	sub_51430468 
+	bl	I2C_GPIO_Line_SetSDA 
 	mov	r0, r5
 	bl	sub_51430f80 
 	mov	r0, #0	
 	b	ret_514307e0	// 0x51430830
 
-sub_51430834:
+I2C_GPIO_Condition_WriteBit:	// sub_51430834:
 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, lr}
 	mov	r7, r0
 	mov	r6, r1
@@ -4968,7 +4970,7 @@ sub_51430834:
 	ldr	r1, var_514309d4 
 	ldr	r0, var_514309d8
 	mov	r2, #448	// 0x1c0
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _5143085c:
 	ldr	r1, var_51430314
 	add	r0, r7, r7, lsl #1
@@ -4977,7 +4979,7 @@ _5143085c:
 	bne	_51430884 
 	mov	r1, r7
 	add	r0, pc, #400	// 0x190	// !!!! PC relative 0x51430874 + 0x190
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	mvn	r0, #0	
 ret_51430880:
 	ldmia	sp!, {r4, r5, r6, r7, r8, r9, sl, pc}
@@ -4986,13 +4988,13 @@ _51430884:
 	ldr	r8, [r5, #8]
 	mov	r1, r6
 	mov	r0, r7
-	bl	sub_51430468 
+	bl	I2C_GPIO_Line_SetSDA 
 	mov	sl, r8, lsr #1
 	mov	r0, sl
 	bl	sub_51430f80 
 	mov	r1, #0	
 	mov	r0, r7
-	bl	sub_51430404 
+	bl	I2C_GPIO_Line_ConfigSCL 
 	ldr	r9, var_51430798 
 _514308b4:
 	ldrb	r0, [r5, #1]
@@ -5010,24 +5012,24 @@ _514308b4:
 _514308e4:
 	mov	r1, #1	
 	mov	r0, r7
-	bl	sub_514304cc 
+	bl	I2C_GPIO_Line_SetSCL 
 	mov	r1, #1	
 	mov	r0, r7
-	bl	sub_51430404 
+	bl	I2C_GPIO_Line_ConfigSCL 
 	mov	r1, #1	
 	mov	r0, r7
-	bl	sub_514304cc 
+	bl	I2C_GPIO_Line_SetSCL 
 	mov	r0, r8
 	bl	sub_51430f80 
 	mov	r1, #0	
 	mov	r0, r7
-	bl	sub_514304cc 
+	bl	I2C_GPIO_Line_SetSCL 
 	mov	r0, sl
 	bl	sub_51430f80 
 	mov	r0, #0	
 	b	ret_51430880 	// 0x51430928
 
-sub_5143092c:
+I2C_GPIO_Condition_ReadBit:	// sub_5143092c:
 	stmdb	sp!, {r4, r5, r6, lr}
 	mov	r4, r0
 	mov	r6, r1
@@ -5036,7 +5038,7 @@ sub_5143092c:
 	ldr	r2, var_51430a40
 	sub	r1, pc, #1648	// 0x670	// !!!! PC relative 0x51430944 - 0x670
 	sub	r0, pc, #1632	// 0x660	// !!!! PC relative 0x51430948 - 0x660
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51430950:
 	ldr	r1, var_51430314
 	add	r0, r4, r4, lsl #1
@@ -5045,7 +5047,7 @@ _51430950:
 	bne	_51430978
 	mov	r1, r4
 	add	r0, pc, #212	// 0xd4	// !!!! PC relative 0x51430968 + 0xd4
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	mvn	r0, #0
 ret_51430974:
 	ldmia	sp!, {r4, r5, r6, pc}
@@ -5057,17 +5059,17 @@ _51430978:
 	bl	sub_51430f80
 	mov	r1, #1
 	mov	r0, r4
-	bl	sub_514304cc
+	bl	I2C_GPIO_Line_SetSCL
 	mov	r0, r5
 	bl	sub_51430f80
 	mov	r1, r6
 	mov	r0, r4
-	bl	sub_51430530
+	bl	I2C_GPIO_Line_GetSDA
 	mov	r0, r5
 	bl	sub_51430f80
 	mov	r1, #0
 	mov	r0, r4
-	bl	sub_514304cc
+	bl	I2C_GPIO_Line_SetSCL
 	mov	r0, r5
 	bl	sub_51430f80
 	mov	r0, #0
@@ -5116,7 +5118,7 @@ var_51430a6c:	.word	0x28684320
 var_51430a70:	.word	0x20296425
 var_51430a74:	.word	0x0000000a
 
-sub_51430a78:
+I2C_GPIO_Condition_GetAck:	// sub_51430a78:
 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, lr}
 	mov	r8, r0
 	mov	r5, r1
@@ -5126,7 +5128,7 @@ sub_51430a78:
 	ldr	r2, var_51430cd4 
 	sub	r1, pc, #1984	// 0x7c0	// !!!! PC relative !!!!! 0x51430a94 + 0x7c0
 	sub	r0, pc, #1968	// 0x7b0	// !!!! PC relative !!!!! 0x51430a98 + 0x7b0
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51430aa0:
 	ldr	r1, var_51430314
 	add	r0, r8, r8, lsl #1
@@ -5135,7 +5137,7 @@ _51430aa0:
 	bne	_51430ac8
 	mov	r1, r8
 	add	r0, pc, #536	// 0x218	// !!!! PC relative !!!!! 0x51430ab8 + 0x218
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	mvn	r0, #0	
 ret_51430ac4:
 	ldmia	sp!, {r4, r5, r6, r7, r8, r9, sl, pc}
@@ -5144,12 +5146,12 @@ _51430ac8:
 	ldr	r6, [r7, #8]
 	mov	r1, #0
 	mov	r0, r8
-	bl	sub_51430290 
+	bl	I2C_GPIO_Line_ConfigSDA 
 	mov	r0, r6
 	bl	sub_51430f80
 	mov	r1, #0	
 	mov	r0, r8
-	bl	sub_51430404 
+	bl	I2C_GPIO_Line_ConfigSCL 
 	ldr	r9, var_51430798
 	mov	sl, r6, lsr #1
 _51430af8:
@@ -5167,32 +5169,32 @@ _51430af8:
 _51430b24:
 	mov	r1, #1	
 	mov	r0, r8
-	bl	sub_514304cc
+	bl	I2C_GPIO_Line_SetSCL
 	mov	r1, #1	
 	mov	r0, r8
-	bl	sub_51430404 
+	bl	I2C_GPIO_Line_ConfigSCL 
 	mov	r1, #1
 	mov	r0, r8
-	bl	sub_514304cc
+	bl	I2C_GPIO_Line_SetSCL
 	mov	r0, sl
 	bl	sub_51430f80 
 	mov	r1, r5
 	mov	r0, r8
-	bl	sub_51430530 
+	bl	I2C_GPIO_Line_GetSDA 
 	mov	r0, sl
 	bl	sub_51430f80
 	mov	r1, #0
 	mov	r0, r8
-	bl	sub_514304cc 
+	bl	I2C_GPIO_Line_SetSCL 
 	mov	r1, #1	
 	mov	r0, r8
-	bl	sub_51430290 
+	bl	I2C_GPIO_Line_ConfigSDA 
 	mov	r0, sl
 	bl	sub_51430f80 
 	mov	r0, #0	
 	b	ret_51430ac4 	// 0x51430b88
 
-sub_51430b8c:
+I2C_GPIO_Condition_SetAck:	// sub_51430b8c:
 	stmdb	sp!, {r4, r5, r6, lr}
 	mov	r5, r0
 	cmp	r5, #6	
@@ -5200,7 +5202,7 @@ sub_51430b8c:
 	ldr	r1, var_514309d4 
 	ldr	r0, var_514309d8
 	mov	r2, #644	// 0x284
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 _51430bac:
 	ldr	r1, var_51430314
 	add	r0, r5, r5, lsl #1
@@ -5209,7 +5211,7 @@ _51430bac:
 	bne	_51430bd4
 	mov	r1, r5
 	add	r0, pc, #320	// 0x140 // !!!! PC relative 0x15430bc4 + 0x140
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	mvn	r0, #0
 ret_51430bd0:
 	ldmia	sp!, {r4, r5, r6, pc}
@@ -5218,27 +5220,27 @@ _51430bd4:
 	ldr	r4, [r0, #8]
 	mov	r1, #1	
 	mov	r0, r5
-	bl	sub_51430290
+	bl	I2C_GPIO_Line_ConfigSDA
 	mov	r1, #0	
 	mov	r0, r5
-	bl	sub_51430468
+	bl	I2C_GPIO_Line_SetSDA
 	mov	r6, r4, lsr #1
 	mov	r0, r6
 	bl	sub_51430f80
 	mov	r1, #1	
 	mov	r0, r5
-	bl	sub_514304cc
+	bl	I2C_GPIO_Line_SetSCL
 	mov	r0, r4
 	bl	sub_51430f80
 	mov	r1, #0
 	mov	r0, r5
-	bl	sub_514304cc
+	bl	I2C_GPIO_Line_SetSCL
 	mov	r0, r6
 	bl	sub_51430f80 
 	mov	r0, #0	
 	b	ret_51430bd0 	// 0x51430c2c
 
-sub_51430c30:
+I2C_GPIO_Condition_SetNAck:	// sub_51430c30:
 	stmdb	sp!, {r4, r5, r6, lr}
 	mov	r5, r0
 	cmp	r5, #6
@@ -5246,7 +5248,7 @@ sub_51430c30:
 	ldr	r2, var_51430d40 
 	sub	r1, pc, #2416	// 0x970	// !!!! PC relative 0x15430c44 - 0x970
 	sub	r0, pc, #2400	// 0x960	// !!!! PC relative 0x15430c48 - 0x960
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 _51430c50:
 	ldr	r1, var_51430314
 	add	r0, r5, r5, lsl #1
@@ -5255,7 +5257,7 @@ _51430c50:
 	bne	_51430c78
 	mov	r1, r5
 	add	r0, pc, #212	// 0xd4		// !!!! PC relative 0x15430b68 + 0xd4
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	mvn	r0, #0	
 ret_51430c74:
 	ldmia	sp!, {r4, r5, r6, pc}
@@ -5264,21 +5266,21 @@ _51430c78:
 	ldr	r4, [r0, #8]
 	mov	r1, #1
 	mov	r0, r5
-	bl	sub_51430290
+	bl	I2C_GPIO_Line_ConfigSDA
 	mov	r1, #1	
 	mov	r0, r5
-	bl	sub_51430468
+	bl	I2C_GPIO_Line_SetSDA
 	mov	r6, r4, lsr #1
 	mov	r0, r6
 	bl	sub_51430f80 
 	mov	r1, #1	
 	mov	r0, r5
-	bl	sub_514304cc
+	bl	I2C_GPIO_Line_SetSCL
 	mov	r0, r4
 	bl	sub_51430f80
 	mov	r1, #0	
 	mov	r0, r5
-	bl	sub_514304cc
+	bl	I2C_GPIO_Line_SetSCL
 	mov	r0, r6
 	bl	sub_51430f80
 	mov	r0, #0	
@@ -5326,7 +5328,7 @@ var_51430d6c:	.word	0x28684320
 var_51430d70:	.word	0x20296425
 var_51430d74:	.word	0x0000000a
 
-sub_51430d78:
+I2C_GPIO_Condition_WriteByte:	// sub_51430d78:
 	stmdb	sp!, {r4, r5, r6, lr}
 	mov	r5, r0
 	mov	r6, r1
@@ -5335,7 +5337,7 @@ sub_51430d78:
 	ldr	r1, var_514309d4 
 	ldr	r0, var_514309d8 
 	mov	r2, #728	// 0x2d8
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 _51430d9c:
 	ldr	r1, var_51430314 
 	add	r0, r5, r5, lsl #1
@@ -5344,7 +5346,7 @@ _51430d9c:
 	bne	_51430dc4 
 	mov	r1, r5
 	add	r0, pc, #344	// 0x158		// !!!! PC relative !!!!!
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	mvn	r0, #0
 ret_51430dc0:
 	ldmia	sp!, {r4, r5, r6, pc}
@@ -5355,18 +5357,18 @@ _51430dc8:
 	mov	r0, r6, lsr r0
 	and	r1, r0, #1
 	mov	r0, r5
-	bl	sub_51430834
+	bl	I2C_GPIO_Condition_WriteBit
 	add	r0, r4, #1
 	and	r4, r0, #255	// 0xff
 	cmp	r4, #8
 	bcc	_51430dc8
 	mov	r1, #0
 	mov	r0, r5
-	bl	sub_51430468 
+	bl	I2C_GPIO_Line_SetSDA 
 	mov	r0, #0
 	b	ret_51430dc0	// 0x51430dfc
 
-sub_51430e00:
+I2C_GPIO_Condition_ReadByte:	// sub_51430e00:
 	stmdb	sp!, {r3, r4, r5, r6, r7, r8, r9, lr}
 	mov	r6, r0
 	mov	r5, r1
@@ -5376,7 +5378,7 @@ sub_51430e00:
 	ldr	r2, var_51430f48 
 	ldr	r1, var_514309d4 
 	ldr	r0, var_514309d8 
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 _51430e28:
 	ldr	r8, var_51430314 
 	add	r7, r6, r6, lsl #1
@@ -5385,21 +5387,21 @@ _51430e28:
 	bne	_51430e50
 	mov	r1, r6
 	add	r0, pc, #260	// 0x104	// !!!! PC relative 0x51430e40 + 0x104
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 	mvn	r0, #0	
 ret_51430e4c:
 	ldmia	sp!, {r3, r4, r5, r6, r7, r8, r9, pc}
 _51430e50:
 	mov	r1, #0	
 	mov	r0, r6
-	bl	sub_51430290 
+	bl	I2C_GPIO_Line_ConfigSDA 
 	add	r7, r8, r7, lsl #2
 	ldr	r0, [r7, #8]
 	mov	r0, r0, lsr #2
 	bl	sub_51430f80 
 	mov	r1, #0
 	mov	r0, r6
-	bl	sub_51430404 
+	bl	I2C_GPIO_Line_ConfigSCL 
 	ldr	r8, var_51430798 
 _51430e7c:
 	ldrb	r0, [r7, #1]
@@ -5418,17 +5420,17 @@ _51430e7c:
 _51430eb0:
 	mov	r1, #1	
 	mov	r0, r6
-	bl	sub_514304cc 
+	bl	I2C_GPIO_Line_SetSCL 
 	mov	r1, #1	
 	mov	r0, r6
-	bl	sub_51430404
+	bl	I2C_GPIO_Line_ConfigSCL
 	mov	r0, #0	
 	strb	r0, [r5]
 	mov	r4, #0
 _51430ed4:
 	mov	r1, sp
 	mov	r0, r6
-	bl	sub_5143092c 
+	bl	I2C_GPIO_Condition_ReadBit 
 	ldrb	r2, [sp]
 	ldrb	r0, [r5]
 	rsb	r1, r4, #7	
@@ -5439,7 +5441,7 @@ _51430ed4:
 	bcc	_51430ed4 
 	mov	r1, #1
 	mov	r0, r6
-	bl	sub_51430290 
+	bl	I2C_GPIO_Line_ConfigSDA 
 	mov	r0, #0	
 	b	ret_51430e4c 	// 0x51430f10
 
@@ -5978,7 +5980,7 @@ _51431728:
 	bne	_51431750 
 	mov	r1, #0	
 	add	r0, pc, #684	// 0x2ac	// !!!! PC relative 0x51431738 + 0x2ac
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 	ldr	r0, [r6]
 	orr	r0, r0, #1	
 	str	r0, [r6]
@@ -5996,7 +5998,7 @@ _51431764:
 	bne	_5143178c 
 	mov	r1, #1	
 	add	r0, pc, #624	// 0x270	// !!!! PC relative 0x51431774 + 0x270
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 	ldr	r0, [r6]
 	orr	r0, r0, #2	
 	str	r0, [r6]
@@ -7072,7 +7074,7 @@ _514344c8:
 
 _514344dc:
 	add	r0, pc, #740	// 0x2e4	// !!!! PC relative 0x514344dc + 0x2e4
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	ldr	r0, var_51434804
 	ldr	r1, [r0]
 	orr	r1, r1, #0x800000
@@ -7118,7 +7120,7 @@ sub_51435b48:
 	subs	ip, ip, #3808	// 0xee0
 	beq	_51435b64 
 	add	r0, pc, #424	// 0x1a8	// !!!! PC relative 0x51435b5c + 0x1a8
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51435b64:
 	mov	r0, #0	
 	ldr	r1, var_51435d40
@@ -7140,7 +7142,7 @@ _51435b90:
 	bcc	_51435b6c 
 	ldr	r0, var_51435d44
 	mov	r1, r4
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	ldr	r0, var_51435d48
 	ldr	r1, [r0]
 	orr	r1, r1, #0x80000000
@@ -7154,7 +7156,7 @@ sub_51435bc4:
 	subs	ip, ip, #0xee0
 	beq	_51435bdc 
 	add	r0, pc, #368	// 0x170	// !!!! PC relative 0x51435bd4 + 0x170
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51435bdc:
 	ldr	r0, var_51435d80
 	ldr	r1, [r0, #20]
@@ -7182,7 +7184,7 @@ _51435c24:
 	cmp	r0, #11	// 0xb
 	bcc	_51435bfc 
 	ldr	r0, var_51435d8c
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 	ldr	r0, var_51435d48 
 	ldr	r1, [r0]
 	orr	r1, r1, #0x40000000
@@ -7218,7 +7220,7 @@ _51435c9c:
 	b	_51435cb8 
 _51435cb0:
 	add	r0, pc, #220	// 0xdc	// !!!! PC relative	0x51435cb0 + 0xdc
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 _51435cb8:
 	mov	r0, r4
 	ldmia	sp!, {r4, pc}
@@ -7446,7 +7448,7 @@ _514363dc:
 	ldr	r2, var_51436478
 	add	r1, pc, #108	// 0x6c		// !!!! PC relative 0x514363e8 + 0x6c
 	add	r0, pc, #136	// 0x88		// !!!! PC relative 0x514363ec + 0x88
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _514363f4:
 	and	r0, r4, #15	// 0xf
 	ldr	r1, [r5, #32]
@@ -7463,7 +7465,7 @@ _5143640c:
 	ldr	r2, var_5143648c
 	add	r1, pc, #60	// 0x3c
 	add	r0, pc, #88	// 0x58
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 _51436424:
 	and	r0, r4, #15	// 0xf
 	ldr	r1, [r5, #36]
@@ -7500,7 +7502,7 @@ _51436490:
 	ldr	r2, var_514368e0
 	sub	r1, pc, #72	// 0x48	// !!!! PC relative 0x5143649c - 0x48
 	sub	r0, pc, #44	// 0x2c	// !!!! PC relative 0x514364a0 - 0x2c
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _514364a8:
 	and	r0, r4, #15	// 0xf
 	ldr	r1, [r5, #36]
@@ -7515,7 +7517,7 @@ _514364c0:
 	ldr	r2, var_514368e4
 	sub	r1, pc, #120	// 0x78	// !!!! PC relative 0x514364cc - 0x78
 	sub	r0, pc, #92	// 0x5c	// !!!! PC relative 0x514364d0 - 0x5c
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _514364d8:
 	and	r0, r4, #15	// 0xf
 	ldr	r1, [r5, #36]
@@ -7530,7 +7532,7 @@ _514364f0:
 	ldr	r2, var_514368e8
 	sub	r1, pc, #168	// 0xa8	// !!!! PC relative 0x514364fc - 0xa8
 	sub	r0, pc, #140	// 0x8c	// !!!! PC relative 0x51436500 - 0xac
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51436508:
 	and	r0, r4, #15	// 0xf
 	ldr	r1, [r5, #40]
@@ -7545,7 +7547,7 @@ _51436520:
 	ldr	r2, var_514368ec
 	sub	r1, pc, #216	// 0xd8	// !!!! PC relative 0x5143652c - 0xd8
 	sub	r0, pc, #188	// 0xbc	// !!!! PC relative 0x51436530 - 0xbc
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51436538:
 	and	r0, r4, #15	// 0xf
 	ldr	r1, [r5, #40]
@@ -7560,7 +7562,7 @@ _51436550:
 	ldr	r2, var_514368f0
 	sub	r1, pc, #264	// 0x108	// !!!! PC relative 0x5143655c - 0x108
 	sub	r0, pc, #236	// 0xec		// !!!! PC relative 0x51436560 - 0xec
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 _51436568:
 	and	r0, r4, #15	// 0xf
 	ldr	r1, [r5, #32]
@@ -7575,7 +7577,7 @@ _51436580:
 	mov	r2, #2000	// 0x7d0
 	sub	r1, pc, #312	// 0x138	// !!!! PC relative 0x5143658c - 0x138
 	sub	r0, pc, #284	// 0x11c	// !!!! PC relative 0x51436590 - 0x11c
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51436598:
 	and	r0, r4, #15	// 0xf
 	ldr	r1, [r5, #36]
@@ -7590,7 +7592,7 @@ _514365b0:
 	ldr	r2, var_514368f4
 	sub	r1, pc, #360	// 0x168	// !!!! PC relative 0x514365bc - 0x168
 	sub	r0, pc, #332	// 0x14c	// !!!! PC relative 0x514365c0 - 0x14c
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _514365c8:
 	ldr	r0, [r5, #32]
 	bic	r0, r0, #0xf0000000
@@ -7604,7 +7606,7 @@ _514365dc:
 	ldr	r2, var_514368f8
 	sub	r1, pc, #404	// 0x194	// !!!! PC relative 0x514365e8 - 0x194
 	sub	r0, pc, #376	// 0x178	// !!!! PC relative 0x514365ec - 0x178
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 _514365f4:
 	and	r0, r4, #15	// 0xf
 	ldr	r1, [r5, #36]
@@ -7619,7 +7621,7 @@ _5143660c:
 	ldr	r2, var_514368fc
 	sub	r1, pc, #452	// 0x1c4	// !!!! PC relative 0x51436618 - 0x1c4
 	add	r0, pc, #732	// 0x2dc	// !!!! PC relative 0x5143661c - 0x2dc
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51436624:
 	and	r0, r4, #3	
 	ldr	r1, [r5, #32]
@@ -7634,7 +7636,7 @@ _5143663c:
 	ldr	r2, var_51436910
 	sub	r1, pc, #500	// 0x1f4	// !!!! PC relative 0x51436648 - 0x1f4
 	sub	r0, pc, #472	// 0x1d8	// !!!! PC relative 0x5143664c - 0x1d8
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51436654:
 	and	r0, r4, #15	// 0xf
 	ldr	r1, [r5, #40]
@@ -7649,7 +7651,7 @@ _5143666c:
 	mov	r2, #2080	// 0x820
 	sub	r1, pc, #548	// 0x224	// !!!! PC relative 0x51436678 - 0x224
 	sub	r0, pc, #520	// 0x208	// !!!! PC relative 0x5143667c - 0x208
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51436684:
 	and	r0, r4, #15	// 0xf
 	ldr	r1, [r5, #36]
@@ -7664,7 +7666,7 @@ _5143669c:
 	ldr	r2, var_51436914
 	sub	r1, pc, #596	// 0x254	// !!!! PC relative 0x514366a8 - 0x254
 	sub	r0, pc, #568	// 0x238	// !!!! PC relative 0x514366ac - 0x238
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 _514366b4:
 	and	r0, r4, #15	// 0xf
 	ldr	r1, [r5, #32]
@@ -7679,7 +7681,7 @@ _514366cc:
 	ldr	r2, var_51436918
 	sub	r1, pc, #644	// 0x284	// !!!! PC relative 0x514366d8 - 0x284
 	add	r0, pc, #568	// 0x238	// !!!! PC relative 0x514366dc - 0x238
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _514366e4:
 	and	r0, r4, #1	
 	ldr	r1, [r5, #32]
@@ -7694,7 +7696,7 @@ _514366fc:
 	ldr	r2, var_5143692c
 	sub	r1, pc, #692	// 0x2b4	// !!!! PC relative 0x51436708 - 0x2b4
 	add	r0, pc, #540	// 0x21c	// !!!! PC relative 0x5143670c - 0x21c
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51436714:
 	and	r0, r4, #7
 	ldr	r1, [r5, #32]
@@ -7709,7 +7711,7 @@ _5143672c:
 	ldr	r2, var_51436940
 	sub	r1, pc, #740	// 0x2e4	// !!!! PC relative 0x51436738 - 0x2e4
 	sub	r0, pc, #712	// 0x2c8	// !!!! PC relative 0x5143673c - 0x2c8
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51436744:
 	and	r0, r4, #15	// 0xf
 	ldr	r1, [r5, #32]
@@ -7720,7 +7722,7 @@ _51436744:
 
 _5143675c:
 	add	r0, pc, #480	// 0x1e0
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	ldr	r0, var_51435d48
 	ldr	r1, [r0]
 	orr	r1, r1, #0x200000
@@ -7883,7 +7885,7 @@ _51436bcc:
 	b	_51436be0
 _51436bd8:
 	add	r0, pc, #356	// 0x164	// !!!! PC relative 0x51436bd8 + 0x164
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51436be0:
 	ldr	r0, [r6, #28]
 	bic	r0, r0, #0xc0000
@@ -7920,7 +7922,7 @@ _51436c44:
 	b	_51436c58
 _51436c50:
 	add	r0, pc, #236	// 0xec		// !!!! PC relative 0x51436c50 + 0xec
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51436c58:
 	ldr	r0, [r6, #28]
 	bic	r0, r0, #0x300000
@@ -7957,7 +7959,7 @@ _51436cbc:
 	b	_51436cd0 
 _51436cc8:
 	add	r0, pc, #116	// 0x74		// !!!! PC relative 0x51436cc8 + 0x74
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 _51436cd0:
 	ldr	r0, [r6, #28]
 	bic	r0, r0, #0xc00000
@@ -8016,7 +8018,7 @@ _51436d88:
 	b	_51436d98
 _51436d90:
 	sub	r0, pc, #84	// 0x54		// !!!! PC relative 0x51436d90 - 0x54
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 _51436d98:
 	ldr	r0, [r6, #28]
 	bic	r0, r0, #896	// 0x380
@@ -8049,7 +8051,7 @@ _51436df0:
 	b	_51436e00
 _51436df8:
 	sub	r0, pc, #188	// 0xbc		// !!!! PC relative 0x51436df8 - 0xbc
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51436e00:
 	ldr	r0, [r6, #28]
 	bic	r0, r0, #0x1c00
@@ -8065,7 +8067,7 @@ _51436e14:
 	cmp	r1, #8
 	beq	_51436e34
 	sub	r0, pc, #240	// 0xf0		// !!!! PC relative 0x51436e2c - 0xf0
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51436e34:
 	ldr	r0, [r6, #28]
 	bic	r0, r0, #0xc000000
@@ -8086,7 +8088,7 @@ _51436e58:
 	cmp	r1, #8
 	beq	_51436e78
 	sub	r0, pc, #308	// 0x134	// !!!! PC relative 0x51436e70 - 0x134
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51436e78:
 	ldr	r0, [r6, #28]
 	bic	r0, r0, #0x30000000
@@ -8129,7 +8131,7 @@ _51436eec:
 	b	_51436f00
 _51436ef8:
 	sub	r0, pc, #444	// 0x1bc	// !!!! PC relative 0x51436ef8 - 0x1bc
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51436f00:
 	ldr	r0, [r6, #28]
 	bic	r0, r0, #0xc000
@@ -8166,7 +8168,7 @@ _51436f64:
 	b	_51436f78
 _51436f70:
 	sub	r0, pc, #564	// 0x234	// !!!! PC relative 0x51436f70 - 0x234
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51436f78:
 	ldr	r0, [r6, #28]
 	bic	r0, r0, #0x30000
@@ -8189,7 +8191,7 @@ _51436fa8:
 	b	_51436fc0
 _51436fb8:
 	sub	r0, pc, #636	// 0x27c	// !!!! PC relative 0x51436fb8 - 0x27c
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 _51436fc0:
 	ldr	r0, [r6, #28]
 	bic	r0, r0, #0x80000000
@@ -8203,7 +8205,7 @@ _51436fd4:
 	cmp	r1, #8
 	beq	_51436fec 
 	sub	r0, pc, #680	// 0x2a8	// !!!! PC relative 0x51436fe4 - 0x2a8
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51436fec:
 	ldr	r0, [r6, #28]
 	bic	r0, r0, #0x2000
@@ -8222,7 +8224,7 @@ _51437008:
 	b	_51437028 
 _51437020:
 	sub	r0, pc, #740	// 0x2e4	// !!!! PC relative 0x51437020 - 0x2e4
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51437028:
 	ldr	r0, [r6, #28]
 	bic	r0, r0, #1
@@ -8239,7 +8241,7 @@ _5143703c:
 	b	_5143705c
 _51437054:
 	sub	r0, pc, #792	// 0x318	// !!!! PC relative 0x51437054 - 0x318
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 _5143705c:
 	ldr	r0, [r6, #28]
 	bic	r0, r0, #2
@@ -8255,7 +8257,7 @@ _51437070:
 	b	_51437090
 _51437088:
 	sub	r0, pc, #844	// 0x34c	// !!!! PC relative 0x51437088 - 0x34c
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51437090:
 	ldr	r0, [r6, #28]
 	bic	r0, r0, #4
@@ -8265,7 +8267,7 @@ _51437090:
 
 _514370a4:
 	add	r0, pc, #708	// 0x2c4	// !!!! PC relative 0x514370a4 + 0x2c4
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 	ldr	r0, [r5]
 	orr	r0, r0, #0x80000
 	str	r0, [r5]
@@ -8279,7 +8281,7 @@ _514370b8:
 	str	r0, [r6, #2052]
 	ldmia	sp!, {r4, r5, r6, lr}
 	add	r0, pc, #720	// 0x2d0	// !!!! PC relative 0x514370d4 + 0x2d0
-	b	sub_51403564
+	b	SimpleDebugPrint
 ret_514370dc:
 	ldmia	sp!, {r4, r5, r6, pc}
 
@@ -8465,7 +8467,7 @@ _51437888:
 	b	_51437898
 _51437890:
 	add	r0, pc, #348	// 0x15c	// !!!! PC relative 0x51437890 + 0x15c
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51437898:
 	ldr	r0, [r5, #36]
 	and	r0, r0, #15	// 0xf
@@ -8476,7 +8478,7 @@ _51437898:
 	b	_51437f64
 _514378b4:
 	add	r0, pc, #372	// 0x174	// !!!! PC relative 0x514378b4 + 0x174
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	b	_51437f64
 
 _514378c0:
@@ -8512,7 +8514,7 @@ _51437924:
 	b	_51437934
 _5143792c:
 	add	r0, pc, #288	// 0x120	// !!!! PC relative 0x5143792c + 0x120
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51437934:
 	ldr	r0, [r5, #36]
 	and	r0, r0, #240	// 0xf0
@@ -8523,7 +8525,7 @@ _51437934:
 	b	_51437f64
 _51437950:
 	add	r0, pc, #312	// 0x138	// !!!! PC relative 0x51437950 + 0x138
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	b	_51437f64
 
 _5143795c:
@@ -8559,7 +8561,7 @@ _514379c0:
 	b	_514379d0
 _514379c8:
 	add	r0, pc, #228	// 0xe4	// !!!! PC relative 0x514379c8 + 0xe4
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _514379d0:
 	ldr	r0, [r5, #36]
 	and	r0, r0, #3840	// 0xf00
@@ -8637,7 +8639,7 @@ var_51437aec:	.word	0x000a2032
 
 _51437af0:
 	add	r0, pc, #404	// 0x194	// !!!! PC relative 0x5137af0 + 0x194
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	b	_51437f64	// 0x51437af8
 
 _51437afc:
@@ -8680,7 +8682,7 @@ _51437b60:
 	b	_51437b70
 _51437b68:
 	add	r0, pc, #320	// 0x140	// !!!! PC relative 0x5137b68 + 0x140
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51437b70:
 	ldr	r0, [r5, #40]
 	and	r0, r0, #3840	// 0xf00
@@ -8691,7 +8693,7 @@ _51437b70:
 	b	_51437f64
 _51437b8c:
 	add	r0, pc, #344	// 0x158	// !!!! PC relative 0x5137b8c + 0x158
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	b	_51437f64	// 0x51437b94
 
 _51437b98:
@@ -8730,7 +8732,7 @@ _51437c00:
 	b	_51437c0c
 _51437c04:
 	add	r0, pc, #260	// 0x104	// !!!! PC relative 0x5137c04 + 0x104
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51437c0c:
 	ldr	r0, [r5, #40]
 	and	r0, r0, #61440	// 0xf000
@@ -8741,7 +8743,7 @@ _51437c0c:
 	b	_51437f64
 _51437c28:
 	add	r0, pc, #284	// 0x11c	// !!!! PC relative 0x5137c28 + 0x11c
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	b	_51437f64	// 0x51437c30
 
 _51437c34:
@@ -8759,7 +8761,7 @@ _51437c34:
 	beq	_51437c70
 	mov	r7, #0
 	add	r0, pc, #256	// 0x100	// !!!! PC relative 0x5137c68 + 0x100
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51437c70:
 	ldr	r0, [r5, #36]
 	and	r0, r0, #0xf000
@@ -8854,7 +8856,7 @@ _51437dbc:
 	b	_51437c70 
 _51437dcc:
 	add	r0, pc, #424	// 0x1a8	// !!!! PC relative 0x51437dcc + 0x1a8
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 	b	_51437f64 
 _51437dd8:
 	mov	r0, r4
@@ -8873,7 +8875,7 @@ _51437dd8:
 	b	_51437f64
 _51437e10:
 	add	r0, pc, #392	// 0x188	// !!!! PC relative 0x51437e10 + 0x188
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 	b	_51437f64 
 _51437e1c:
 	mov	r0, r4
@@ -8899,7 +8901,7 @@ _51437e54:
 _51437e64:
 	mov	r4, #0
 	add	r0, pc, #340	// 0x154	// !!!! PC relative 0x51437e68 + 0x154
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51437e70:
 	ldr	r0, [r5, #40]
 	and	r0, r0, #0xf0000
@@ -8911,7 +8913,7 @@ _51437e70:
 _51437e8c:
 	sub	r1, r4, #54	// 0x36
 	add	r0, pc, #360	// 0x168
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	b	_51437f64
 _51437e9c:
 	mov	r0, r7
@@ -8967,7 +8969,7 @@ _51437f2c:
 	b	_51437f64
 _51437f4c:
 	add	r0, pc, #208	// 0xd0	// !!!! PC relative 0x51437f4c + 0xd0
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 	ldr	r0, var_5143736c
 	ldr	r1, [r0]
 	orr	r1, r1, #0x20000
@@ -9322,7 +9324,7 @@ _51438d48:
 	b	_51438d58
 _51438d50:
 	add	r0, pc, #868	// 0x364	// !!!! PC relative 0x51438d50 + 0x364
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 _51438d58:
 	mov	r0, #3
 	bic	r0, r6, r0, lsl r4
@@ -10362,11 +10364,11 @@ _5143a568:
 	bl	sub_514014f4
 _5143a594:
 	add	r0, pc, #704	// 0x2c0	// !!!! PC relative 0x5143a594 + 0x2c0
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	add	r0, pc, #732	// 0x2dc	// !!!! PC relative 0x5143a59c + 0x2dc
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	add	r0, pc, #688	// 0x2b0	// !!!! PC relative 0x5143a5a4 + 0x2b0
-	bl	sub_51403564 
+	bl	SimpleDebugPrint 
 	mov	r0, #0	
 	b	ret_5143a564 
 _5143a5b4:
@@ -10951,12 +10953,12 @@ _5143aff0:
 	.word	0xeeb88b48 	//	fuitod	d8, s16
 _5143affc:
 	add	r0, pc, #388	// 0x184	// !!!! PC relative 0x5143affc + 0x184
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	mov	r1, r4
 	add	r0, pc, #412	// 0x19c	// !!!! PC relative 0x5143b008 + 0x19c
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	ldr	r0, var_5143b1cc
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	b	_5143b040
 _5143b01c:
 	cmp	r4, #3
@@ -11011,7 +11013,7 @@ _5143b0d0:
 	str	r2, [r7]
 	ldr	r1, [r6]
 	add	r0, pc, #292	// 0x124	// !!!! PC relative 0x5143b0d8 + 0x124
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	b	ret_5143af6c	// 0x5143b0e0
 
 
@@ -11218,13 +11220,13 @@ _5143b378:
 	mov	r0, #2	
 	str	r0, [r1, #296]
 	add	r0, pc, #436	// 0x1b4	// !!!! PC relative 0x5143b3c0 + 0x1b4
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	ldr	r2, [sp, #16]
 	mov	r1, r4
 	add	r0, pc, #464	// 0x1d0	// !!!! PC relative 0x5143b3d0 + 0x1d0
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	add	r0, pc, #412	// 0x19c	// !!!! PC relative 0x5143b3d8 + 0x19c
-	bl	sub_51403564
+	bl	SimpleDebugPrint
 	str	r4, [r6]
 	ldr	r0, [r6, #304]
 	orr	r0, r0, #32	// 0x20
