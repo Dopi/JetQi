@@ -473,19 +473,19 @@ _51401a10:
 	bl	SimpleDebugPrint
 	mov	r1, #1	
 	mov	r0, #115	// 0x73
-	bl	sub_51438078 
+	bl	value_table_sub_A 
 	cmp	r4, #0	
 	beq	_51401a44
 	mov	r1, #1	
 	mov	r0, #115	// 0x73
-	bl	sub_514380f8
+	bl	value_table_sub_B
 	ldmia	sp!, {r4, lr}
 	mov	r0, #1	
 	b	sub_51415668 
 _51401a44:
 	mov	r1, #0
 	mov	r0, #115	// 0x73
-	bl	sub_514380f8
+	bl	value_table_sub_B
 ret_51401a50:
 	ldmia	sp!, {r4, lr}
 
@@ -507,7 +507,7 @@ _51401a78:
 	bl	SimpleDebugPrint 
 	mov	r1, #1	
 	mov	r0, #180	// 0xb4
-	bl	sub_51438078 
+	bl	value_table_sub_A 
 	cmp	r4, #0
 	beq	ret_51401aac
 	add	r0, pc, #104	// 0x68	// PC rel 0x51401a94 + 0x68 = 0x51401afc
@@ -515,12 +515,12 @@ _51401a78:
 	ldmia	sp!, {r4, lr}
 	mov	r1, #0
 	mov	r0, #180	// 0xb4
-	b	sub_514380f8 
+	b	value_table_sub_B 
 ret_51401aac:
 	ldmia	sp!, {r4, lr}
 	mov	r1, #1
 	mov	r0, #180	// 0xb4
-	b	sub_514380f8 	// 0x51401ab8
+	b	value_table_sub_B 	// 0x51401ab8
 
 var_51401abc:	.word	0x6e697053
 var_51401ac0:	.word	0x65726f46
@@ -554,15 +554,15 @@ LCD_InitWin:
 sub_51401b28:
 	stmdb	sp!, {r4, lr}
 	sub	sp, sp, #40	// 0x28
-	bl	sub_51415374 
+	bl	load_0x5A0B0004_to_R0 
 	ldr	r0, [r0, #48]
 	cmp	r0, #2
 	bcc	_51401b54
 	mov	r1, #0
 	mov	r0, #183	// 0xb7
-	bl	sub_51438078
+	bl	value_table_sub_A
 	mov	r0, #183	// 0xb7
-	bl	sub_51438160
+	bl	value_table_sub_C
 _51401b54:
 	mov	r1, #0
 	mov	r0, #3
@@ -630,7 +630,8 @@ _51401c1c:
 	mov	r0, #1
 	b	ret_51401bf8 	// 0x51401c38
 
-sub_51401c3c:	stmdb	sp!, {r2, r3, r4, r5, r6, r7, r8, lr}
+OneNAND_Init:	// sub_51401c3c:	
+	stmdb	sp!, {r2, r3, r4, r5, r6, r7, r8, lr}
 	bl	sub_51431168
 	bl	sub_51401788
 	bl	sub_51430594
@@ -641,10 +642,10 @@ sub_51401c3c:	stmdb	sp!, {r2, r3, r4, r5, r6, r7, r8, lr}
 	bl	sub_5141a61c
 	mov	r1, #1
 	mov	r0, #175	// 0xaf
-	bl	sub_51438078
+	bl	value_table_sub_A
 	mov	r1, #0
 	mov	r0, #175	// 0xaf
-	bl	sub_514380f8
+	bl	value_table_sub_B
 	mov	r0, #0	
 	bl	sub_51401a5c 
 	mov	r0, #0	
@@ -673,19 +674,19 @@ _51401ccc:
 	add	r0, pc, #280	// 0x118	// !!!! PC relative 0x51401ccc + 0x118
 	bl	SimpleDebugPrint
 	mov	r0, #67	// 0x43
-	bl	sub_514376ec
+	bl	SYSCON_related_a
 	mov	r4, r0
 	mov	r0, #66	// 0x42
-	bl	sub_514376ec
+	bl	SYSCON_related_a
 	mov	r5, r0
 	mov	r0, #65	// 0x41
-	bl	sub_514376ec
+	bl	SYSCON_related_a
 	mov	r6, r0
 	mov	r0, #63	// 0x3f
-	bl	sub_514376ec
+	bl	SYSCON_related_a
 	mov	r7, r0
 	mov	r0, #4
-	bl	sub_514376ec
+	bl	SYSCON_related_a
 	mov	r1, r0
 _51401d10:
 	add	r0, pc, #256	// 0x100	// PC rel 0x51401d10 + 0x100 = 0x51401e10
@@ -799,21 +800,21 @@ sub_514029b0:
 	stmdb	sp!, {r4, r5, r6, lr}
 	mov	r1, #0
 	mov	r0, #161	// 0xa1
-	bl	sub_51438078
+	bl	value_table_sub_A
 	mov	r1, #0	
 	mov	r0, #162	// 0xa2
-	bl	sub_51438078 
+	bl	value_table_sub_A 
 	mov	r1, #0
 	mov	r0, #186	// 0xba
-	bl	sub_51438078
+	bl	value_table_sub_A
 	mov	r0, #161	// 0xa1
-	bl	sub_51438160
+	bl	value_table_sub_C
 	mov	r4, r0
 	mov	r0, #162	// 0xa2
-	bl	sub_51438160
+	bl	value_table_sub_C
 	mov	r5, r0
 	mov	r0, #186	// 0xba
-	bl	sub_51438160 
+	bl	value_table_sub_C 
 	orrs	r1, r4, r5
 	bne	_51402a10
 	cmp	r0, #1	
@@ -887,28 +888,28 @@ _init2:
 	stmdb   sp!, {r3-r5,lr}
 	MOV     R1, #1
 	MOV     R0, #0x16
-	BL      sub_514380f8
+	BL      value_table_sub_B
 	MOV     R1, #1
 	MOV     R0, #0x16
-	BL      sub_51438078
+	BL      value_table_sub_A
 	MOV     R1, #1
 	MOV     R0, #0x16
-	BL      sub_514380f8
+	BL      value_table_sub_B
 	MOV     R1, #1
 	MOV     R0, #0xB0 // '¦'
-	BL      sub_514380f8
+	BL      value_table_sub_B
 	MOV     R1, #1
 	MOV     R0, #0xB0 // '¦'
-	BL      sub_51438078
+	BL      value_table_sub_A
 	MOV     R1, #1
 	MOV     R0, #0xB0 // '¦'
-	BL      sub_514380f8
+	BL      value_table_sub_B
 	MOV     R1, #2
 	MOV     R0, #0x69 // 'i'
 	BL	sub_514381c4
 	MOV	R1, #0
 	MOV	R0, #0x69 // 'i'
-	BL	sub_51438078
+	BL	value_table_sub_A
 	ldr	r0, var_51403204
 	ldr	r1, var_51403208	/// correct????
 	cmp	R0, R1
@@ -925,16 +926,16 @@ loc_51403000:
 	mov	r1, #0
 	bl	sub_5142fd5c
 	bl	sub_514152f8
-	bl	sub_51415374	// load_0x5A0B0004_to_R0
+	bl	load_0x5A0B0004_to_R0	// load_0x5A0B0004_to_R0
 	mov	r4, r0
 	bl	sub_514029b0
 	str	r0, [R4,#0x30]
-	BL      sub_51401c3c
+	BL      OneNAND_Init
 	LDR     R1, [R4,#0x30]
 //	ADR     R0, aBoothwcheckD__ // "BootHWCheck: %d...\n"
 //	BL      SimpleDebugPrint
 	MOV     R0, #0x69 // 'i'
-	bl	sub_51438160
+	bl	value_table_sub_C
 	CMP     R0, #0
 	BEQ     loc_51403064
 
@@ -944,7 +945,7 @@ loc_51403000:
 
 	MOV     R1, SP
 	MOV     R0, #0xF
-	bl      sub_51419d0c
+	bl      PMIC_Read
 //	ADR     R0, aNoBattery  // "NO battery\n"
 //	BL      SimpleDebugPrint
 
@@ -1064,6 +1065,9 @@ _51403360:
 
 SimpleDebugPrint:
 sub_51403564:
+//
+	bx	lr
+//
 	stmdb	sp!, {r0, r1, r2, r3}
 	stmdb	sp!, {r3, r4, r5, lr}
 	add	r0, sp, #20	// 0x14
@@ -1668,7 +1672,7 @@ _51415348:
 	ldmia	sp!, {r4, r5, r6, pc}
 
 
-sub_51415374:
+load_0x5A0B0004_to_R0:	// sub_51415374:
 	ldr	r0, var_51415448
 	bx	lr	// 0x51415378
 
@@ -1776,14 +1780,14 @@ sub_51415a68:
 	stmdb	sp!, {r2, r3, r4, r5, r6, lr}
 	mov	r5, #0
 	str	r5, [sp, #4]
-	bl	sub_51415374
+	bl	load_0x5A0B0004_to_R0
 	mov	r4, r0
 	mov	r1, #1	
 	mov	r0, #181	// 0xb5
-	bl	sub_51438078
+	bl	value_table_sub_A
 	mov	r1, #1	
 	mov	r0, #181	// 0xb5
-	bl	sub_514380f8
+	bl	value_table_sub_B
 	ldr	r0, [r4, #48]
 	ldr	r4, var_51415ca8
 	ldr	r6, var_51415ca4
@@ -1922,7 +1926,7 @@ var_51415cbc:	.word	0x514452f4
 
 sub_51416498:
 	stmdb	sp!, {r4, lr}
-	bl	sub_51415374 
+	bl	load_0x5A0B0004_to_R0 
 	ldr	r1, [r0, #48]
 	ldr	r0, var_51416c0c
 	cmp	r1, #2
@@ -2062,7 +2066,7 @@ sub_514166ac:
 	stmdb	sp!, {r4, r5, r6, lr}
 	mov	r4, r0
 	mov	r5, r1
-	bl	sub_51415374 
+	bl	load_0x5A0B0004_to_R0 
 	ldr	r0, [r0, #48]
 	ldr	r1, var_51416c0c
 	cmp	r0, #2	
@@ -2310,7 +2314,7 @@ _51416a20:
 
 sub_51416a44:
 	stmdb	sp!, {r4, r5, r6, lr}
-	bl	sub_51415374
+	bl	load_0x5A0B0004_to_R0
 	ldr	r1, [r0, #48]
 	ldr	r0, var_51416c28
 	ldr	r4, var_51416c0c
@@ -2662,7 +2666,7 @@ sub_514173e0:
 
 sub_514173f0:
 	stmdb	sp!, {r4, lr}
-	bl	sub_51415374 
+	bl	load_0x5A0B0004_to_R0 
 	ldr	r2, var_51417780
 	mov	r1, #0
 	str	r1, [r2, #12]
@@ -2932,7 +2936,7 @@ ret_51417f40:
 
 sub_51417f44:	
 	stmdb	sp!, {r4, lr}
-	bl	sub_51415374
+	bl	load_0x5A0B0004_to_R0
 	ldr	r0, [r0, #48]
 	cmp	r0, #2
 	beq	_51417f60
@@ -2941,25 +2945,25 @@ sub_51417f44:
 _51417f60:
 	mov	r1, #1	
 	mov	r0, #148	// 0x94
-	bl	sub_51438078
+	bl	value_table_sub_A
 	mov	r1, #0	
 	mov	r0, #148	// 0x94
-	bl	sub_514380f8
+	bl	value_table_sub_B
 	ldmia	sp!, {r4, lr}
 	add	r0, pc, #564	// 0x234	// !!!! PC relative 0x51417f7c + 0x234 = 0x514181b0
 	b	SimpleDebugPrint
 _51417f84:
 	mov	r1, #1
 	mov	r0, #148	// 0x94
-	bl	sub_51438078
+	bl	value_table_sub_A
 	ldmia	sp!, {r4, lr}
 	mov	r1, #1
 	mov	r0, #148	// 0x94
-	b	sub_514380f8 	// 0x51417f9c
+	b	value_table_sub_B 	// 0x51417f9c
 
 sub_51417fa0:
 	stmdb	sp!, {r4, lr}
-	bl	sub_51415374 
+	bl	load_0x5A0B0004_to_R0 
 	mov	r4, r0
 	bl	sub_51417f44 
 	ldr	r0, [r4, #48]
@@ -3605,7 +3609,7 @@ _51419d04:
 	mov	r0, #1	
 	b	ret_51419cc4 	// 0x51419d08
 
-sub_51419d0c:
+PMIC_Read:	// sub_51419d0c:
 	stmdb	sp!, {r3, r4, r5, lr}
 	mov	r5, r1
 	ldr	r2, var_5141aa8c 
@@ -4491,16 +4495,16 @@ _51430150:
 	bl	sub_514381c4
 	mov	r1, #1
 	mov	r0, r6
-	bl	sub_514380f8
+	bl	value_table_sub_B
 	mov	r1, #1
 	mov	r0, r7
-	bl	sub_514380f8
+	bl	value_table_sub_B
 	mov	r1, #1
 	mov	r0, r6
-	bl	sub_51438078
+	bl	value_table_sub_A
 	mov	r1, #1
 	mov	r0, r7
-	bl	sub_51438078
+	bl	value_table_sub_A
 	mov	r0, #0	
 	b	_51430134	// 0x514301dc
 
@@ -4540,16 +4544,16 @@ _51430228:
 	bl	sub_514381c4
 	ldrb	r0, [r4, #1]
 	mov	r1, #0
-	bl	sub_51438078 
+	bl	value_table_sub_A 
 	ldrb	r0, [r4, #2]
 	mov	r1, #0
-	bl	sub_51438078 
+	bl	value_table_sub_A 
 	ldrb	r0, [r4, #1]
 	mov	r1, #0
-	bl	sub_514380f8 
+	bl	value_table_sub_B 
 	ldrb	r0, [r4, #2]
 	mov	r1, #0
-	bl	sub_514380f8 
+	bl	value_table_sub_B 
 _51430288:
 	mov	r0, #0
 	b	ret_51430224 // 0x5143028c
@@ -4650,7 +4654,7 @@ _514303ec:
 	add	r0, r1, r0, lsl #2
 	mov	r1, r5
 	ldrb	r0, [r0, #2]
-	bl	sub_51438078
+	bl	value_table_sub_A
 	mov	r0, #0
 	b	ret_514302d8	// 0x51430400
 
@@ -4680,7 +4684,7 @@ _51430450:
 	add	r0, r1, r0, lsl #2
 	mov	r1, r5
 	ldrb	r0, [r0, #1]
-	bl	sub_51438078
+	bl	value_table_sub_A
 	mov	r0, #0	
 _51430464:
 	b	ret_5143044c 
@@ -4711,7 +4715,7 @@ _514304b4:
 	add	r0, r1, r0, lsl #2
 	mov	r1, r5
 	ldrb	r0, [r0, #2]
-	bl	sub_514380f8 
+	bl	value_table_sub_B 
 	mov	r0, #0
 	b	ret_514304b0 	// 0x514304c8
 
@@ -4741,7 +4745,7 @@ _51430518:
 	add	r0, r1, r0, lsl #2
 	mov	r1, r5
 	ldrb	r0, [r0, #1]
-	bl	sub_514380f8 
+	bl	value_table_sub_B 
 	mov	r0, #0	
 	b	ret_51430514 	// 0x5143052c
 
@@ -4770,7 +4774,7 @@ ret_51430578:
 _5143057c:
 	add	r0, r1, r0, lsl #2
 	ldrb	r0, [r0, #2]
-	bl	sub_51438160
+	bl	value_table_sub_C
 	strb	r0, [r5]
 	mov	r0, #0	
 	b	ret_51430578	// 0x51430590
@@ -4823,7 +4827,7 @@ _51430604:
 	mov	sl, r5, lsr #1
 _5143062c:
 	ldrb	r0, [r7, #1]
-	bl	sub_51438160 
+	bl	value_table_sub_C 
 	and	r6, r0, #255	// 0xff
 	mov	r0, sl
 	bl	sub_51430f80 
@@ -4998,7 +5002,7 @@ _51430884:
 	ldr	r9, var_51430798 
 _514308b4:
 	ldrb	r0, [r5, #1]
-	bl	sub_51438160 
+	bl	value_table_sub_C 
 	and	r6, r0, #255	// 0xff
 	ldr	r0, [r5, #8]
 	mov	r0, r0, lsr #2
@@ -5156,7 +5160,7 @@ _51430ac8:
 	mov	sl, r6, lsr #1
 _51430af8:
 	ldrb	r0, [r7, #1]
-	bl	sub_51438160
+	bl	value_table_sub_C
 	strb	r0, [r5]
 	mov	r0, sl
 	bl	sub_51430f80
@@ -5405,7 +5409,7 @@ _51430e50:
 	ldr	r8, var_51430798 
 _51430e7c:
 	ldrb	r0, [r7, #1]
-	bl	sub_51438160
+	bl	value_table_sub_C
 	str	r0, [sp]
 	ldr	r0, [r7, #8]
 	mov	r0, r0, lsr #2
@@ -5514,7 +5518,7 @@ ret_514310dc:
 	ldmia	sp!, {r4, r5, r6, r7, r8, r9, sl, pc}
 _514310e0:
 	mov	r0, #4
-	bl	sub_514376ec
+	bl	SYSCON_related_a
 	mov	r5, r0
 	cmp	r4, #0
 	bne	_51431124
@@ -8353,7 +8357,7 @@ var_5143745c:	.word	0x0000000a
 
 
 
-sub_514376ec:
+SYSCON_related_a:	// sub_514376ec:
 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, sl, lr}
 	mov	r4, r0
 	mov	r9, #0
@@ -8983,11 +8987,11 @@ _51437f64:
  *  51438000
  */
 
-sub_51438078:	
+value_table_sub_A:	// sub_51438078:	
 	stmdb	sp!, {r4, r5, r6, r7, r8, lr}
 	mov	r8, r1
 	mov	r4, #0	
-	ldr	r1, var_51438340
+	ldr	r1, var_51438340	// =0x514431e8
 	ldr	r2, [r1, r0, lsl #3]
 	and	r5, r2, #15	// 0xf
 	mov	r2, r2, lsl #24
@@ -9020,11 +9024,10 @@ _514380dc:
 	str	r0, [r6]
 	ldmia	sp!, {r4, r5, r6, r7, r8, pc}	// 0x514380f4
 
-
-sub_514380f8:	
+value_table_sub_B:	// sub_514380f8:	
 	stmdb	sp!, {r4, lr}
 	mov	r2, #0
-	ldr	r4, var_51438340 
+	ldr	r4, var_51438340 	// = 0x514431e8
 	ldr	ip, [r4, r0, lsl #3]
 	and	lr, ip, #15	// 0xf
 	mov	r3, ip, lsl #22
@@ -9052,10 +9055,10 @@ _51438144:
 	ldmia	sp!, {r4, pc}	// 0x5143815c
 
 
-sub_51438160:
+value_table_sub_C:	// sub_51438160:
 	str	lr, [sp, #-4]!
 	mov	r1, #0	// 0x0
-	ldr	lr, var_51438340
+	ldr	lr, var_51438340	// = 0x514431e8
 	ldr	ip, [lr, r0, lsl #3]
 	and	r3, ip, #15	// 0xf
 	mov	r2, ip, lsl #22
@@ -9085,7 +9088,7 @@ _514381ac:
 sub_514381c4:
 	stmdb	sp!, {r4, lr}
 	mov	r2, #0
-	ldr	r4, var_51438340
+	ldr	r4, var_51438340	// = 0x514431e8
 	ldr	ip, [r4, r0, lsl #3]
 	and	lr, ip, #15	// 0xf
 	mov	r3, ip, lsl #20
@@ -10920,7 +10923,7 @@ _5143af74:
 	mov	r0, #0	
 	bl	sub_5143ae70 
 	mov	r0, #66	// 0x42
-	bl	sub_514376ec
+	bl	SYSCON_related_a
 	mul	r0, r5, r0
 	.word	0xee080a10 	//	fmsr	s16, r0
 	.word	0xeeb88b48 	//	fuitod	d8, s16
@@ -10938,7 +10941,7 @@ _5143afb8:
 	mov	r0, #2
 	bl	sub_5143ae70
 	mov	r0, #63	// 0x3f
-	bl	sub_514376ec
+	bl	SYSCON_related_a
 	mov	r4, r0
 	ldr	r1, var_5143b184
 	cmp	r4, r1
@@ -11114,7 +11117,7 @@ sub_5143b22c:
 	stmdb	sp!, {r4, r5, r6, r7, r8, r9, lr}
 	sub	sp, sp, #20	// 0x14
 	mov	r4, #0	
-	bl	sub_51415374
+	bl	load_0x5A0B0004_to_R0
 	mov	r8, r0
 	mov	r0, #30	// 0x1e
 	bl	sub_51433dbc 
@@ -11953,6 +11956,14 @@ sub_5143fee8:
  *
  */
 
+vvar_51403204:	.word	0x51446da0
+vvar_51403208:	.word	0x51446da0
+vvar_5140320c:	.word	0x00000000
+vvar_51403210:	.word	0x00207f9c
+vvar_51403214:	.word	0x51446da0
+
+
+
 _wait_10s:
 	mov	r0, #0x20000000			// approx 10 sec wait
 _waitloop:
@@ -11962,7 +11973,77 @@ _waitloop:
 	bx	lr
 
 _init_start_qi:
-	b	_init_start_qi
+	stmdb   sp!, {r3-r5,lr}
+	MOV     R1, #1
+	MOV     R0, #0x16
+	BL      value_table_sub_B
+	MOV     R1, #1
+	MOV     R0, #0x16
+	BL      value_table_sub_A
+	MOV     R1, #1
+	MOV     R0, #0x16
+	BL      value_table_sub_B
+	MOV     R1, #1
+	MOV     R0, #0xB0 // '¦'
+	BL      value_table_sub_B
+	MOV     R1, #1
+	MOV     R0, #0xB0 // '¦'
+	BL      value_table_sub_A
+	MOV     R1, #1
+	MOV     R0, #0xB0 // '¦'
+	BL      value_table_sub_B
+	MOV     R1, #2
+	MOV     R0, #0x69 // 'i'
+	BL	sub_514381c4
+	MOV	R1, #0
+	MOV	R0, #0x69 // 'i'
+	BL	value_table_sub_A
+
+	ldr	pc, _start_oldboot
+
+
+	ldr	r0, vvar_51403204
+	ldr	r1, vvar_51403208	/// correct????
+//	cmp	R0, R1
+//	beq	loc_51403000b
+
+//	add	r1, r0, #0
+//	ldr	r0, var_51403208
+//	ldr	r2, var_5140320c
+//	bl	sub_5142fd38	// okay
+
+//loc_51403000b:
+	ldr	r2, vvar_51403210 // =0x207F9C
+	ldr	r0, vvar_51403214 // =0x51446DA0 ???
+	mov	r1, #0
+	bl	sub_5142fd5c
+	bl	sub_514152f8
+	bl	load_0x5A0B0004_to_R0	// load_0x5A0B0004_to_R0
+	mov	r4, r0
+	bl	sub_514029b0
+	str	r0, [R4,#0x30]
+//	BL      OneNAND_Init
+//	LDR     R1, [R4,#0x30]
+//	ADR     R0, aBoothwcheckD__ // "BootHWCheck: %d...\n"
+//	BL      SimpleDebugPrint
+	MOV     R0, #0x69 // 'i'
+	bl	value_table_sub_C
+//	CMP     R0, #0
+//	BEQ     loc_51403064
+
+//	LDR     R0, [R4,#0x30]
+//	CMP     R0, #2
+//	BCC     loc_51403064
+
+	MOV     R1, SP
+	MOV     R0, #0xF
+	bl      PMIC_Read
+//	ADR     R0, aNoBattery  // "NO battery\n"
+//	BL      SimpleDebugPrint
+
+
+
+//	b	_init_start_qi
 //	bl	_wait_10s
 //	ldr	pc, _start_armboot
 	ldr	pc, _start_oldboot
