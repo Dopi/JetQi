@@ -460,9 +460,25 @@ _ss_loc2:
 	blt	_sscopy_loop1			// yes: Loop
 */
 
+_copy_to_text_base:
+	ldr	r0, _TEXT_BASE
+	ldr	r1, _old_new_base
+	mov	r2, #0x10000
+	mov	r3, #0
+	mov	ip, r2,lsr#2
+_copy_to_text_base_loop:
+	cmp	r3, ip
+	bcs	_steppingstone_done
+	ldr	r2, [r1,r3,lsl#2]
+	str	r2, [r0,r3,lsl#2]
+	add	r3, r3, #1
+	b	_copy_to_text_base_loop
+
+
+
 _steppingstone_done:
-//	ldr	pc, _TEXT_BASE
-	ldr	pc, _old_new_base
+	ldr	pc, _TEXT_BASE
+//	ldr	pc, _old_new_base
 
 /*
  * we have a stack in steppingstone because we can want to run full memory

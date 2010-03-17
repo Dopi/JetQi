@@ -11962,14 +11962,6 @@ sub_5143fee8:
  *
  */
 
-vvar_51403204:	.word	0x51446da0
-vvar_51403208:	.word	0x51446da0
-vvar_5140320c:	.word	0x00000000
-vvar_51403210:	.word	0x00207f9c
-vvar_51403214:	.word	0x51446da0
-
-
-
 _wait_10s:
 	mov	r0, #0x20000000			// approx 10 sec wait
 _waitloop:
@@ -11977,6 +11969,25 @@ _waitloop:
 	cmp	r0, #0
 	bne	_waitloop
 	bx	lr
+
+_spin_forever:
+	b	_spin_forever
+
+/*
+ *
+ */
+
+vvar_51403204:	.word	0x51446da0
+vvar_51403208:	.word	0x51446da0
+vvar_5140320c:	.word	0x00000000
+vvar_51403210:	.word	0x00207f9c
+vvar_51403214:	.word	0x51446da0
+
+vvar_51402258:	.word	0x514449A8
+
+/*
+ *
+ */
 
 _init_start_qi:
 	stmdb   sp!, {r3-r5,lr}
@@ -12005,23 +12016,15 @@ _init_start_qi:
 	MOV	R0, #0x69 // 'i'
 	BL	value_table_sub_A
 
-
-
-	ldr	pc, _start_oldboot
-
-
-
 	ldr	r0, vvar_51403204	// initial content: 0x51446da0
 	ldr	r1, vvar_51403208	// initial content: 0x51446da0
-//	cmp	R0, R1
-//	beq	loc_51403000b
-
-//	add	r1, r0, #0
-//	ldr	r0, vvar_51403208	// initial content: 0x51446da0
-//	ldr	r2, vvar_5140320c	// initial content: 0
-//	bl	memcopy_R2bytes_fromR0_toR1	// okay
-
-//loc_51403000b:
+	cmp	R0, R1
+	beq	_init_no_copy_needed
+	add	r1, r0, #0
+	ldr	r0, vvar_51403208	// initial content: 0x51446da0
+	ldr	r2, vvar_5140320c	// initial content: 0
+	bl	memcopy_R2bytes_fromR0_toR1	// okay
+_init_no_copy_needed:
 	ldr	r2, vvar_51403210 	// =0x207F9C
 	ldr	r0, vvar_51403214 	// initial content: 0x51446da0
 	mov	r1, #0
@@ -12050,11 +12053,41 @@ _init_start_qi:
 //	ADR     R0, aNoBattery  // "NO battery\n"
 //	BL      SimpleDebugPrint
 
+//	BL      SelectBootingMode
+	MOV     R0, #1
+	bl      sub_5141af20
+	MOV     R0, #0x7D0
+	BL      sub_51430f80
+	BL      LCD_InitWin // 0x51401B28
+
+
+
 
 	ldr	pc, _start_oldboot
 
 
-//	b	_init_start_qi
+
+	MOV     R0, #0
+	STR     R0, [R4,#0x24]
+	ldr	r0, vvar_51402258 // =0x514449A8
+	ldrb    r0, [r0]
+	CMP     R0, #0x10
+
+	MOV     R1, #0
+	MOV     R0, #2
+	bl      sub_5141ab40	// I2C_something
+	bl	Download_Mode_MSG
+//	BL      sub_514131A0
+//	B       loc_514030E8
+
+//	MOV     R0, #8
+//	B       sub_5141804C
+
+//	BL      sub_514185F4
+//	BL      Baseband_Init
+
+
+
 //	bl	_wait_10s
 //	ldr	pc, _start_armboot
 	ldr	pc, _start_oldboot
