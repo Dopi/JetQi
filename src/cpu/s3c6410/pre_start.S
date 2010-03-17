@@ -918,13 +918,13 @@ _init2:
 	add	r1, r0, #0
 	ldr	r0, var_51403208
 	ldr	r2, var_5140320c
-	bl	sub_5142fd38	// okay
+	bl	memcopy_R2bytes_fromR0_toR1	// okay
 
 loc_51403000:
 	ldr	r2, var_51403210 // =0x207F9C
 	ldr	r0, var_51403214 // =0x51446DA0 ???
 	mov	r1, #0
-	bl	sub_5142fd5c
+	bl	memclear_R2bytes_withR1_atR0
 	bl	sub_514152f8
 	bl	load_0x5A0B0004_to_R0	// load_0x5A0B0004_to_R0
 	mov	r4, r0
@@ -1640,6 +1640,7 @@ var_514042b4:	.word	0x51494850
 var_514042b8:	.word	0x51495210
 
 sub_514042bc:	// MISSING
+	bx	lr
 
 /*
  *  51415000
@@ -1775,6 +1776,7 @@ var_51415990:	.word	0x0a0d7825
 var_51415994:	.word	0x00000000
 
 sub_51415998:	// MISSING
+	bx	lr
 
 sub_51415a68:
 	stmdb	sp!, {r2, r3, r4, r5, r6, lr}
@@ -4018,17 +4020,20 @@ var_5141b1a8:
  */
 
 sub_5141dc50:	// MISSING
+	bx	lr
 
 sub_5141df9c:	// MISSING
-
+	bx	lr
 
 /*
  *  5141e000
  */
 
 sub_5141e174:	// MISSING
-
+	bx	lr
+	
 sub_5141e294:	// MISSING
+	bx	lr
 
 /*
  *  51420000
@@ -4111,7 +4116,7 @@ var_514211d8:	.word	0x80010000
 _514211dc:	.word	0xeafff27e	//	b	5141dbdc
 
 sub_514211e0:	// MISSING
-
+	bx	lr
 
 
 /* 
@@ -4181,6 +4186,7 @@ var_5142fd34:	.word	0x51649170
 
 
 sub_5142fadc:	// MISSING
+	bx	lr
 
 sub_5142fc84:
 	ldr	r0, var_5142fd34
@@ -4209,7 +4215,7 @@ sub_5142fc84:
 	str	r2, [r0, #60]
 	bx	lr	// 0x5142fce4
 
-sub_5142fd38:
+memcopy_R2bytes_fromR0_toR1:	// sub_5142fd38:
 	mov     r3, #0
 	mov     ip, r2,lsr#2
 _5142fd40:
@@ -4222,8 +4228,7 @@ _5142fd40:
 ret_5142fd58: 
 	bx      lr
 
-
-sub_5142fd5c:	
+memclear_R2bytes_withR1_atR0:	// sub_5142fd5c:	
 	mov	r3, #0
 	mov	r2, r2, lsr #2
 _5142fd64:
@@ -5499,6 +5504,7 @@ _51430fb0:
 	bx	lr	// 0x51430fb8
 
 sub_51430fbc:	// MISSING
+	bx	lr
 
 /*
  *  51431000
@@ -11999,24 +12005,27 @@ _init_start_qi:
 	MOV	R0, #0x69 // 'i'
 	BL	value_table_sub_A
 
+
+
 	ldr	pc, _start_oldboot
 
 
-	ldr	r0, vvar_51403204
-	ldr	r1, vvar_51403208	/// correct????
+
+	ldr	r0, vvar_51403204	// initial content: 0x51446da0
+	ldr	r1, vvar_51403208	// initial content: 0x51446da0
 //	cmp	R0, R1
 //	beq	loc_51403000b
 
 //	add	r1, r0, #0
-//	ldr	r0, var_51403208
-//	ldr	r2, var_5140320c
-//	bl	sub_5142fd38	// okay
+//	ldr	r0, vvar_51403208	// initial content: 0x51446da0
+//	ldr	r2, vvar_5140320c	// initial content: 0
+//	bl	memcopy_R2bytes_fromR0_toR1	// okay
 
 //loc_51403000b:
-	ldr	r2, vvar_51403210 // =0x207F9C
-	ldr	r0, vvar_51403214 // =0x51446DA0 ???
+	ldr	r2, vvar_51403210 	// =0x207F9C
+	ldr	r0, vvar_51403214 	// initial content: 0x51446da0
 	mov	r1, #0
-	bl	sub_5142fd5c
+	bl	memclear_R2bytes_withR1_atR0
 	bl	sub_514152f8
 	bl	load_0x5A0B0004_to_R0	// load_0x5A0B0004_to_R0
 	mov	r4, r0
@@ -12041,6 +12050,8 @@ _init_start_qi:
 //	ADR     R0, aNoBattery  // "NO battery\n"
 //	BL      SimpleDebugPrint
 
+
+	ldr	pc, _start_oldboot
 
 
 //	b	_init_start_qi
