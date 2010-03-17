@@ -32,8 +32,8 @@ SECTIONS
 	__steppingstone = 0x0c000000;
 	__system_ram_start = 0x50000000;
 	__oldboot_ram_start = 0x51400000;
-	__jetqi_ram_start = 0x51447800;
-/*	__jetqi_ram_start = 0x53000000; */
+/*	__jetqi_ram_start = 0x51447800; */
+	__jetqi_ram_start = 0x53000000; 
 
 	__oldboot_location = 0x800;
 	__jetqi_location = 0x48000;
