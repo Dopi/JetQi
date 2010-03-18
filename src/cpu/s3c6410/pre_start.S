@@ -3400,7 +3400,7 @@ _514199ec:
 	mov	r0, #1
 	b	ret_514199e8	// 0x51419a10
 
-sub_51419a14:
+pmic_write_I2C:		// sub_51419a14:
 	stmdb	sp!, {r3, r4, r5, r6, r7, r8, r9, sl, fp, lr}
 	mov	r7, r0
 	mov	r8, r1
@@ -3602,7 +3602,7 @@ _51419cc8:
 	ldrb	r0, [r6, r5]
 	mov	r3, #1	
 	mov	r2, sp
-	bl	sub_51419a14 
+	bl	pmic_write_I2C 
 	cmp	r0, #0
 	beq	_51419d04
 	mov	r0, #0	
@@ -3637,7 +3637,7 @@ _51419d44:
 	mov	r0, #1	
 	b	ret_51419d40	// 0x51419d60
 
-sub_51419d64:
+PMIC_LUT1_write:	// sub_51419d64:
 	stmdb	sp!, {r4, lr}
 	mov	ip, r1
 	ldr	r3, var_5141aa90
@@ -3646,7 +3646,7 @@ sub_51419d64:
 	mov	r3, r2
 	ldrb	r1, [r1, #1]
 	mov	r2, ip
-	bl	sub_51419a14
+	bl	pmic_write_I2C
 	cmp	r0, #0
 	beq	_51419d98
 	mov	r0, #0
@@ -3679,7 +3679,7 @@ _5141a648:
 	mov	r2, #1	
 	mov	r1, sp
 	mov	r0, #58	// 0x3a
-	bl	sub_51419d64
+	bl	PMIC_LUT1_write
 	b	ret_5141a644	// 0x5141a660
 
 
@@ -3721,12 +3721,12 @@ _5141ab5c:
 	mov	r2, #1
 	mov	r1, sp
 	mov	r0, #0
-	bl	sub_51419d64
+	bl	PMIC_LUT1_write
 	str	r4, [sp]
 	mov	r2, #1
 	mov	r1, sp
 	mov	r0, #1
-	bl	sub_51419d64
+	bl	PMIC_LUT1_write
 	b	ret_5141ab58
 _5141ab98:
 	cmp	r0, #2
@@ -3736,12 +3736,12 @@ _5141ab98:
 	mov	r2, #1
 	mov	r1, sp
 	mov	r0, #0
-	bl	sub_51419d64
+	bl	PMIC_LUT1_write
 	str	r4, [sp]
 	mov	r2, #1
 	mov	r1, sp
 	mov	r0, #1
-	bl	sub_51419d64
+	bl	PMIC_LUT1_write
 	b	ret_5141ab58
 _5141abd0:
 	cmp	r0, #3
@@ -3751,12 +3751,12 @@ _5141abd0:
 	mov	r2, #1
 	mov	r1, sp
 	mov	r0, #0
-	bl	sub_51419d64
+	bl	PMIC_LUT1_write
 	str	r4, [sp]
 	mov	r2, #1
 	mov	r1, sp
 	mov	r0, #1
-	bl	sub_51419d64
+	bl	PMIC_LUT1_write
 	b	ret_5141ab58
 _5141ac08:
 	mov	r0, #77	// 0x4d
@@ -3764,12 +3764,12 @@ _5141ac08:
 	mov	r2, #1
 	mov	r1, sp
 	mov	r0, #0
-	bl	sub_51419d64
+	bl	PMIC_LUT1_write
 	str	r4, [sp]
 	mov	r2, #1
 	mov	r1, sp
 	mov	r0, #1
-	bl	sub_51419d64
+	bl	PMIC_LUT1_write
 	b	ret_5141ab58	// 0x5141ac34
 
 
@@ -3783,7 +3783,7 @@ sub_5141ade0:
 	mov	r2, #1	
 	mov	r1, sp
 	mov	r0, #23	// 0x17
-	bl	sub_51419d64 
+	bl	PMIC_LUT1_write 
 	ldr	r5, var_5141aaa0
 	ldrb	r1, [r5, #1]
 	cmp	r1, #4	
@@ -3880,16 +3880,16 @@ sub_5141af20:
 	mov	r2, #1	
 	mov	r1, sp
 	mov	r0, #61	// 0x3d
-	bl	sub_51419d64
+	bl	PMIC_LUT1_write
 	mov	r2, #1
 	mov	r1, sp
 	mov	r0, #72	// 0x48
-	bl	sub_51419d64
+	bl	PMIC_LUT1_write
 _5141af58:
 	mov	r2, #1
 	mov	r1, sp
 	mov	r0, #46	// 0x2e
-	bl	sub_51419d64
+	bl	PMIC_LUT1_write
 	ldmia	sp!, {ip, pc}	// 0x5141af68
  
 
@@ -3903,13 +3903,13 @@ sub_5141b008:
 	mov	r2, #1
 	mov	r1, sp
 	mov	r0, #17	// 0x11
-	bl	sub_51419d64
+	bl	PMIC_LUT1_write
 	mov	r0, #1
 	str	r0, [sp]
 	mov	r2, #1
 	mov	r1, sp
 	mov	r0, #20	// 0x14
-	bl	sub_51419d64 
+	bl	PMIC_LUT1_write 
 	ldr	r5, var_5141aaa0
 	ldrb	r0, [r5, #2]
 	cmp	r0, #61	// 0x3d
@@ -3940,7 +3940,7 @@ sub_5141b088:
 	mov	r2, #1	// 0x1
 	mov	r1, sp
 	mov	r0, #76	// 0x4c
-	bl	sub_51419d64
+	bl	PMIC_LUT1_write
 	mov	r1, #1	// 0x1
 	mov	r0, #40	// 0x28
 	bl	sub_51419c90
@@ -3951,7 +3951,7 @@ sub_5141b088:
 	mov	r2, #1	// 0x1
 	mov	r1, sp
 	mov	r0, #66	// 0x42
-	bl	sub_51419d64 
+	bl	PMIC_LUT1_write 
 	mov	r1, #45	// 0x2d
 	mov	r0, #178	// 0xb2
 	bl	sub_51419c90 
@@ -3970,11 +3970,11 @@ _5141b100:
 	mov	r2, #1	// 0x1
 	mov	r1, sp
 	mov	r0, #63	// 0x3f
-	bl	sub_51419d64 
+	bl	PMIC_LUT1_write 
 	mov	r2, #1	// 0x1
 	mov	r1, sp
 	mov	r0, #64	// 0x40
-	bl	sub_51419d64 
+	bl	PMIC_LUT1_write 
 	bl	sub_514153bc 
 	cmp	r0, #4	// 0x4
 	bcs	_5141b140
@@ -3995,7 +3995,7 @@ _5141b140:
 	mov	r2, #1	// 0x1
 	mov	r1, sp
 	mov	r0, #52	// 0x34
-	bl	sub_51419d64 
+	bl	PMIC_LUT1_write 
 	mov	r1, #21	// 0x15
 	mov	r0, #52	// 0x34
 	bl	sub_51419c90 
@@ -4004,7 +4004,7 @@ _5141b140:
 	mov	r2, #1	// 0x1
 	mov	r1, sp
 	mov	r0, #95	// 0x5f
-	bl	sub_51419d64 
+	bl	PMIC_LUT1_write 
 	ldr	r0, var_5141b1a8 
 	bl	sub_51430f80
 ret_5141b1a4:	
@@ -12061,9 +12061,15 @@ _init_no_copy_needed:
 	BL      LCD_InitWin // 0x51401B28
 
 
+	adr	r2, pmu_write_var
+	mov	r0, #0x78	// write to PMU
+	mov	r1, #0x44	// reg = CARD1EN 
+	mov	r3, #1		// why 1 ?
+	bl	pmic_write_I2C
+//	cmp	r0, #0
+	b	_spin_forever
 
-
-	ldr	pc, _start_oldboot
+//	ldr	pc, _start_oldboot
 
 
 
@@ -12092,6 +12098,9 @@ _init_no_copy_needed:
 //	ldr	pc, _start_armboot
 	ldr	pc, _start_oldboot
 
+
+_pmu_write_var
+	.word	0xf
 _start_armboot:
 	.word 	start_qi
 _start_oldboot:
