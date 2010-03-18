@@ -12061,7 +12061,7 @@ _init_no_copy_needed:
 	BL      LCD_InitWin // 0x51401B28
 
 
-	adr	r2, pmu_write_var
+	adr	r2, _pmu_write_var
 	mov	r0, #0x78	// write to PMU
 	mov	r1, #0x44	// reg = CARD1EN 
 	mov	r3, #1		// why 1 ?
@@ -12099,7 +12099,7 @@ _init_no_copy_needed:
 	ldr	pc, _start_oldboot
 
 
-_pmu_write_var
+_pmu_write_var:
 	.word	0xf
 _start_armboot:
 	.word 	start_qi
