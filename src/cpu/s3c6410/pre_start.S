@@ -638,7 +638,7 @@ OneNAND_Init:	// sub_51401c3c:
 	bl	sub_51438b94
 	bl	sub_5140146c
 	bl	sub_51403dc8
-	bl	sub_5141b088
+	bl	pmic_reading_writing_B
 	bl	sub_5141a61c
 	mov	r1, #1
 	mov	r0, #175	// 0xaf
@@ -1720,7 +1720,7 @@ _514156e8:
 	mov	r0, #3	
 	b	j_I2C_GPIO_Line_Close 	// 0x514156ec
 
-sub_514153bc:
+read_from_0x5a0b0034_to_R0:	\\ sub_514153bc:
 	ldr	r0, var_51415448
 	ldr	r0, [r0, #48]
 	bx	lr	// 0x514153c4
@@ -3356,7 +3356,7 @@ var_5141872c:	.word	0x00202020
  *  51419000
  */
 
-sub_51419978:
+pmic_read_I2C:		// sub_51419978:
 	stmdb	sp!, {r1, r2, r3, r4, r5, r6, r7, r8, r9, sl, fp, lr}
 	mov	r7, r0
 	mov	r8, r1
@@ -3575,7 +3575,7 @@ var_51419c84:	.word	0x7e7e7e6c
 var_51419c88:	.word	0x20642520
 var_51419c8c:	.word	0x0000000a
 
-sub_51419c90:
+PMIC_LUT2_Read_Write:	// sub_51419c90:
 	stmdb	sp!, {r3, r4, r5, r6, r7, lr}
 	mov	r7, r1
 	ldr	r6, var_5141aa8c
@@ -3585,7 +3585,7 @@ sub_51419c90:
 	ldrb	r0, [r6, r5]
 	ldrb	r1, [r4, #1]
 	mov	r2, sp
-	bl	sub_51419978 
+	bl	pmic_read_I2C 
 	cmp	r0, #0	
 	beq	_51419cc8
 	mov	r0, #0	
@@ -3621,7 +3621,7 @@ PMIC_Read:	// sub_51419d0c:
 	ldrb	r0, [r2, r0]
 	ldrb	r1, [r4, #1]
 	mov	r2, sp
-	bl	sub_51419978
+	bl	pmic_read_I2C
 	cmp	r0, #0
 	beq	_51419d44
 	mov	r0, #0	
@@ -3662,15 +3662,15 @@ _51419d98:
 
 sub_5141a61c:
 	stmdb	sp!, {r3, lr}
-	bl	sub_514153bc 
+	bl	read_from_0x5a0b0034_to_R0 
 	cmp	r0, #6	
 	bcs	_5141a648 
 	mov	r1, #21	// 0x15
 	mov	r0, #155	// 0x9b
-	bl	sub_51419c90 
+	bl	PMIC_LUT2_Read_Write 
 	mov	r1, #1	
 	mov	r0, #152	// 0x98
-	bl	sub_51419c90 
+	bl	PMIC_LUT2_Read_Write 
 ret_5141a644:
 	ldmia	sp!, {ip, pc}
 _5141a648:
@@ -3709,7 +3709,7 @@ sub_5141ab40:
 	bne	_5141ab5c
 	mov	r1, #1
 	mov	r0, #0
-	bl	sub_51419c90
+	bl	PMIC_LUT2_Read_Write
 ret_5141ab58:
 	ldmia	sp!, {r3, r4, r5, pc}
 _5141ab5c:
@@ -3874,7 +3874,7 @@ sub_5141af20:
 	stmdb	sp!, {r3, lr}
 	orr	r0, r0, #14
 	str	r0, [sp]
-	bl	sub_514153bc
+	bl	read_from_0x5a0b0034_to_R0
 	cmp	r0, #4	
 	bcs	_5141af58
 	mov	r2, #1	
@@ -3933,7 +3933,7 @@ _5141b080:
 	strb	r4, [r5, #2]
 	ldmia	sp!, {r3, r4, r5, pc}	// 0x5141b084
 
-sub_5141b088:
+pmic_reading_writing_B:		// sub_5141b088:
 	stmdb	sp!, {r3, r4, r5, lr}
 	mov	r4, #15	// 0xf
 	str	r4, [sp]
@@ -3943,10 +3943,10 @@ sub_5141b088:
 	bl	PMIC_LUT1_write
 	mov	r1, #1	// 0x1
 	mov	r0, #40	// 0x28
-	bl	sub_51419c90
+	bl	PMIC_LUT2_Read_Write
 	mov	r1, #45	// 0x2d
 	mov	r0, #172	// 0xac
-	bl	sub_51419c90 
+	bl	PMIC_LUT2_Read_Write 
 	str	r4, [sp]
 	mov	r2, #1	// 0x1
 	mov	r1, sp
@@ -3954,16 +3954,16 @@ sub_5141b088:
 	bl	PMIC_LUT1_write 
 	mov	r1, #45	// 0x2d
 	mov	r0, #178	// 0xb2
-	bl	sub_51419c90 
+	bl	PMIC_LUT2_Read_Write 
 	mov	r1, #9	// 0x9
 	mov	r0, #137	// 0x89
-	bl	sub_51419c90 
-	bl	sub_514153bc 
+	bl	PMIC_LUT2_Read_Write 
+	bl	read_from_0x5a0b0034_to_R0 
 	cmp	r0, #4	// 0x4
 	bcs	_5141b100 
 	mov	r1, #7	// 0x7
 	mov	r0, #158	// 0x9e
-	bl	sub_51419c90 
+	bl	PMIC_LUT2_Read_Write 
 _5141b100:
 	mov	r0, #19	// 0x13
 	str	r0, [sp]
@@ -3975,22 +3975,22 @@ _5141b100:
 	mov	r1, sp
 	mov	r0, #64	// 0x40
 	bl	PMIC_LUT1_write 
-	bl	sub_514153bc 
+	bl	read_from_0x5a0b0034_to_R0 
 	cmp	r0, #4	// 0x4
 	bcs	_5141b140
 	mov	r1, #7	// 0x7
 	mov	r0, #180	// 0xb4
-	bl	sub_51419c90 
+	bl	PMIC_LUT2_Read_Write 
 _5141b140:
 	mov	r1, #46	// 0x2e
 	mov	r0, #131	// 0x83
-	bl	sub_51419c90 
+	bl	PMIC_LUT2_Read_Write 
 	mov	r1, #7	// 0x7
 	mov	r0, #127	// 0x7f
-	bl	sub_51419c90 
+	bl	PMIC_LUT2_Read_Write 
 	mov	r1, #9	// 0x9
 	mov	r0, #143	// 0x8f
-	bl	sub_51419c90 
+	bl	PMIC_LUT2_Read_Write 
 	str	r4, [sp]
 	mov	r2, #1	// 0x1
 	mov	r1, sp
@@ -3998,7 +3998,7 @@ _5141b140:
 	bl	PMIC_LUT1_write 
 	mov	r1, #21	// 0x15
 	mov	r0, #52	// 0x34
-	bl	sub_51419c90 
+	bl	PMIC_LUT2_Read_Write 
 	mov	r0, #6	// 0x6
 	str	r0, [sp]
 	mov	r2, #1	// 0x1
@@ -12060,7 +12060,7 @@ _init_no_copy_needed:
 	BL      sub_51430f80
 	BL      LCD_InitWin // 0x51401B28
 
-
+/*
 	adr	r2, _pmu_write_var
 	mov	r0, #0x78	// write to PMU
 	mov	r1, #0x44	// reg = CARD1EN 
@@ -12068,7 +12068,10 @@ _init_no_copy_needed:
 	bl	pmic_write_I2C
 //	cmp	r0, #0
 	b	_spin_forever
+*/
 
+	bl	pmic_reading_writing_B
+	b	_spin_forever
 //	ldr	pc, _start_oldboot
 
 
