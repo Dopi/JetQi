@@ -639,7 +639,7 @@ OneNAND_Init:	// sub_51401c3c:
 	bl	sub_5140146c
 	bl	sub_51403dc8
 	bl	pmic_reading_writing_B
-	bl	sub_5141a61c
+	bl	PMIC_set_reg_SIMLTEN
 	mov	r1, #1
 	mov	r0, #175	// 0xaf
 	bl	value_table_sub_A
@@ -945,14 +945,14 @@ loc_51403000:
 
 	MOV     R1, SP
 	MOV     R0, #0xF
-	bl      PMIC_Read
+	bl      PMIC_LUT2_read	// read from CHG_IRQ2
 //	ADR     R0, aNoBattery  // "NO battery\n"
 //	BL      SimpleDebugPrint
 
 loc_51403064:
 //	BL      SelectBootingMode
 	MOV     R0, #1
-	bl      sub_5141af20
+	bl      PMIC_set_reg_SRAMEN_MVTEN_LDOAEN
 	MOV     R0, #0x7D0
 	BL      sub_51430f80
 	BL      LCD_InitWin // 0x51401B28
@@ -1720,7 +1720,7 @@ _514156e8:
 	mov	r0, #3	
 	b	j_I2C_GPIO_Line_Close 	// 0x514156ec
 
-read_from_0x5a0b0034_to_R0:	\\ sub_514153bc:
+read_from_0x5a0b0034_to_R0:	// sub_514153bc:
 	ldr	r0, var_51415448
 	ldr	r0, [r0, #48]
 	bx	lr	// 0x514153c4
@@ -3575,7 +3575,7 @@ var_51419c84:	.word	0x7e7e7e6c
 var_51419c88:	.word	0x20642520
 var_51419c8c:	.word	0x0000000a
 
-PMIC_LUT2_Read_Write:	// sub_51419c90:
+PMIC_LUT2_write:	// sub_51419c90:
 	stmdb	sp!, {r3, r4, r5, r6, r7, lr}
 	mov	r7, r1
 	ldr	r6, var_5141aa8c
@@ -3611,7 +3611,7 @@ _51419d04:
 	mov	r0, #1	
 	b	ret_51419cc4 	// 0x51419d08
 
-PMIC_Read:	// sub_51419d0c:
+PMIC_LUT2_read:	// sub_51419d0c:
 	stmdb	sp!, {r3, r4, r5, lr}
 	mov	r5, r1
 	ldr	r2, var_5141aa8c 
@@ -3660,17 +3660,17 @@ _51419d98:
  *  5141A000
  */
 
-sub_5141a61c:
+PMIC_set_reg_SIMLTEN:	// sub_5141a61c:
 	stmdb	sp!, {r3, lr}
 	bl	read_from_0x5a0b0034_to_R0 
 	cmp	r0, #6	
 	bcs	_5141a648 
 	mov	r1, #21	// 0x15
 	mov	r0, #155	// 0x9b
-	bl	PMIC_LUT2_Read_Write 
+	bl	PMIC_LUT2_write 
 	mov	r1, #1	
 	mov	r0, #152	// 0x98
-	bl	PMIC_LUT2_Read_Write 
+	bl	PMIC_LUT2_write 
 ret_5141a644:
 	ldmia	sp!, {ip, pc}
 _5141a648:
@@ -3709,7 +3709,7 @@ sub_5141ab40:
 	bne	_5141ab5c
 	mov	r1, #1
 	mov	r0, #0
-	bl	PMIC_LUT2_Read_Write
+	bl	PMIC_LUT2_write
 ret_5141ab58:
 	ldmia	sp!, {r3, r4, r5, pc}
 _5141ab5c:
@@ -3870,7 +3870,7 @@ _5141af18:
 	strb	r4, [r5, #1]
 	ldmia	sp!, {r3, r4, r5, pc}	// 0x5141af1c
 
-sub_5141af20:
+PMIC_set_reg_SRAMEN_MVTEN_LDOAEN:	// sub_5141af20:
 	stmdb	sp!, {r3, lr}
 	orr	r0, r0, #14
 	str	r0, [sp]
@@ -3943,10 +3943,10 @@ pmic_reading_writing_B:		// sub_5141b088:
 	bl	PMIC_LUT1_write
 	mov	r1, #1	// 0x1
 	mov	r0, #40	// 0x28
-	bl	PMIC_LUT2_Read_Write
+	bl	PMIC_LUT2_write
 	mov	r1, #45	// 0x2d
 	mov	r0, #172	// 0xac
-	bl	PMIC_LUT2_Read_Write 
+	bl	PMIC_LUT2_write 
 	str	r4, [sp]
 	mov	r2, #1	// 0x1
 	mov	r1, sp
@@ -3954,16 +3954,16 @@ pmic_reading_writing_B:		// sub_5141b088:
 	bl	PMIC_LUT1_write 
 	mov	r1, #45	// 0x2d
 	mov	r0, #178	// 0xb2
-	bl	PMIC_LUT2_Read_Write 
+	bl	PMIC_LUT2_write 
 	mov	r1, #9	// 0x9
 	mov	r0, #137	// 0x89
-	bl	PMIC_LUT2_Read_Write 
+	bl	PMIC_LUT2_write 
 	bl	read_from_0x5a0b0034_to_R0 
 	cmp	r0, #4	// 0x4
 	bcs	_5141b100 
 	mov	r1, #7	// 0x7
 	mov	r0, #158	// 0x9e
-	bl	PMIC_LUT2_Read_Write 
+	bl	PMIC_LUT2_write 
 _5141b100:
 	mov	r0, #19	// 0x13
 	str	r0, [sp]
@@ -3980,17 +3980,17 @@ _5141b100:
 	bcs	_5141b140
 	mov	r1, #7	// 0x7
 	mov	r0, #180	// 0xb4
-	bl	PMIC_LUT2_Read_Write 
+	bl	PMIC_LUT2_write 
 _5141b140:
 	mov	r1, #46	// 0x2e
 	mov	r0, #131	// 0x83
-	bl	PMIC_LUT2_Read_Write 
+	bl	PMIC_LUT2_write 
 	mov	r1, #7	// 0x7
 	mov	r0, #127	// 0x7f
-	bl	PMIC_LUT2_Read_Write 
+	bl	PMIC_LUT2_write 
 	mov	r1, #9	// 0x9
 	mov	r0, #143	// 0x8f
-	bl	PMIC_LUT2_Read_Write 
+	bl	PMIC_LUT2_write 
 	str	r4, [sp]
 	mov	r2, #1	// 0x1
 	mov	r1, sp
@@ -3998,7 +3998,7 @@ _5141b140:
 	bl	PMIC_LUT1_write 
 	mov	r1, #21	// 0x15
 	mov	r0, #52	// 0x34
-	bl	PMIC_LUT2_Read_Write 
+	bl	PMIC_LUT2_write 
 	mov	r0, #6	// 0x6
 	str	r0, [sp]
 	mov	r2, #1	// 0x1
@@ -12034,7 +12034,7 @@ _init_no_copy_needed:
 	mov	r4, r0
 	bl	sub_514029b0
 	str	r0, [R4,#0x30]
-//	BL      OneNAND_Init
+	BL      OneNAND_Init
 //	LDR     R1, [R4,#0x30]
 //	ADR     R0, aBoothwcheckD__ // "BootHWCheck: %d...\n"
 //	BL      SimpleDebugPrint
@@ -12049,13 +12049,13 @@ _init_no_copy_needed:
 
 	MOV     R1, SP
 	MOV     R0, #0xF
-	bl      PMIC_Read
+	bl      PMIC_LUT2_read
 //	ADR     R0, aNoBattery  // "NO battery\n"
 //	BL      SimpleDebugPrint
 
 //	BL      SelectBootingMode
 	MOV     R0, #1
-	bl      sub_5141af20
+	bl      PMIC_set_reg_SRAMEN_MVTEN_LDOAEN
 	MOV     R0, #0x7D0
 	BL      sub_51430f80
 	BL      LCD_InitWin // 0x51401B28
