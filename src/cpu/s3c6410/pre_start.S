@@ -12064,36 +12064,51 @@ _init_no_copy_needed:
 	mov	r4, #0xF
 	mov	r1, #0x2D 
 	mov	r0, #0xAC 
-	bl	PMIC_LUT2_Write // REG_CARD1TV (CARD1TV)
+	bl	PMIC_LUT2_write // REG_CARD1TV (CARD1TV)
+	cmp	r0, #0
+	bne	_continue_oldboot
+
 	str	r4, [SP]
 	mov	r2, #1
 	mov	r1, SP
 	mov	r0, #0x42
 	bl	PMIC_LUT1_write // write 0xf to REG_CARD1EN
-
+	cmp	r0, #0
+	bne	_continue_oldboot
 
 	// PMIC_set_reg_SIMLTEN
 	mov	r1, #5
 	mov	r0, #0x97
-	bl	PMIC_LUT2_Write // REG_SIMLTEN (SIMLTENSRC)
+	bl	PMIC_LUT2_write // REG_SIMLTEN (SIMLTENSRC)
+	cmp	r0, #0
+	bne	_continue_oldboot
 
 	mov	r1, #0
 	mov	r0, #0xF7
-	bl	PMIC_LUT2_Write // REG_SEQ6CNFG (SEQ6T)
+	bl	PMIC_LUT2_write // REG_SEQ6CNFG (SEQ6T)
+	cmp	r0, #0
+	bne	_continue_oldboot
 
 	// PMIC_config_SEQ34567_enable_LDOD_RFTXL_RFRXL_RFRXH_REFOUT (called from DRV_modem_reset called from BBinit)
 	mov	R1, #0
 	mov	R0, #0xF8
-	bl	PMIC_LUT2_Write // REG_SEQ6CNFG (SEQ6SRC)
+	bl	PMIC_LUT2_write // REG_SEQ6CNFG (SEQ6SRC)
+	cmp	r0, #0
+	bne	_continue_oldboot
 
 	// PMIC_setup_SIMLTEN_SEQ6 (called from BBinit)
 	mov	r1, #0x15
 	mov	r0, #0x9B 
-	bl	PMIC_LUT2_Write // REG_SIMLTTV (SIMLTTV)
+	bl	PMIC_LUT2_write // REG_SIMLTTV (SIMLTTV)
+	cmp	r0, #0
+	bne	_continue_oldboot
 	mov	r1, #1
 	mov	r0, #0x98 
-	bl	PMIC_LUT2_Write // REG_SIMLTEN (SIMLTEN)
+	bl	PMIC_LUT2_write // REG_SIMLTEN (SIMLTEN)
+	cmp	r0, #0
+	bne	_spin_forever	//_continue_oldboot
 
+	b	_continue_oldboot	//_spin_forever
 
 //	adr	r2, _pmu_write_var
 //	mov	r0, #0x78	// write to PMU
@@ -12106,7 +12121,6 @@ _init_no_copy_needed:
 
 //	ldr	pc, _start_oldboot
 
-	b	_spin_forever
 
 	mov	r0, #0
 	str	r0, [R4,#0x24]
@@ -12131,6 +12145,7 @@ _init_no_copy_needed:
 
 //	bl	_wait_10s
 //	ldr	pc, _start_armboot
+_continue_oldboot:
 	ldr	pc, _start_oldboot
 
 
