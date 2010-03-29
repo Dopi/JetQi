@@ -886,33 +886,33 @@ _51402ac0:
 
 _init2:
 	stmdb   sp!, {r3-r5,lr}
-	MOV     R1, #1
-	MOV     R0, #0x16
-	BL      value_table_sub_B
-	MOV     R1, #1
-	MOV     R0, #0x16
-	BL      value_table_sub_A
-	MOV     R1, #1
-	MOV     R0, #0x16
-	BL      value_table_sub_B
-	MOV     R1, #1
-	MOV     R0, #0xB0 // '¦'
-	BL      value_table_sub_B
-	MOV     R1, #1
-	MOV     R0, #0xB0 // '¦'
-	BL      value_table_sub_A
-	MOV     R1, #1
-	MOV     R0, #0xB0 // '¦'
-	BL      value_table_sub_B
-	MOV     R1, #2
-	MOV     R0, #0x69 // 'i'
+	mov	r1, #1
+	mov	r0, #0x16
+	bl	value_table_sub_B
+	mov	r1, #1
+	mov	r0, #0x16
+	bl	value_table_sub_A
+	mov	r1, #1
+	mov	r0, #0x16
+	bl	value_table_sub_B
+	mov	r1, #1
+	mov	r0, #0xB0 // '¦'
+	bl	value_table_sub_B
+	mov	r1, #1
+	mov	r0, #0xB0 // '¦'
+	bl	value_table_sub_A
+	mov	r1, #1
+	mov	r0, #0xB0 // '¦'
+	bl	value_table_sub_B
+	mov	r1, #2
+	mov	r0, #0x69 // 'i'
 	BL	sub_514381c4
-	MOV	R1, #0
-	MOV	R0, #0x69 // 'i'
+	MOV	r1, #0
+	MOV	r0, #0x69 // 'i'
 	BL	value_table_sub_A
 	ldr	r0, var_51403204
 	ldr	r1, var_51403208	/// correct????
-	cmp	R0, R1
+	cmp	r0, R1
 	beq	loc_51403000
 
 	add	r1, r0, #0
@@ -930,11 +930,11 @@ loc_51403000:
 	mov	r4, r0
 	bl	sub_514029b0
 	str	r0, [R4,#0x30]
-	BL      OneNAND_Init
+	bl	OneNAND_Init
 	LDR     R1, [R4,#0x30]
 //	ADR     R0, aBoothwcheckD__ // "BootHWCheck: %d...\n"
-//	BL      SimpleDebugPrint
-	MOV     R0, #0x69 // 'i'
+//	bl	SimpleDebugPrint
+	mov	r0, #0x69 // 'i'
 	bl	value_table_sub_C
 	CMP     R0, #0
 	BEQ     loc_51403064
@@ -943,39 +943,39 @@ loc_51403000:
 	CMP     R0, #2
 	BCC     loc_51403064
 
-	MOV     R1, SP
-	MOV     R0, #0xF
-	bl      PMIC_LUT2_read	// read from CHG_IRQ2
+	mov	r1, SP
+	mov	r0, #0xF
+	bl	PMIC_LUT2_read	// read from CHG_IRQ2
 //	ADR     R0, aNoBattery  // "NO battery\n"
-//	BL      SimpleDebugPrint
+//	bl	SimpleDebugPrint
 
 loc_51403064:
-//	BL      SelectBootingMode
-	MOV     R0, #1
-	bl      PMIC_set_reg_SRAMEN_MVTEN_LDOAEN
-	MOV     R0, #0x7D0
-	BL      sub_51430f80
-	BL      LCD_InitWin // 0x51401B28
-	MOV     R0, #0
-	STR     R0, [R4,#0x24]
+//	bl	SelectBootingMode
+	mov	r0, #1
+	bl	PMIC_set_reg_SRAMEN_MVTEN_LDOAEN
+	mov	r0, #0x7D0
+	bl	sub_51430f80
+	bl	LCD_InitWin // 0x51401B28
+	mov	r0, #0
+	str	r0, [R4,#0x24]
 	ldr	r0, var_51402258 // =0x514449A8
 	ldrb    r0, [r0]
 	CMP     R0, #0x10
 	BEQ     loc_514031B0
 
 loc_514031B0:
-	MOV     R1, #0
-	MOV     R0, #2
-	bl      sub_5141ab40	// I2C_something
+	mov	r1, #0
+	mov	r0, #2
+	bl	sub_5141ab40	// I2C_something
 	bl	Download_Mode_MSG
-//	BL      sub_514131A0
+//	bl	sub_514131A0
 //	B       loc_514030E8
 
-//	MOV     R0, #8
+//	mov	r0, #8
 //	B       sub_5141804C
 
-//	BL      sub_514185F4
-//	BL      Baseband_Init
+//	bl	sub_514185F4
+//	bl	Baseband_Init
 
 _continue_with_start_qi:
 	b	_init_start_qi
@@ -3275,26 +3275,26 @@ asc_jetdroid:
 
 Download_Mode_MSG: //0x514184B8
 	STMFD   SP!, {R4,LR}
-	MOV     R0, #0x7D0
+	mov	r0, #0x7D0
 	bl	sub_51430f80
 	bl	sub_51417fa0
-	MOV     R0, #0
-	BL      sub_51417f24
-	MOV     R3, #0
-	MOV     R2, #0xF800
-	MOV     R1, #4
+	mov	r0, #0
+	bl	sub_51417f24
+	mov	R3, #0
+	mov	R2, #0xF800
+	mov	r1, #4
 	ADR     R0, asc_spacer // "--------------------------------"
-	BL      LCD_printf	// 0x514182D4
-	MOV     R3, #0
-	MOV     R2, #0xF800
-	MOV     R1, #5
+	bl	LCD_printf	// 0x514182D4
+	mov	R3, #0
+	mov	R2, #0xF800
+	mov	r1, #5
 	ADR     R0, asc_jetdroid // "   \t    JetDroid mode  \t      "
-	BL      LCD_printf
-	MOV     R3, #0
-	MOV     R2, #0xF800
-	MOV     R1, #8
+	bl	LCD_printf
+	mov	R3, #0
+	mov	R2, #0xF800
+	mov	r1, #8
 	ADR     R0, asc_spacer  // "--------------------------------"
-	BL      LCD_printf
+	bl	LCD_printf
 	LDMFD   SP!, {R4,LR}
 
 
@@ -4216,13 +4216,13 @@ sub_5142fc84:
 	bx	lr	// 0x5142fce4
 
 memcopy_R2bytes_fromR0_toR1:	// sub_5142fd38:
-	mov     r3, #0
-	mov     ip, r2,lsr#2
+	mov	r3, #0
+	mov	ip, r2,lsr#2
 _5142fd40:
 	cmp     r3, ip
 	bcs     ret_5142fd58
 	ldr     r2, [r1,r3,lsl#2]
-	str     r2, [r0,r3,lsl#2]
+	str	r2, [r0,r3,lsl#2]
 	add     r3, r3, #1
 	b       _5142fd40
 ret_5142fd58: 
@@ -11991,34 +11991,34 @@ vvar_51402258:	.word	0x514449A8
 
 _init_start_qi:
 	stmdb   sp!, {r3-r5,lr}
-	MOV     R1, #1
-	MOV     R0, #0x16
-	BL      value_table_sub_B
-	MOV     R1, #1
-	MOV     R0, #0x16
-	BL      value_table_sub_A
-	MOV     R1, #1
-	MOV     R0, #0x16
-	BL      value_table_sub_B
-	MOV     R1, #1
-	MOV     R0, #0xB0 // '¦'
-	BL      value_table_sub_B
-	MOV     R1, #1
-	MOV     R0, #0xB0 // '¦'
-	BL      value_table_sub_A
-	MOV     R1, #1
-	MOV     R0, #0xB0 // '¦'
-	BL      value_table_sub_B
-	MOV     R1, #2
-	MOV     R0, #0x69 // 'i'
+	mov	r1, #1
+	mov	r0, #0x16
+	bl	value_table_sub_B
+	mov	r1, #1
+	mov	r0, #0x16
+	bl	value_table_sub_A
+	mov	r1, #1
+	mov	r0, #0x16
+	bl	value_table_sub_B
+	mov	r1, #1
+	mov	r0, #0xB0 // '¦'
+	bl	value_table_sub_B
+	mov	r1, #1
+	mov	r0, #0xB0 // '¦'
+	bl	value_table_sub_A
+	mov	r1, #1
+	mov	r0, #0xB0 // '¦'
+	bl	value_table_sub_B
+	mov	r1, #2
+	mov	r0, #0x69 // 'i'
 	BL	sub_514381c4
-	MOV	R1, #0
-	MOV	R0, #0x69 // 'i'
+	MOV	r1, #0
+	MOV	r0, #0x69 // 'i'
 	BL	value_table_sub_A
 
 	ldr	r0, vvar_51403204	// initial content: 0x51446da0
 	ldr	r1, vvar_51403208	// initial content: 0x51446da0
-	cmp	R0, R1
+	cmp	r0, R1
 	beq	_init_no_copy_needed
 	add	r1, r0, #0
 	ldr	r0, vvar_51403208	// initial content: 0x51446da0
@@ -12034,11 +12034,11 @@ _init_no_copy_needed:
 	mov	r4, r0
 	bl	sub_514029b0
 	str	r0, [R4,#0x30]
-	BL      OneNAND_Init
+	bl	OneNAND_Init
 //	LDR     R1, [R4,#0x30]
 //	ADR     R0, aBoothwcheckD__ // "BootHWCheck: %d...\n"
-//	BL      SimpleDebugPrint
-	MOV     R0, #0x69 // 'i'
+//	bl	SimpleDebugPrint
+	mov	r0, #0x69 // 'i'
 	bl	value_table_sub_C
 //	CMP     R0, #0
 //	BEQ     loc_51403064
@@ -12047,53 +12047,85 @@ _init_no_copy_needed:
 //	CMP     R0, #2
 //	BCC     loc_51403064
 
-	MOV     R1, SP
-	MOV     R0, #0xF
-	bl      PMIC_LUT2_read
+	mov	r1, SP
+	mov	r0, #0xF
+	bl	PMIC_LUT2_read
 //	ADR     R0, aNoBattery  // "NO battery\n"
-//	BL      SimpleDebugPrint
+//	bl	SimpleDebugPrint
 
-//	BL      SelectBootingMode
-	MOV     R0, #1
-	bl      PMIC_set_reg_SRAMEN_MVTEN_LDOAEN
-	MOV     R0, #0x7D0
-	BL      sub_51430f80
-	BL      LCD_InitWin // 0x51401B28
+//	bl	SelectBootingMode
+	mov	r0, #1
+	bl	PMIC_set_reg_SRAMEN_MVTEN_LDOAEN
+	mov	r0, #0x7D0
+	bl	sub_51430f80
+	bl	LCD_InitWin // 0x51401B28
 
-/*
-	adr	r2, _pmu_write_var
-	mov	r0, #0x78	// write to PMU
-	mov	r1, #0x44	// reg = CARD1EN 
-	mov	r3, #1		// why 1 ?
-	bl	pmic_write_I2C
+
+	mov	r4, #0xF
+	mov	r1, #0x2D 
+	mov	r0, #0xAC 
+	bl	PMIC_LUT2_Write // REG_CARD1TV (CARD1TV)
+	str	r4, [SP]
+	mov	r2, #1
+	mov	r1, SP
+	mov	r0, #0x42
+	bl	PMIC_LUT1_write // write 0xf to REG_CARD1EN
+
+
+	// PMIC_set_reg_SIMLTEN
+	mov	r1, #5
+	mov	r0, #0x97
+	bl	PMIC_LUT2_Write // REG_SIMLTEN (SIMLTENSRC)
+
+	mov	r1, #0
+	mov	r0, #0xF7
+	bl	PMIC_LUT2_Write // REG_SEQ6CNFG (SEQ6T)
+
+	// PMIC_config_SEQ34567_enable_LDOD_RFTXL_RFRXL_RFRXH_REFOUT (called from DRV_modem_reset called from BBinit)
+	mov	R1, #0
+	mov	R0, #0xF8
+	bl	PMIC_LUT2_Write // REG_SEQ6CNFG (SEQ6SRC)
+
+	// PMIC_setup_SIMLTEN_SEQ6 (called from BBinit)
+	mov	r1, #0x15
+	mov	r0, #0x9B 
+	bl	PMIC_LUT2_Write // REG_SIMLTTV (SIMLTTV)
+	mov	r1, #1
+	mov	r0, #0x98 
+	bl	PMIC_LUT2_Write // REG_SIMLTEN (SIMLTEN)
+
+
+//	adr	r2, _pmu_write_var
+//	mov	r0, #0x78	// write to PMU
+//	mov	r1, #0x44	// reg = CARD1EN 
+//	mov	r3, #1		// why 1 ?
+//	bl	pmic_write_I2C
 //	cmp	r0, #0
-	b	_spin_forever
-*/
 
-	bl	pmic_reading_writing_B
-	b	_spin_forever
+//	bl	pmic_reading_writing_B
+
 //	ldr	pc, _start_oldboot
 
+	b	_spin_forever
 
-
-	MOV     R0, #0
-	STR     R0, [R4,#0x24]
+	mov	r0, #0
+	str	r0, [R4,#0x24]
 	ldr	r0, vvar_51402258 // =0x514449A8
 	ldrb    r0, [r0]
 	CMP     R0, #0x10
 
-	MOV     R1, #0
-	MOV     R0, #2
-	bl      sub_5141ab40	// I2C_something
+	mov	r1, #0
+	mov	r0, #2
+	bl	sub_5141ab40	// I2C_something
 	bl	Download_Mode_MSG
-//	BL      sub_514131A0
+//	bl	sub_514131A0
 //	B       loc_514030E8
 
-//	MOV     R0, #8
+//	mov	r0, #8
 //	B       sub_5141804C
 
-//	BL      sub_514185F4
-//	BL      Baseband_Init
+//	bl	sub_514185F4
+//	bl	Baseband_Init
 
 
 
