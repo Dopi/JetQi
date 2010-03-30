@@ -796,7 +796,7 @@ var_51402258:	.word	0x514449A8
  *
  */
 
-sub_514029b0:
+more_GPIO_setup:	// sub_514029b0:
 	stmdb	sp!, {r4, r5, r6, lr}
 	mov	r1, #0
 	mov	r0, #161	// 0xa1
@@ -928,7 +928,7 @@ loc_51403000:
 	bl	sub_514152f8
 	bl	load_0x5A0B0004_to_R0	// load_0x5A0B0004_to_R0
 	mov	r4, r0
-	bl	sub_514029b0
+	bl	more_GPIO_setup
 	str	r0, [R4,#0x30]
 	bl	OneNAND_Init
 	LDR     R1, [R4,#0x30]
@@ -5458,13 +5458,15 @@ _51430ed4:
 
 aI2c_gpio_con_4: 			// var_51430f14
 	.ascii	"[I2C_GPIO_Condition_WriteByte] Not Opened: Ch(%d) "
-	.byte	0xA,0
+	.byte	0xA, 0
+	.align 4
 
 off_51430f48:	.word	0x000002fb	// var_51430f48
 
 aI2c_gpio_condition_readbyteNot:	// var_51430f4c
 	.ascii	"[I2C_GPIO_Condition_ReadByte] Not Opened: Ch(%d) "
-	.byte	0xA, 0, 0
+	.byte	0xA, 0
+	.align 4
 
 sub_51430f80:
 	ldr	r2, var_514311a4
@@ -9110,10 +9112,12 @@ GPIO_LUT_base_adr:		//var_51438340
 	.word 	0x514431e8
 aSrcGpio_driver_port_c:		//var_51438344 
 	.ascii	"src\gpio_driver_port.c"
-	.byte	0,0
+	.byte	0
+	.align 4
 aGpio_pin_numGpio_k_0Gpio_pin_numGpio_n_15:	//var_5143835C
 	.ascii	"(GPIO_PIN_NUM < GPIO_K_0) || (GPIO_PIN_NUM > GPIO_N_15)"
 	.byte	0
+	.align 4
 var_51438394:	.word 	0x000001eb 
 
 
@@ -11955,6 +11959,13 @@ vvar_51403214:	.word	0x51446da0
 
 vvar_51402258:	.word	0x514449A8
 
+adr_sub_514152F8:	.word	0x514152F8
+adr_OneNAND_Init:	.word	0x51401C3C
+adr_SelectBootingMode:	.word	0x51402B90
+adr_LCD_InitWin:	.word	0x51401B28
+adr_MSG_UPLOAD_data_to_pc:	.word	0x5141852C
+adr_Baseband_Init:	.word	0x5141983C
+adr_PMIC_set_reg_SRAMEN_MVTEN_LDOAEN:	.word	0x5141AF20
 /*
  *
  */
@@ -11999,23 +12010,33 @@ _init_no_copy_needed:
 	ldr	r0, vvar_51403214 	// initial content: 0x51446da0
 	mov	r1, #0
 	bl	memclear_R2bytes_withR1_atR0
-	bl	sub_514152f8
+
+//	bl	sub_514152f8
+	adr	lr, _return1
+	ldr	pc, adr_sub_514152F8	
+_return1:	
+//
 	bl	load_0x5A0B0004_to_R0	// load_0x5A0B0004_to_R0
 	mov	r4, r0
-	bl	sub_514029b0
+	bl	more_GPIO_setup
 	str	r0, [R4,#0x30]
-	bl	OneNAND_Init
-//	LDR     R1, [R4,#0x30]
+
+//	bl	OneNAND_Init
+	adr	lr, _return2
+	ldr	pc, adr_OneNAND_Init	
+_return2:
+//
+	ldr	r1, [r4, #0x30]
 //	ADR     R0, aBoothwcheckD__ // "BootHWCheck: %d...\n"
 //	bl	SimpleDebugPrint
 	mov	r0, #0x69 // 'i'
 	bl	value_table_sub_C
-//	CMP     R0, #0
-//	BEQ     loc_51403064
+	cmp	r0, #0
+	beq	_battery_okay
 
-//	LDR     R0, [R4,#0x30]
-//	CMP     R0, #2
-//	BCC     loc_51403064
+	ldr	r0, [r4, #0x30]
+	cmp	r0, #2
+	bcc	_battery_okay
 
 	mov	r1, SP
 	mov	r0, #0xF
@@ -12023,12 +12044,46 @@ _init_no_copy_needed:
 //	ADR     R0, aNoBattery  // "NO battery\n"
 //	bl	SimpleDebugPrint
 
+_battery_okay:
 //	bl	SelectBootingMode
+	adr	lr, _return3
+	ldr	pc, adr_SelectBootingMode			
+_return3:
+//	
 	mov	r0, #1
-	bl	PMIC_set_reg_SRAMEN_MVTEN_LDOAEN
+//	bl	PMIC_set_reg_SRAMEN_MVTEN_LDOAEN
+	adr	lr, _return3b
+	ldr	pc, adr_PMIC_set_reg_SRAMEN_MVTEN_LDOAEN			
+_return3b:
+//
 	mov	r0, #0x7D0
 	bl	sub_51430f80
-	bl	LCD_InitWin // 0x51401B28
+//	bl	LCD_InitWin // 0x51401B28
+	adr	lr, _return4
+	ldr	pc, adr_LCD_InitWin
+_return4:
+//
+	mov	r0, #0
+	str	r0, [R4,#0x24]
+	ldr	r0, vvar_51402258 // =0x514449A8
+
+//	bl	MSG_UPLOAD_data_to_pc
+	adr	lr, _return5
+	ldr	pc, adr_MSG_UPLOAD_data_to_pc	
+_return5:
+//
+//	bl	Baseband_Init
+	adr	lr, _return6
+	ldr	pc, adr_Baseband_Init	
+_return6:
+//
+//	bl	sub_514156F0
+//	bl	USB_BOOT_Uploader
+	b	_spin_forever
+
+
+
+
 
 
 	mov	r4, #0xF
