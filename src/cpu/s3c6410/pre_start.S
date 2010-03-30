@@ -906,7 +906,7 @@ _init2:
 	bl	value_table_sub_B
 	mov	r1, #2
 	mov	r0, #0x69 // 'i'
-	BL	sub_514381c4
+	BL	value_table_sub_D
 	MOV	r1, #0
 	MOV	r0, #0x69 // 'i'
 	BL	value_table_sub_A
@@ -4494,10 +4494,10 @@ _51430150:
 	str	r1, [r0, #8]
 	mov	r1, #0
 	mov	r0, r6
-	bl	sub_514381c4
+	bl	value_table_sub_D
 	mov	r1, #0
 	mov	r0, r7
-	bl	sub_514381c4
+	bl	value_table_sub_D
 	mov	r1, #1
 	mov	r0, r6
 	bl	value_table_sub_B
@@ -4543,10 +4543,10 @@ _51430228:
 	add	r4, r2, r0, lsl #2
 	mov	r1, #0
 	ldrb	r0, [r4, #1]
-	bl	sub_514381c4 
+	bl	value_table_sub_D 
 	ldrb	r0, [r4, #2]
 	mov	r1, #0
-	bl	sub_514381c4
+	bl	value_table_sub_D
 	ldrb	r0, [r4, #1]
 	mov	r1, #0
 	bl	value_table_sub_A 
@@ -5354,7 +5354,8 @@ _51430d9c:
 	cmp	r0, #0
 	bne	_51430dc4 
 	mov	r1, r5
-	add	r0, pc, #344	// 0x158		// !!!! PC relative !!!!!
+	//add	r0, pc, #344	// 0x158		// !!!! PC relative !!!!!
+	adr	r0, aI2c_gpio_con_4
 	bl	SimpleDebugPrint
 	mvn	r0, #0
 ret_51430dc0:
@@ -5384,7 +5385,7 @@ I2C_GPIO_Condition_ReadByte:	// sub_51430e00:
 	mov	r4, #0	
 	cmp	r6, #6	
 	bcc	_51430e28 
-	ldr	r2, var_51430f48 
+	ldr	r2, off_51430f48 
 	ldr	r1, var_514309d4 
 	ldr	r0, var_514309d8 
 	bl	SimpleDebugPrint 
@@ -5395,7 +5396,8 @@ _51430e28:
 	cmp	r0, #0	
 	bne	_51430e50
 	mov	r1, r6
-	add	r0, pc, #260	// 0x104	// !!!! PC relative 0x51430e40 + 0x104
+	//add	r0, pc, #260	// 0x104	// !!!! PC relative 0x51430e40 + 0x104
+	adr	r0, aI2c_gpio_condition_readbyteNot
 	bl	SimpleDebugPrint 
 	mvn	r0, #0	
 ret_51430e4c:
@@ -5454,33 +5456,15 @@ _51430ed4:
 	mov	r0, #0	
 	b	ret_51430e4c 	// 0x51430f10
 
-var_51430f14:	.word	0x4332495b
-var_51430f18:	.word	0x4950475f
-var_51430f1c:	.word	0x6f435f4f
-var_51430f20:	.word	0x7469646e
-var_51430f24:	.word	0x5f6e6f69
-var_51430f28:	.word	0x74697257
-var_51430f2c:	.word	0x74794265
-var_51430f30:	.word	0x4e205d65
-var_51430f34:	.word	0x4f20746f
-var_51430f38:	.word	0x656e6570
-var_51430f3c:	.word	0x43203a64
-var_51430f40:	.word	0x64252868
-var_51430f44:	.word	0x000a2029
-var_51430f48:	.word	0x000002fb
-var_51430f4c:	.word	0x4332495b
-var_51430f50:	.word	0x4950475f
-var_51430f54:	.word	0x6f435f4f
-var_51430f58:	.word	0x7469646e
-var_51430f5c:	.word	0x5f6e6f69
-var_51430f60:	.word	0x64616552
-var_51430f64:	.word	0x65747942
-var_51430f68:	.word	0x6f4e205d
-var_51430f6c:	.word	0x704f2074
-var_51430f70:	.word	0x64656e65
-var_51430f74:	.word	0x6843203a
-var_51430f78:	.word	0x29642528
-var_51430f7c:	.word	0x00000a20
+aI2c_gpio_con_4: 			// var_51430f14
+	.ascii	"[I2C_GPIO_Condition_WriteByte] Not Opened: Ch(%d) "
+	.byte	0xA,0
+
+off_51430f48:	.word	0x000002fb	// var_51430f48
+
+aI2c_gpio_condition_readbyteNot:	// var_51430f4c
+	.ascii	"[I2C_GPIO_Condition_ReadByte] Not Opened: Ch(%d) "
+	.byte	0xA, 0, 0
 
 sub_51430f80:
 	ldr	r2, var_514311a4
@@ -8997,7 +8981,7 @@ value_table_sub_A:	// sub_51438078:
 	stmdb	sp!, {r4, r5, r6, r7, r8, lr}
 	mov	r8, r1
 	mov	r4, #0	
-	ldr	r1, var_51438340	// =0x514431e8
+	ldr	r1, GPIO_LUT_base_adr	// =0x514431e8
 	ldr	r2, [r1, r0, lsl #3]
 	and	r5, r2, #15	// 0xf
 	mov	r2, r2, lsl #24
@@ -9033,7 +9017,7 @@ _514380dc:
 value_table_sub_B:	// sub_514380f8:	
 	stmdb	sp!, {r4, lr}
 	mov	r2, #0
-	ldr	r4, var_51438340 	// = 0x514431e8
+	ldr	r4, GPIO_LUT_base_adr 	// = 0x514431e8
 	ldr	ip, [r4, r0, lsl #3]
 	and	lr, ip, #15	// 0xf
 	mov	r3, ip, lsl #22
@@ -9064,7 +9048,7 @@ _51438144:
 value_table_sub_C:	// sub_51438160:
 	str	lr, [sp, #-4]!
 	mov	r1, #0	// 0x0
-	ldr	lr, var_51438340	// = 0x514431e8
+	ldr	lr, GPIO_LUT_base_adr	// = 0x514431e8
 	ldr	ip, [lr, r0, lsl #3]
 	and	r3, ip, #15	// 0xf
 	mov	r2, ip, lsl #22
@@ -9091,10 +9075,10 @@ _514381ac:
 	ldr	pc, [sp], #4 	// 0x514381c0
 
 
-sub_514381c4:
+value_table_sub_D:	// sub_514381c4:
 	stmdb	sp!, {r4, lr}
 	mov	r2, #0
-	ldr	r4, var_51438340	// = 0x514431e8
+	ldr	r4, GPIO_LUT_base_adr	// = 0x514431e8
 	ldr	ip, [r4, r0, lsl #3]
 	and	lr, ip, #15	// 0xf
 	mov	r3, ip, lsl #20
@@ -9122,29 +9106,15 @@ _51438210:
 	ldmia	sp!, {r4, pc}	// 0x51438228
 
 
-var_51438340:	.word 	0x514431e8
-_51438344:	.word 	0x5c637273 
-_51438348:	.word 	0x6f697067
-_5143834c:	.word 	0x6972645f
-_51438350:	.word 	0x5f726576
-_51438354:	.word 	0x74726f70
-_51438358:	.word 	0x0000632e 
-_5143835c:	.word 	0x49504728
-_51438360:	.word 	0x49505f4f
-_51438364:	.word 	0x554e5f4e 
-_51438368:	.word 	0x203c204d 
-_5143836c:	.word 	0x4f495047 
-_51438370:	.word 	0x305f4b5f 
-_51438374:	.word 	0x7c7c2029 
-_51438378:	.word 	0x50472820 
-_5143837c:	.word 	0x505f4f49 
-_51438380:	.word 	0x4e5f4e49 
-_51438384:	.word 	0x3e204d55 
-_51438388:	.word 	0x49504720 
-_5143838c:	.word 	0x5f4e5f4f 
-_51438390:	.word 	0x00293531
-_51438394:	.word 	0x000001eb 
-
+GPIO_LUT_base_adr:		//var_51438340
+	.word 	0x514431e8
+aSrcGpio_driver_port_c:		//var_51438344 
+	.ascii	"src\gpio_driver_port.c"
+	.byte	0,0
+aGpio_pin_numGpio_k_0Gpio_pin_numGpio_n_15:	//var_5143835C
+	.ascii	"(GPIO_PIN_NUM < GPIO_K_0) || (GPIO_PIN_NUM > GPIO_N_15)"
+	.byte	0
+var_51438394:	.word 	0x000001eb 
 
 
 var_51438628:	.word	0x5164a828
@@ -12011,7 +11981,7 @@ _init_start_qi:
 	bl	value_table_sub_B
 	mov	r1, #2
 	mov	r0, #0x69 // 'i'
-	BL	sub_514381c4
+	BL	value_table_sub_D
 	MOV	r1, #0
 	MOV	r0, #0x69 // 'i'
 	BL	value_table_sub_A
