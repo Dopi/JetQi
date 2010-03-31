@@ -11906,38 +11906,40 @@ sub_5143fee8:
  */
 
 asc_spacer:
-	.ascii	"-----------------------------"
+	.ascii	"------------------------------"
 	.byte	0
 	.align	4
 
 asc_jetdroid:
-	.ascii	"   \t    JetDroid mode  \t      "
+	.ascii	"   \t    JetDroid mode  \t     "
 	.byte	0
 	.align	4
 
 JetDroid_mode_MSG: //0x514184B8
 	stmfd	sp!, {r4,lr}
 	mov	r0, #0x7D0
-	bl	jump_sub_51430f80
-	bl	jump_sub_51417fa0
+	bl	sub_51430f80
+	bl	sub_51417fa0
 	mov	r0, #0
-	bl	jump_sub_51417f24
+	bl	sub_51417f24
 	mov	R3, #0
 	mov	R2, #0xF800
-	mov	r1, #4
+	mov	r1, #2
 	adr	r0, asc_spacer // "--------------------------------"
 	bl	jump_LCD_printf	// 0x514182D4
 	mov	R3, #0
 	mov	R2, #0xF800
-	mov	r1, #5
+	mov	r1, #4
 	adr	r0, asc_jetdroid // "   \t    JetDroid mode  \t      "
 	bl	jump_LCD_printf
 	mov	R3, #0
 	mov	R2, #0xF800
-	mov	r1, #8
+	mov	r1, #6
 	adr	r0, asc_spacer  // "--------------------------------"
 	bl	jump_LCD_printf
 	ldmfd	sp!, {R4,lr}
+	mov	r0, #8
+	ldr	pc, adr_sub_5141804c //b	sub_5141804C
 
 /*
  *
@@ -11995,6 +11997,10 @@ jump_sub_51417f24:
 adr_sub_51417fa0:	.word	0x51417fa0
 jump_sub_51417fa0:
 	ldr	pc, adr_sub_51417fa0
+
+adr_sub_5141804c:	.word	0x5141804c
+jump_sub_5141804c:
+	ldr	pc, adr_sub_5141804c
 
 adr_LCD_printf:	.word	0x514182D4
 jump_LCD_printf:
@@ -12095,8 +12101,8 @@ _battery_okay:
 	str	r0, [R4,#0x24]
 	ldr	r0, vvar_51402258 // =0x514449A8
 
-//	bl	JetDroid_mode_MSG
-	bl	jump_MSG_UPLOAD_data_to_pc
+	bl	JetDroid_mode_MSG
+//	bl	jump_MSG_UPLOAD_data_to_pc
 	bl	jump_Baseband_Init
 //	bl	sub_514156F0
 //	bl	USB_BOOT_Uploader
