@@ -929,10 +929,10 @@ loc_51403000:
 	bl	load_0x5A0B0004_to_R0	// load_0x5A0B0004_to_R0
 	mov	r4, r0
 	bl	more_GPIO_setup
-	str	r0, [R4,#0x30]
+	str	r0, [r4, #0x30]
 	bl	OneNAND_Init
-	LDR     R1, [R4,#0x30]
-//	ADR     R0, aBoothwcheckD__ // "BootHWCheck: %d...\n"
+	ldr	r1, [r4, #0x30]
+//	adr	r0, aBoothwcheckD__ // "BootHWCheck: %d...\n"
 //	bl	SimpleDebugPrint
 	mov	r0, #0x69 // 'i'
 	bl	value_table_sub_C
@@ -946,7 +946,7 @@ loc_51403000:
 	mov	r1, SP
 	mov	r0, #0xF
 	bl	PMIC_LUT2_read	// read from CHG_IRQ2
-//	ADR     R0, aNoBattery  // "NO battery\n"
+//	adr	r0, aNoBattery  // "NO battery\n"
 //	bl	SimpleDebugPrint
 
 loc_51403064:
@@ -967,7 +967,7 @@ loc_514031B0:
 	mov	r1, #0
 	mov	r0, #2
 	bl	sub_5141ab40	// I2C_something
-	bl	Download_Mode_MSG
+	bl	JetDroid_mode_MSG
 //	bl	sub_514131A0
 //	B       loc_514030E8
 
@@ -3265,37 +3265,6 @@ ret_51418474:
 
 
 
-asc_spacer:
-	.ascii	"--------------------------------"
-	.byte	0
-
-asc_jetdroid:
-	.ascii	"   \t    JetDroid mode  \t      "
-	.byte	0
-
-Download_Mode_MSG: //0x514184B8
-	STMFD   SP!, {R4,LR}
-	mov	r0, #0x7D0
-	bl	sub_51430f80
-	bl	sub_51417fa0
-	mov	r0, #0
-	bl	sub_51417f24
-	mov	R3, #0
-	mov	R2, #0xF800
-	mov	r1, #4
-	ADR     R0, asc_spacer // "--------------------------------"
-	bl	LCD_printf	// 0x514182D4
-	mov	R3, #0
-	mov	R2, #0xF800
-	mov	r1, #5
-	ADR     R0, asc_jetdroid // "   \t    JetDroid mode  \t      "
-	bl	LCD_printf
-	mov	R3, #0
-	mov	R2, #0xF800
-	mov	r1, #8
-	ADR     R0, asc_spacer  // "--------------------------------"
-	bl	LCD_printf
-	LDMFD   SP!, {R4,LR}
 
 
 
@@ -11936,6 +11905,44 @@ sub_5143fee8:
  *
  */
 
+asc_spacer:
+	.ascii	"-----------------------------"
+	.byte	0
+	.align	4
+
+asc_jetdroid:
+	.ascii	"   \t    JetDroid mode  \t      "
+	.byte	0
+	.align	4
+
+JetDroid_mode_MSG: //0x514184B8
+	stmfd	sp!, {r4,lr}
+	mov	r0, #0x7D0
+	bl	jump_sub_51430f80
+	bl	jump_sub_51417fa0
+	mov	r0, #0
+	bl	jump_sub_51417f24
+	mov	R3, #0
+	mov	R2, #0xF800
+	mov	r1, #4
+	adr	r0, asc_spacer // "--------------------------------"
+	bl	jump_LCD_printf	// 0x514182D4
+	mov	R3, #0
+	mov	R2, #0xF800
+	mov	r1, #5
+	adr	r0, asc_jetdroid // "   \t    JetDroid mode  \t      "
+	bl	jump_LCD_printf
+	mov	R3, #0
+	mov	R2, #0xF800
+	mov	r1, #8
+	adr	r0, asc_spacer  // "--------------------------------"
+	bl	jump_LCD_printf
+	ldmfd	sp!, {R4,lr}
+
+/*
+ *
+ */
+
 _wait_10s:
 	mov	r0, #0x20000000			// approx 10 sec wait
 _waitloop:
@@ -11959,13 +11966,56 @@ vvar_51403214:	.word	0x51446da0
 
 vvar_51402258:	.word	0x514449A8
 
-adr_sub_514152F8:	.word	0x514152F8
+
+/*
+ * Long Distance Jumps
+ */
+
+
 adr_OneNAND_Init:	.word	0x51401C3C
-adr_SelectBootingMode:	.word	0x51402B90
+jump_OneNAND_Init:
+	ldr	pc, adr_OneNAND_Init	
+
 adr_LCD_InitWin:	.word	0x51401B28
+jump_LCD_InitWin:
+	ldr	pc, adr_LCD_InitWin	
+
+adr_SelectBootingMode:	.word	0x51402B90
+jump_SelectBootingMode:
+	ldr	pc, adr_SelectBootingMode	
+
+adr_sub_514152F8:	.word	0x514152F8
+jump_sub_514152f8:
+	ldr	pc, adr_sub_514152F8	
+
+adr_sub_51417f24:	.word	0x51417f24
+jump_sub_51417f24:
+	ldr	pc, adr_sub_51417f24
+
+adr_sub_51417fa0:	.word	0x51417fa0
+jump_sub_51417fa0:
+	ldr	pc, adr_sub_51417fa0
+
+adr_LCD_printf:	.word	0x514182D4
+jump_LCD_printf:
+	ldr	pc, adr_LCD_printf	
+
 adr_MSG_UPLOAD_data_to_pc:	.word	0x5141852C
+jump_MSG_UPLOAD_data_to_pc:
+	ldr	pc, adr_MSG_UPLOAD_data_to_pc	
+
 adr_Baseband_Init:	.word	0x5141983C
+jump_Baseband_Init:
+	ldr	pc, adr_Baseband_Init	
+
 adr_PMIC_set_reg_SRAMEN_MVTEN_LDOAEN:	.word	0x5141AF20
+jump_PMIC_set_reg_SRAMEN_MVTEN_LDOAEN:
+	ldr	pc, adr_PMIC_set_reg_SRAMEN_MVTEN_LDOAEN	
+
+adr_sub_51430f80:	.word	0x51430f80
+jump_sub_51430f80:
+	ldr	pc, adr_sub_51430f80
+
 /*
  *
  */
@@ -12010,24 +12060,14 @@ _init_no_copy_needed:
 	ldr	r0, vvar_51403214 	// initial content: 0x51446da0
 	mov	r1, #0
 	bl	memclear_R2bytes_withR1_atR0
-
-//	bl	sub_514152f8
-	adr	lr, _return1
-	ldr	pc, adr_sub_514152F8	
-_return1:	
-//
+	bl	jump_sub_514152f8
 	bl	load_0x5A0B0004_to_R0	// load_0x5A0B0004_to_R0
 	mov	r4, r0
 	bl	more_GPIO_setup
 	str	r0, [R4,#0x30]
-
-//	bl	OneNAND_Init
-	adr	lr, _return2
-	ldr	pc, adr_OneNAND_Init	
-_return2:
-//
+	bl	jump_OneNAND_Init
 	ldr	r1, [r4, #0x30]
-//	ADR     R0, aBoothwcheckD__ // "BootHWCheck: %d...\n"
+//	adr	r0, aBoothwcheckD__ // "BootHWCheck: %d...\n"
 //	bl	SimpleDebugPrint
 	mov	r0, #0x69 // 'i'
 	bl	value_table_sub_C
@@ -12041,42 +12081,23 @@ _return2:
 	mov	r1, SP
 	mov	r0, #0xF
 	bl	PMIC_LUT2_read
-//	ADR     R0, aNoBattery  // "NO battery\n"
+//	adr	r0, aNoBattery  // "NO battery\n"
 //	bl	SimpleDebugPrint
 
 _battery_okay:
-//	bl	SelectBootingMode
-	adr	lr, _return3
-	ldr	pc, adr_SelectBootingMode			
-_return3:
-//	
+	bl	jump_SelectBootingMode
 	mov	r0, #1
-//	bl	PMIC_set_reg_SRAMEN_MVTEN_LDOAEN
-	adr	lr, _return3b
-	ldr	pc, adr_PMIC_set_reg_SRAMEN_MVTEN_LDOAEN			
-_return3b:
-//
+	bl	jump_PMIC_set_reg_SRAMEN_MVTEN_LDOAEN
 	mov	r0, #0x7D0
 	bl	sub_51430f80
-//	bl	LCD_InitWin // 0x51401B28
-	adr	lr, _return4
-	ldr	pc, adr_LCD_InitWin
-_return4:
-//
+	bl	jump_LCD_InitWin // 0x51401B28
 	mov	r0, #0
 	str	r0, [R4,#0x24]
 	ldr	r0, vvar_51402258 // =0x514449A8
 
-//	bl	MSG_UPLOAD_data_to_pc
-	adr	lr, _return5
-	ldr	pc, adr_MSG_UPLOAD_data_to_pc	
-_return5:
-//
-//	bl	Baseband_Init
-	adr	lr, _return6
-	ldr	pc, adr_Baseband_Init	
-_return6:
-//
+//	bl	JetDroid_mode_MSG
+	bl	jump_MSG_UPLOAD_data_to_pc
+	bl	jump_Baseband_Init
 //	bl	sub_514156F0
 //	bl	USB_BOOT_Uploader
 	b	_spin_forever
@@ -12145,26 +12166,6 @@ _return6:
 //	bl	pmic_reading_writing_B
 
 //	ldr	pc, _start_oldboot
-
-
-	mov	r0, #0
-	str	r0, [R4,#0x24]
-	ldr	r0, vvar_51402258 // =0x514449A8
-	ldrb    r0, [r0]
-	CMP     R0, #0x10
-
-	mov	r1, #0
-	mov	r0, #2
-	bl	sub_5141ab40	// I2C_something
-	bl	Download_Mode_MSG
-//	bl	sub_514131A0
-//	B       loc_514030E8
-
-//	mov	r0, #8
-//	B       sub_5141804C
-
-//	bl	sub_514185F4
-//	bl	Baseband_Init
 
 
 
