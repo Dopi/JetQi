@@ -11915,26 +11915,29 @@ asc_jetdroid:
 	.byte	0
 	.align	4
 
+color_white:	.word	0xFFFF	
+color_yellow:	.word	0xFFE0	
+color_red:	.word	0xF800	
+
 JetDroid_mode_MSG: //0x514184B8
 	stmfd	sp!, {r4,lr}
 	mov	r0, #0x7D0
-	bl	sub_51430f80
-	bl	sub_51417fa0
+	bl	jump_sub_51430f80
+	bl	jump_sub_51417fa0
 	mov	r0, #0
-	bl	sub_51417f24
+	bl	jump_sub_51417f24
 	mov	R3, #0
-	mov	R2, #0xF800
-	mov	r1, #2
+	ldr	r2, color_red
+	mov	r1, #1	// line
 	adr	r0, asc_spacer // "--------------------------------"
 	bl	jump_LCD_printf	// 0x514182D4
 	mov	R3, #0
-	mov	R2, #0xF800
-	mov	r1, #4
+	ldr	r2, color_white
+	mov	r1, #2	// line
 	adr	r0, asc_jetdroid // "   \t    JetDroid mode  \t      "
 	bl	jump_LCD_printf
-	mov	R3, #0
-	mov	R2, #0xF800
-	mov	r1, #6
+	ldr	r2, color_red
+	mov	r1, #3	// line
 	adr	r0, asc_spacer  // "--------------------------------"
 	bl	jump_LCD_printf
 	ldmfd	sp!, {R4,lr}
@@ -11982,6 +11985,14 @@ adr_LCD_InitWin:	.word	0x51401B28
 jump_LCD_InitWin:
 	ldr	pc, adr_LCD_InitWin	
 
+adr_LaunchNucleus:	.word	0x514023A8 
+jump_LaunchNucleus:
+	ldr	pc, adr_LaunchNucleus
+
+adr_more_GPIO_setup:	.word	0x514029b0
+jump_more_GPIO_setup:
+	ldr	pc, adr_more_GPIO_setup	
+
 adr_SelectBootingMode:	.word	0x51402B90
 jump_SelectBootingMode:
 	ldr	pc, adr_SelectBootingMode	
@@ -12006,13 +12017,29 @@ adr_LCD_printf:	.word	0x514182D4
 jump_LCD_printf:
 	ldr	pc, adr_LCD_printf	
 
+adr_LCD_clear_screen:	.word	0x5141847C
+jump_LCD_clear_screen:
+	ldr	pc, adr_LCD_clear_screen
+
+adr_Samsung_boot_logo:	.word	0x51418498
+jump_Samsung_boot_logo:
+	ldr	pc, adr_Samsung_boot_logo
+
 adr_MSG_UPLOAD_data_to_pc:	.word	0x5141852C
 jump_MSG_UPLOAD_data_to_pc:
 	ldr	pc, adr_MSG_UPLOAD_data_to_pc	
 
+adr_LCD_blue_screen:	.word	0x5141864C
+jump_LCD_blue_screen:
+	ldr	pc, adr_LCD_blue_screen
+
 adr_Baseband_Init:	.word	0x5141983C
 jump_Baseband_Init:
 	ldr	pc, adr_Baseband_Init	
+
+adr_PMIC_LUT2_read:	.word	0x51419d0c
+jump_PMIC_LUT2_read:
+	ldr	pc, adr_PMIC_LUT2_read
 
 adr_PMIC_set_reg_SRAMEN_MVTEN_LDOAEN:	.word	0x5141AF20
 jump_PMIC_set_reg_SRAMEN_MVTEN_LDOAEN:
@@ -12021,6 +12048,7 @@ jump_PMIC_set_reg_SRAMEN_MVTEN_LDOAEN:
 adr_sub_51430f80:	.word	0x51430f80
 jump_sub_51430f80:
 	ldr	pc, adr_sub_51430f80
+
 
 /*
  *
@@ -12069,7 +12097,7 @@ _init_no_copy_needed:
 	bl	jump_sub_514152f8
 	bl	load_0x5A0B0004_to_R0	// load_0x5A0B0004_to_R0
 	mov	r4, r0
-	bl	more_GPIO_setup
+	bl	jump_more_GPIO_setup
 	str	r0, [R4,#0x30]
 	bl	jump_OneNAND_Init
 	ldr	r1, [r4, #0x30]
@@ -12086,7 +12114,7 @@ _init_no_copy_needed:
 
 	mov	r1, SP
 	mov	r0, #0xF
-	bl	PMIC_LUT2_read
+	bl	jump_PMIC_LUT2_read
 //	adr	r0, aNoBattery  // "NO battery\n"
 //	bl	SimpleDebugPrint
 
@@ -12095,22 +12123,19 @@ _battery_okay:
 	mov	r0, #1
 	bl	jump_PMIC_set_reg_SRAMEN_MVTEN_LDOAEN
 	mov	r0, #0x7D0
-	bl	sub_51430f80
+	bl	jump_sub_51430f80
 	bl	jump_LCD_InitWin // 0x51401B28
 	mov	r0, #0
 	str	r0, [R4,#0x24]
 	ldr	r0, vvar_51402258 // =0x514449A8
 
 	bl	JetDroid_mode_MSG
-//	bl	jump_MSG_UPLOAD_data_to_pc
 	bl	jump_Baseband_Init
-//	bl	sub_514156F0
-//	bl	USB_BOOT_Uploader
+	bl	_wait_10s
+	bl	jump_LCD_clear_screen
+	bl	jump_Samsung_boot_logo
+	bl	jump_LaunchNucleus
 	b	_spin_forever
-
-
-
-
 
 
 	mov	r4, #0xF
