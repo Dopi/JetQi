@@ -233,9 +233,72 @@ _battery_okay:
 	ldr	r0, vvar_51402258 // =0x514449A8
 
 	bl	JetDroid_mode_MSG
+
+	ldr	r2, color_white
+	adr	r0, asc_baseband_init
+	bl	LCD_write_line_newline
 	bl	jump_Baseband_Init
+
+	bl	PMIC_setup	
+
 	bl	_wait_10s
-	b	_continue_nucleus
+//	b	_continue_nucleus
+	b	_spin_forever
+
+PMIC_setup:
+	stmfd	sp!, {r4,lr}
+
+	mov	r1, #0x2D 
+	mov	r0, #0xAC 
+	bl	jump_PMIC_LUT2_write // REG_CARD1TV (CARD1TV)
+	mov	r1, #0x46
+	bl	PMIC_write_print_result
+
+//	mov	r4, #0xF
+	mov	r4, #0xB
+	str	r4, [SP]
+	mov	r2, #1
+	mov	r1, SP
+	mov	r0, #0x42
+	bl	jump_PMIC_LUT1_write // write 0xf to REG_CARD1EN
+	mov	r1, #0x44
+	bl	PMIC_write_print_result
+
+	// PMIC_set_reg_SIMLTEN
+	mov	r1, #5
+	mov	r0, #0x97
+	bl	jump_PMIC_LUT2_write // REG_SIMLTEN (SIMLTENSRC)
+	mov	r1, #0x3C
+	bl	PMIC_write_print_result
+
+	mov	r1, #0
+	mov	r0, #0xF7
+	bl	jump_PMIC_LUT2_write // REG_SEQ6CNFG (SEQ6T)
+	mov	r1, #0x69
+	bl	PMIC_write_print_result
+
+	// PMIC_config_SEQ34567_enable_LDOD_RFTXL_RFRXL_RFRXH_REFOUT (called from DRV_modem_reset called from BBinit)
+	mov	R1, #0
+	mov	R0, #0xF8
+	bl	jump_PMIC_LUT2_write // REG_SEQ6CNFG (SEQ6SRC)
+	mov	r1, #0x69
+	bl	PMIC_write_print_result
+
+	// PMIC_setup_SIMLTEN_SEQ6 (called from BBinit)
+	mov	r1, #0x15
+	mov	r0, #0x9B 
+	bl	jump_PMIC_LUT2_write // REG_SIMLTTV (SIMLTTV)
+	mov	r1, #0x3E
+	bl	PMIC_write_print_result
+
+	mov	r1, #1
+	mov	r0, #0x98 
+	bl	jump_PMIC_LUT2_write // REG_SIMLTEN (SIMLTEN)
+	mov	r1, #0x3C
+	bl	PMIC_write_print_result
+
+	ldmfd	sp!, {R4,lr}
+	
 
 
 /*
@@ -311,6 +374,27 @@ asc_jetdroid:
 	.byte	0
 	.align	4
 
+asc_baseband_init:
+	.ascii	"Initializing baseband ........"
+	.byte	0
+	.align	4
+
+asc_PMIC_write:
+	.ascii	"PMIC write to 0x"
+asc_PMIC_write_value:
+	.ascii	"0"
+	.ascii	"0"
+	.ascii	" .... "
+asc_PMIC_write_result:
+	.ascii	"OKAY"
+	.byte	0
+	.align	4
+
+asc_OKAY:
+	.ascii	"OKAY"
+asc_FAIL:
+	.ascii	"FAIL"
+
 /*
  *  Vars
  */
@@ -319,9 +403,58 @@ color_white:	.word	0xFFFF
 color_yellow:	.word	0xFFE0	
 color_red:	.word	0xF800	
 
+line_pointer:	.word	0
+
+
 /*
  *  Display output
  */
+
+PMIC_write_print_result:
+// arguments: R0: 0=fail,1=success, R1: target register
+	stmfd	sp!, {r2-r7,lr}
+	cmp	r0, #1
+	beq	_PMIC_write_print_result_cont
+	ldr	r0, asc_FAIL
+	str	r0, asc_PMIC_write_result
+_PMIC_write_print_result_cont:
+	// convert first digit to ACSII
+	mov	r0, r1, lsr#4		
+	and	r0, r0, #0xf
+	cmp	r0, #0xa
+	blt	_PMIC_write_print_result_A
+	add	r0, r0, #7
+_PMIC_write_print_result_A:
+	add	r0, r0, #0x30
+	strb	r0, asc_PMIC_write_value
+
+	// convert second digit to ACSII
+	and	r0, r1, #0xf
+	cmp	r0, #0xa
+	blt	_PMIC_write_print_result_B
+	add	r0, r0, #7
+_PMIC_write_print_result_B:
+	add	r0, r0, #0x30
+	strb	r0, asc_PMIC_write_value + 1
+
+	// print output
+	ldr	r2, color_white
+	adr	r0, asc_PMIC_write
+	bl	LCD_write_line_newline
+	ldmfd	sp!, {r2-r7,lr}
+
+
+LCD_write_line:
+	mov	R3, #0
+	ldr	r1, line_pointer
+	b	jump_LCD_printf	// 0x514182D4
+
+LCD_write_line_newline:
+	mov	R3, #0
+	ldr	r1, line_pointer
+	add	r1, #1
+	str	r1, line_pointer
+	b	jump_LCD_printf	// 0x514182D4
 
 JetDroid_mode_MSG: //0x514184B8
 	stmfd	sp!, {r4,lr}
@@ -330,20 +463,15 @@ JetDroid_mode_MSG: //0x514184B8
 	bl	jump_sub_51417fa0
 	mov	r0, #0
 	bl	jump_sub_51417f24
-	mov	R3, #0
 	ldr	r2, color_red
-	mov	r1, #1	// line
 	adr	r0, asc_spacer // "--------------------------------"
-	bl	jump_LCD_printf	// 0x514182D4
-	mov	R3, #0
+	bl	LCD_write_line_newline
 	ldr	r2, color_white
-	mov	r1, #2	// line
 	adr	r0, asc_jetdroid // "   \t    JetDroid mode  \t      "
-	bl	jump_LCD_printf
+	bl	LCD_write_line_newline
 	ldr	r2, color_red
-	mov	r1, #3	// line
 	adr	r0, asc_spacer  // "--------------------------------"
-	bl	jump_LCD_printf
+	bl	LCD_write_line_newline
 	ldmfd	sp!, {R4,lr}
 	mov	r0, #8
 	ldr	pc, adr_sub_5141804c //b	sub_5141804C
