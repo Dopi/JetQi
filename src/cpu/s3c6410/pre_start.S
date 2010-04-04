@@ -248,6 +248,86 @@ _battery_okay:
 PMIC_setup:
 	stmfd	sp!, {r4,lr}
 
+
+	//
+	//	READ
+	//
+	mov	r2, #1
+	mov	r1, SP
+	mov	r0, #0x2e
+	bl	jump_PMIC_LUT1_read // read from REG_LDOAEN
+	mov	r1, #0x2c
+	ldr	r2, [SP]
+	bl	PMIC_read_print_result
+
+	mov	r2, #1
+	mov	r1, SP
+	mov	r0, #0x2f
+	bl	jump_PMIC_LUT1_read // read from REG_LDOAFSEQ
+	mov	r1, #0x2d
+	ldr	r2, [SP]
+	bl	PMIC_read_print_result
+
+	mov	r2, #1
+	mov	r1, SP
+	mov	r0, #0x30
+	bl	jump_PMIC_LUT1_read // read from REG_LDOATV
+	mov	r1, #0x2e
+	ldr	r2, [SP]
+	bl	PMIC_read_print_result
+
+	mov	r2, #1
+	mov	r1, SP
+	mov	r0, #0x3a
+	bl	jump_PMIC_LUT1_read // read from REG_SIMLTEN
+	mov	r1, #0x3c
+	ldr	r2, [SP]
+	bl	PMIC_read_print_result
+
+	mov	r2, #1
+	mov	r1, SP
+	mov	r0, #0x3b
+	bl	jump_PMIC_LUT1_read // read from REG_SIMLTFSEQ
+	mov	r1, #0x3d
+	ldr	r2, [SP]
+	bl	PMIC_read_print_result
+
+	mov	r2, #1
+	mov	r1, SP
+	mov	r0, #0x3c
+	bl	jump_PMIC_LUT1_read // read from REG_SIMLTTV
+	mov	r1, #0x3e
+	ldr	r2, [SP]
+	bl	PMIC_read_print_result
+
+	mov	r2, #1
+	mov	r1, SP
+	mov	r0, #0x42
+	bl	jump_PMIC_LUT1_read // read from REG_CARD1EN
+	mov	r1, #0x44
+	ldr	r2, [SP]
+	bl	PMIC_read_print_result
+
+	mov	r2, #1
+	mov	r1, SP
+	mov	r0, #0x43
+	bl	jump_PMIC_LUT1_read // read from REG_CARD1FSEQ
+	mov	r1, #0x45
+	ldr	r2, [SP]
+	bl	PMIC_read_print_result
+
+	mov	r2, #1
+	mov	r1, SP
+	mov	r0, #0x44
+	bl	jump_PMIC_LUT1_read // read from REG_CARD1TV
+	mov	r1, #0x46
+	ldr	r2, [SP]
+	bl	PMIC_read_print_result
+
+
+	//
+	//	WRITE
+	//
 	mov	r1, #0x2D 
 	mov	r0, #0xAC 
 	bl	jump_PMIC_LUT2_write // REG_CARD1TV (CARD1TV)
@@ -297,7 +377,10 @@ PMIC_setup:
 	mov	r1, #0x3C
 	bl	PMIC_write_print_result
 
-	ldmfd	sp!, {R4,lr}
+
+
+
+	ldmfd	sp!, {R4,pc}
 	
 
 
@@ -382,10 +465,19 @@ asc_baseband_init:
 asc_PMIC_write:
 	.ascii	"PMIC write to 0x"
 asc_PMIC_write_value:
-	.ascii	"0"
-	.ascii	"0"
-	.ascii	" .... "
+	.ascii	"00 .... "
 asc_PMIC_write_result:
+	.ascii	"OKAY"
+	.byte	0
+	.align	4
+
+asc_PMIC_read:
+	.ascii	"PMIC read 0x"
+asc_PMIC_read_register:
+	.ascii	"00 = 0x"
+asc_PMIC_read_value:
+	.ascii	"00  "
+asc_PMIC_read_result:
 	.ascii	"OKAY"
 	.byte	0
 	.align	4
@@ -441,7 +533,62 @@ _PMIC_write_print_result_B:
 	ldr	r2, color_white
 	adr	r0, asc_PMIC_write
 	bl	LCD_write_line_newline
-	ldmfd	sp!, {r2-r7,lr}
+	ldmfd	sp!, {r2-r7,pc}
+
+
+PMIC_read_print_result:
+// arguments: R0: 0=fail,1=success, R1: read register, R2: register value
+	stmfd	sp!, {r2-r7,lr}
+	cmp	r0, #1
+	beq	_PMIC_read_print_result_cont
+	ldr	r0, asc_FAIL
+	str	r0, asc_PMIC_read_result
+_PMIC_read_print_result_cont:
+	// convert first digit to ACSII
+	mov	r0, r1, lsr#4		
+	and	r0, r0, #0xf
+	cmp	r0, #0xa
+	blt	_PMIC_read_print_result_A
+	add	r0, r0, #7
+_PMIC_read_print_result_A:
+	add	r0, r0, #0x30
+	strb	r0, asc_PMIC_read_register
+
+	// convert second digit to ACSII
+	and	r0, r1, #0xf
+	cmp	r0, #0xa
+	blt	_PMIC_read_print_result_B
+	add	r0, r0, #7
+_PMIC_read_print_result_B:
+	add	r0, r0, #0x30
+	strb	r0, asc_PMIC_read_register + 1
+
+	mov	r1,r2
+	// convert first digit to ACSII
+	mov	r0, r1, lsr#4		
+	and	r0, r0, #0xf
+	cmp	r0, #0xa
+	blt	_PMIC_read_print_result_C
+	add	r0, r0, #7
+_PMIC_read_print_result_C:
+	add	r0, r0, #0x30
+	strb	r0, asc_PMIC_read_value
+
+	// convert second digit to ACSII
+	and	r0, r1, #0xf
+	cmp	r0, #0xa
+	blt	_PMIC_read_print_result_D
+	add	r0, r0, #7
+_PMIC_read_print_result_D:
+	add	r0, r0, #0x30
+	strb	r0, asc_PMIC_read_value + 1
+
+	// print output
+	ldr	r2, color_white
+	adr	r0, asc_PMIC_read
+	bl	LCD_write_line_newline
+	ldmfd	sp!, {r2-r7,pc}
+
 
 
 LCD_write_line:
