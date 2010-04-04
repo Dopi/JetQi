@@ -248,10 +248,10 @@ _battery_okay:
 PMIC_setup:
 	stmfd	sp!, {r4,lr}
 
-
 	//
 	//	READ
 	//
+
 	mov	r2, #1
 	mov	r1, SP
 	mov	r0, #0x2e
@@ -324,7 +324,6 @@ PMIC_setup:
 	ldr	r2, [SP]
 	bl	PMIC_read_print_result
 
-
 	//
 	//	WRITE
 	//
@@ -334,8 +333,8 @@ PMIC_setup:
 	mov	r1, #0x46
 	bl	PMIC_write_print_result
 
-//	mov	r4, #0xF
-	mov	r4, #0xB
+/*
+	mov	r4, #0xF
 	str	r4, [SP]
 	mov	r2, #1
 	mov	r1, SP
@@ -343,6 +342,19 @@ PMIC_setup:
 	bl	jump_PMIC_LUT1_write // write 0xf to REG_CARD1EN
 	mov	r1, #0x44
 	bl	PMIC_write_print_result
+*/
+	mov	r1, #5
+	mov	r0, #0xA8
+	bl	jump_PMIC_LUT2_write // REG_CARD1EN (CARD1SRC)
+	mov	r1, #0x44
+	bl	PMIC_write_print_result
+
+	mov	r1, #1
+	mov	r0, #0xA9 
+	bl	jump_PMIC_LUT2_write // REG_CARD1EN (CARD1EN)
+	mov	r1, #0x44
+	bl	PMIC_write_print_result
+
 
 	// PMIC_set_reg_SIMLTEN
 	mov	r1, #5
@@ -378,6 +390,56 @@ PMIC_setup:
 	bl	PMIC_write_print_result
 
 
+	//
+	//	READ
+	//
+	mov	r2, #1
+	mov	r1, SP
+	mov	r0, #0x3a
+	bl	jump_PMIC_LUT1_read // read from REG_SIMLTEN
+	mov	r1, #0x3c
+	ldr	r2, [SP]
+	bl	PMIC_read_print_result
+
+	mov	r2, #1
+	mov	r1, SP
+	mov	r0, #0x3b
+	bl	jump_PMIC_LUT1_read // read from REG_SIMLTFSEQ
+	mov	r1, #0x3d
+	ldr	r2, [SP]
+	bl	PMIC_read_print_result
+
+	mov	r2, #1
+	mov	r1, SP
+	mov	r0, #0x3c
+	bl	jump_PMIC_LUT1_read // read from REG_SIMLTTV
+	mov	r1, #0x3e
+	ldr	r2, [SP]
+	bl	PMIC_read_print_result
+
+	mov	r2, #1
+	mov	r1, SP
+	mov	r0, #0x42
+	bl	jump_PMIC_LUT1_read // read from REG_CARD1EN
+	mov	r1, #0x44
+	ldr	r2, [SP]
+	bl	PMIC_read_print_result
+
+	mov	r2, #1
+	mov	r1, SP
+	mov	r0, #0x43
+	bl	jump_PMIC_LUT1_read // read from REG_CARD1FSEQ
+	mov	r1, #0x45
+	ldr	r2, [SP]
+	bl	PMIC_read_print_result
+
+	mov	r2, #1
+	mov	r1, SP
+	mov	r0, #0x44
+	bl	jump_PMIC_LUT1_read // read from REG_CARD1TV
+	mov	r1, #0x46
+	ldr	r2, [SP]
+	bl	PMIC_read_print_result
 
 
 	ldmfd	sp!, {R4,pc}
