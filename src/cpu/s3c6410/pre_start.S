@@ -251,7 +251,7 @@ PMIC_setup:
 	//
 	//	READ
 	//
-
+/*
 	mov	r2, #1
 	mov	r1, SP
 	mov	r0, #0x2e
@@ -323,46 +323,13 @@ PMIC_setup:
 	mov	r1, #0x46
 	ldr	r2, [SP]
 	bl	PMIC_read_print_result
+*/
 
 	//
 	//	WRITE
 	//
-	mov	r1, #0x2D 
-	mov	r0, #0xAC 
-	bl	jump_PMIC_LUT2_write // REG_CARD1TV (CARD1TV)
-	mov	r1, #0x46
-	bl	PMIC_write_print_result
-
-/*
-	mov	r4, #0xF
-	str	r4, [SP]
-	mov	r2, #1
-	mov	r1, SP
-	mov	r0, #0x42
-	bl	jump_PMIC_LUT1_write // write 0xf to REG_CARD1EN
-	mov	r1, #0x44
-	bl	PMIC_write_print_result
-*/
-	mov	r1, #5
-	mov	r0, #0xA8
-	bl	jump_PMIC_LUT2_write // REG_CARD1EN (CARD1SRC)
-	mov	r1, #0x44
-	bl	PMIC_write_print_result
-
-	mov	r1, #1
-	mov	r0, #0xA9 
-	bl	jump_PMIC_LUT2_write // REG_CARD1EN (CARD1EN)
-	mov	r1, #0x44
-	bl	PMIC_write_print_result
-
 
 	// PMIC_set_reg_SIMLTEN
-	mov	r1, #5
-	mov	r0, #0x97
-	bl	jump_PMIC_LUT2_write // REG_SIMLTEN (SIMLTENSRC)
-	mov	r1, #0x3C
-	bl	PMIC_write_print_result
-
 	mov	r1, #0
 	mov	r0, #0xF7
 	bl	jump_PMIC_LUT2_write // REG_SEQ6CNFG (SEQ6T)
@@ -383,16 +350,50 @@ PMIC_setup:
 	mov	r1, #0x3E
 	bl	PMIC_write_print_result
 
-	mov	r1, #1
-	mov	r0, #0x98 
-	bl	jump_PMIC_LUT2_write // REG_SIMLTEN (SIMLTEN)
-	mov	r1, #0x3C
+	mov	r1, #0x2D 
+	mov	r0, #0xAC 
+	bl	jump_PMIC_LUT2_write // REG_CARD1TV (CARD1TV)
+	mov	r1, #0x46
 	bl	PMIC_write_print_result
 
+	bl	_wait_5s
 
-	//
-	//	READ
-	//
+PMIC_setup_loop:
+
+/*
+
+	mov	r1, #5
+	mov	r0, #0xA8
+	bl	jump_PMIC_LUT2_write // REG_CARD1EN (CARD1SRC)
+	mov	r1, #0x44
+	bl	PMIC_write_print_result
+
+	mov	r1, #1
+	mov	r0, #0xA9 
+	bl	jump_PMIC_LUT2_write // REG_CARD1EN (CARD1EN)
+	mov	r1, #0x44
+	bl	PMIC_write_print_result
+*/
+//	bl	jump_LCD_clear_screen
+//	mov	r0, #0
+//	str	r0, line_pointer
+//	bl	disable_MSG
+
+	// PMIC_setup_SIMLTEN_SEQ6 (called from BBinit)
+	mov	r1, #0
+	mov	r0, #0x98 
+	bl	jump_PMIC_LUT2_write // REG_SIMLTEN (SIMLTEN)
+//	mov	r1, #0x3C
+//	bl	PMIC_write_print_result
+
+	// PMIC_set_reg_SIMLTEN
+//	mov	r1, #5
+	ldr	r1, _LDO_source
+	mov	r0, #0x97
+	bl	jump_PMIC_LUT2_write // REG_SIMLTEN (SIMLTENSRC)
+//	mov	r1, #0x3C
+//	bl	PMIC_write_print_result
+
 	mov	r2, #1
 	mov	r1, SP
 	mov	r0, #0x3a
@@ -401,50 +402,36 @@ PMIC_setup:
 	ldr	r2, [SP]
 	bl	PMIC_read_print_result
 
-	mov	r2, #1
-	mov	r1, SP
-	mov	r0, #0x3b
-	bl	jump_PMIC_LUT1_read // read from REG_SIMLTFSEQ
-	mov	r1, #0x3d
-	ldr	r2, [SP]
-	bl	PMIC_read_print_result
+	bl	_wait_5s
+
+//	bl	enable_MSG
+
+	// PMIC_setup_SIMLTEN_SEQ6 (called from BBinit)
+	mov	r1, #1
+	mov	r0, #0x98 
+	bl	jump_PMIC_LUT2_write // REG_SIMLTEN (SIMLTEN)
+//	mov	r1, #0x3C
+//	bl	PMIC_write_print_result
 
 	mov	r2, #1
 	mov	r1, SP
-	mov	r0, #0x3c
-	bl	jump_PMIC_LUT1_read // read from REG_SIMLTTV
-	mov	r1, #0x3e
+	mov	r0, #0x3a
+	bl	jump_PMIC_LUT1_read // read from REG_SIMLTEN
+	mov	r1, #0x3c
 	ldr	r2, [SP]
 	bl	PMIC_read_print_result
 
-	mov	r2, #1
-	mov	r1, SP
-	mov	r0, #0x42
-	bl	jump_PMIC_LUT1_read // read from REG_CARD1EN
-	mov	r1, #0x44
-	ldr	r2, [SP]
-	bl	PMIC_read_print_result
+	bl	_wait_5s
 
-	mov	r2, #1
-	mov	r1, SP
-	mov	r0, #0x43
-	bl	jump_PMIC_LUT1_read // read from REG_CARD1FSEQ
-	mov	r1, #0x45
-	ldr	r2, [SP]
-	bl	PMIC_read_print_result
-
-	mov	r2, #1
-	mov	r1, SP
-	mov	r0, #0x44
-	bl	jump_PMIC_LUT1_read // read from REG_CARD1TV
-	mov	r1, #0x46
-	ldr	r2, [SP]
-	bl	PMIC_read_print_result
-
+	ldr	r0, _LDO_source
+	add	r0, r0, #1
+	str	r0, _LDO_source
+	cmp	r0, #8
+	blt	PMIC_setup_loop
 
 	ldmfd	sp!, {R4,pc}
 	
-
+_LDO_source:	.word	0
 
 /*
  *
@@ -548,6 +535,17 @@ asc_OKAY:
 	.ascii	"OKAY"
 asc_FAIL:
 	.ascii	"FAIL"
+
+asc_enable:
+	.ascii	"enable"
+	.byte	0
+	.align	4
+
+asc_disable:
+	.ascii	"disable"
+	.byte	0
+	.align	4
+
 
 /*
  *  Vars
@@ -684,6 +682,20 @@ JetDroid_mode_MSG: //0x514184B8
 	ldmfd	sp!, {R4,lr}
 	mov	r0, #8
 	ldr	pc, adr_sub_5141804c //b	sub_5141804C
+
+enable_MSG:
+	stmfd	sp!, {r4,lr}
+	ldr	r2, color_white
+	adr	r0, asc_enable
+	bl	LCD_write_line_newline
+	ldmfd	sp!, {R4,pc}
+
+disable_MSG:
+	stmfd	sp!, {r4,lr}
+	ldr	r2, color_white
+	adr	r0, asc_disable
+	bl	LCD_write_line_newline
+	ldmfd	sp!, {R4,pc}
 
 /*
  * Waiting (short, long, infinite)
