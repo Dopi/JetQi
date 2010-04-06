@@ -356,7 +356,7 @@ PMIC_setup:
 	mov	r1, #0x46
 	bl	PMIC_write_print_result
 
-	bl	_wait_5s
+	bl	_wait_10s
 
 PMIC_setup_loop:
 
@@ -374,26 +374,19 @@ PMIC_setup_loop:
 	mov	r1, #0x44
 	bl	PMIC_write_print_result
 */
-//	bl	jump_LCD_clear_screen
-//	mov	r0, #0
-//	str	r0, line_pointer
-//	bl	disable_MSG
 
-	// PMIC_setup_SIMLTEN_SEQ6 (called from BBinit)
+	// disable
 	mov	r1, #0
 	mov	r0, #0x98 
 	bl	jump_PMIC_LUT2_write // REG_SIMLTEN (SIMLTEN)
-//	mov	r1, #0x3C
-//	bl	PMIC_write_print_result
 
-	// PMIC_set_reg_SIMLTEN
-//	mov	r1, #5
+
+	// set SRC
 	ldr	r1, _LDO_source
 	mov	r0, #0x97
 	bl	jump_PMIC_LUT2_write // REG_SIMLTEN (SIMLTENSRC)
-//	mov	r1, #0x3C
-//	bl	PMIC_write_print_result
 
+	// print register
 	mov	r2, #1
 	mov	r1, SP
 	mov	r0, #0x3a
@@ -402,17 +395,14 @@ PMIC_setup_loop:
 	ldr	r2, [SP]
 	bl	PMIC_read_print_result
 
-	bl	_wait_5s
+	bl	_wait_10s
 
-//	bl	enable_MSG
-
-	// PMIC_setup_SIMLTEN_SEQ6 (called from BBinit)
+	// enable
 	mov	r1, #1
 	mov	r0, #0x98 
 	bl	jump_PMIC_LUT2_write // REG_SIMLTEN (SIMLTEN)
-//	mov	r1, #0x3C
-//	bl	PMIC_write_print_result
 
+	// print register
 	mov	r2, #1
 	mov	r1, SP
 	mov	r0, #0x3a
@@ -421,8 +411,9 @@ PMIC_setup_loop:
 	ldr	r2, [SP]
 	bl	PMIC_read_print_result
 
-	bl	_wait_5s
+	bl	_wait_10s
 
+	// increment counter
 	ldr	r0, _LDO_source
 	add	r0, r0, #1
 	str	r0, _LDO_source
