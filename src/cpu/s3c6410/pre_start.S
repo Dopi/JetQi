@@ -248,10 +248,11 @@ _battery_okay:
 PMIC_setup:
 	stmfd	sp!, {r4,lr}
 
+/*
 	//
 	//	READ
 	//
-/*
+
 	mov	r2, #1
 	mov	r1, SP
 	mov	r0, #0x2e
@@ -360,54 +361,46 @@ PMIC_setup:
 
 PMIC_setup_loop:
 
-/*
-
-	mov	r1, #5
-	mov	r0, #0xA8
-	bl	jump_PMIC_LUT2_write // REG_CARD1EN (CARD1SRC)
-	mov	r1, #0x44
-	bl	PMIC_write_print_result
-
-	mov	r1, #1
-	mov	r0, #0xA9 
-	bl	jump_PMIC_LUT2_write // REG_CARD1EN (CARD1EN)
-	mov	r1, #0x44
-	bl	PMIC_write_print_result
-*/
-
-	// disable
+	// disable LDO
 	mov	r1, #0
-	mov	r0, #0x98 
-	bl	jump_PMIC_LUT2_write // REG_SIMLTEN (SIMLTEN)
+//	mov	r0, #0x98 		// REG_SIMLTEN (SIMLTEN)
+	mov	r0, #0xA9 		// REG_CARD1EN (CARD1EN)
+	bl	jump_PMIC_LUT2_write 
 
 
 	// set SRC
 	ldr	r1, _LDO_source
-	mov	r0, #0x97
-	bl	jump_PMIC_LUT2_write // REG_SIMLTEN (SIMLTENSRC)
+//	mov	r0, #0x97		// REG_SIMLTEN (SIMLTENSRC)
+	mov	r0, #0xA8		// REG_CARD1EN (CARD1ENSRC)
+	bl	jump_PMIC_LUT2_write 	
 
 	// print register
 	mov	r2, #1
 	mov	r1, SP
-	mov	r0, #0x3a
-	bl	jump_PMIC_LUT1_read // read from REG_SIMLTEN
-	mov	r1, #0x3c
+//	mov	r0, #0x3a		// read from REG_SIMLTEN
+	mov	r0, #0x42		// read from REG_CARD1EN
+	bl	jump_PMIC_LUT1_read 
+//	mov	r1, #0x3c		// REG_SIMLTEN
+	mov	r1, #0x44		// REG_CARD1EN
 	ldr	r2, [SP]
 	bl	PMIC_read_print_result
 
 	bl	_wait_10s
 
-	// enable
+	// enable LDO
 	mov	r1, #1
-	mov	r0, #0x98 
-	bl	jump_PMIC_LUT2_write // REG_SIMLTEN (SIMLTEN)
+//	mov	r0, #0x98 		// REG_SIMLTEN (SIMLTEN)
+	mov	r0, #0xA9 		// REG_CARD1EN (CARD1EN)
+	bl	jump_PMIC_LUT2_write 
 
 	// print register
 	mov	r2, #1
 	mov	r1, SP
-	mov	r0, #0x3a
-	bl	jump_PMIC_LUT1_read // read from REG_SIMLTEN
-	mov	r1, #0x3c
+//	mov	r0, #0x3a		// read from REG_SIMLTEN
+	mov	r0, #0x42		// read from REG_CARD1EN
+	bl	jump_PMIC_LUT1_read
+//	mov	r1, #0x3c		// REG_SIMLTEN
+	mov	r1, #0x44		// REG_CARD1EN
 	ldr	r2, [SP]
 	bl	PMIC_read_print_result
 
