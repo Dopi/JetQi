@@ -248,11 +248,54 @@ _battery_okay:
 PMIC_setup:
 	stmfd	sp!, {r4,lr}
 
-/*
+	//
+	//	WRITE
+	//
+
+	// PMIC_set_reg_SIMLTEN
+	mov	r1, #0
+	mov	r0, #0xF7
+	bl	jump_PMIC_LUT2_write // REG_SEQ6CNFG (SEQ6T)
+	mov	r1, #0x69
+	bl	PMIC_write_print_result
+
+	// PMIC_config_SEQ34567_enable_LDOD_RFTXL_RFRXL_RFRXH_REFOUT (called from DRV_modem_reset called from BBinit)
+	mov	R1, #0
+	mov	R0, #0xF8
+	bl	jump_PMIC_LUT2_write // REG_SEQ6CNFG (SEQ6SRC)
+	mov	r1, #0x69
+	bl	PMIC_write_print_result
+
+	// PMIC_setup_SIMLTEN_SEQ6 (called from BBinit)
+	mov	r1, #0x15
+	mov	r0, #0x9B 
+	bl	jump_PMIC_LUT2_write // REG_SIMLTTV (SIMLTTV)
+	mov	r1, #0x3E
+	bl	PMIC_write_print_result
+
+	mov	r1, #0x2D 
+	mov	r0, #0xAC 
+	bl	jump_PMIC_LUT2_write // REG_CARD1TV (CARD1TV)
+	mov	r1, #0x46
+	bl	PMIC_write_print_result
+
+	mov	r1, #0x0 
+	mov	r0, #0xAA
+	bl	jump_PMIC_LUT2_write // REG_CARD1FSEQ (CARD1FSEQPU)
+	mov	r1, #0x45
+	bl	PMIC_write_print_result
+
+	mov	r1, #0x0 
+	mov	r0, #0xAB
+	bl	jump_PMIC_LUT2_write // REG_CARD1FSEQ (CARD1FSEQPD)
+	mov	r1, #0x45
+	bl	PMIC_write_print_result
+
+
 	//
 	//	READ
 	//
-
+/*
 	mov	r2, #1
 	mov	r1, SP
 	mov	r0, #0x2e
@@ -276,7 +319,7 @@ PMIC_setup:
 	mov	r1, #0x2e
 	ldr	r2, [SP]
 	bl	PMIC_read_print_result
-
+*/
 	mov	r2, #1
 	mov	r1, SP
 	mov	r0, #0x3a
@@ -324,38 +367,10 @@ PMIC_setup:
 	mov	r1, #0x46
 	ldr	r2, [SP]
 	bl	PMIC_read_print_result
-*/
 
-	//
-	//	WRITE
-	//
 
-	// PMIC_set_reg_SIMLTEN
-	mov	r1, #0
-	mov	r0, #0xF7
-	bl	jump_PMIC_LUT2_write // REG_SEQ6CNFG (SEQ6T)
-	mov	r1, #0x69
-	bl	PMIC_write_print_result
 
-	// PMIC_config_SEQ34567_enable_LDOD_RFTXL_RFRXL_RFRXH_REFOUT (called from DRV_modem_reset called from BBinit)
-	mov	R1, #0
-	mov	R0, #0xF8
-	bl	jump_PMIC_LUT2_write // REG_SEQ6CNFG (SEQ6SRC)
-	mov	r1, #0x69
-	bl	PMIC_write_print_result
 
-	// PMIC_setup_SIMLTEN_SEQ6 (called from BBinit)
-	mov	r1, #0x15
-	mov	r0, #0x9B 
-	bl	jump_PMIC_LUT2_write // REG_SIMLTTV (SIMLTTV)
-	mov	r1, #0x3E
-	bl	PMIC_write_print_result
-
-	mov	r1, #0x2D 
-	mov	r0, #0xAC 
-	bl	jump_PMIC_LUT2_write // REG_CARD1TV (CARD1TV)
-	mov	r1, #0x46
-	bl	PMIC_write_print_result
 
 	bl	_wait_10s
 
