@@ -272,7 +272,7 @@ PMIC_setup:
 	bl	jump_PMIC_LUT2_write // REG_SIMLTTV (SIMLTTV)
 	mov	r1, #0x3E
 	bl	PMIC_write_print_result
-
+/*
 	mov	r1, #0x2D 
 	mov	r0, #0xAC 
 	bl	jump_PMIC_LUT2_write // REG_CARD1TV (CARD1TV)
@@ -290,7 +290,7 @@ PMIC_setup:
 	bl	jump_PMIC_LUT2_write // REG_CARD1FSEQ (CARD1FSEQPD)
 	mov	r1, #0x45
 	bl	PMIC_write_print_result
-
+*/
 
 	//
 	//	READ
@@ -344,6 +344,7 @@ PMIC_setup:
 	ldr	r2, [SP]
 	bl	PMIC_read_print_result
 
+/*
 	mov	r2, #1
 	mov	r1, SP
 	mov	r0, #0x42
@@ -367,8 +368,31 @@ PMIC_setup:
 	mov	r1, #0x46
 	ldr	r2, [SP]
 	bl	PMIC_read_print_result
+*/
 
+	mov	r2, #1
+	mov	r1, SP
+	mov	r0, #0x45
+	bl	jump_PMIC_LUT1_read // read from REG_CARD2EN
+	mov	r1, #0x48
+	ldr	r2, [SP]
+	bl	PMIC_read_print_result
 
+	mov	r2, #1
+	mov	r1, SP
+	mov	r0, #0x46
+	bl	jump_PMIC_LUT1_read // read from REG_CARD2FSEQ
+	mov	r1, #0x49
+	ldr	r2, [SP]
+	bl	PMIC_read_print_result
+
+	mov	r2, #1
+	mov	r1, SP
+	mov	r0, #0x47
+	bl	jump_PMIC_LUT1_read // read from REG_CARD2TV
+	mov	r1, #0x4A
+	ldr	r2, [SP]
+	bl	PMIC_read_print_result
 
 
 
@@ -379,24 +403,28 @@ PMIC_setup_loop:
 	// disable LDO
 	mov	r1, #0
 //	mov	r0, #0x98 		// REG_SIMLTEN (SIMLTEN)
-	mov	r0, #0xA9 		// REG_CARD1EN (CARD1EN)
+//	mov	r0, #0xA9 		// REG_CARD1EN (CARD1EN)
+	mov	r0, #0xAF 		// REG_CARD1EN (CARD2EN)
 	bl	jump_PMIC_LUT2_write 
 
 
 	// set SRC
 	ldr	r1, _LDO_source
 //	mov	r0, #0x97		// REG_SIMLTEN (SIMLTENSRC)
-	mov	r0, #0xA8		// REG_CARD1EN (CARD1ENSRC)
+//	mov	r0, #0xA8		// REG_CARD1EN (CARD1ENSRC)
+	mov	r0, #0xAE		// REG_CARD2EN (CARD2ENSRC)
 	bl	jump_PMIC_LUT2_write 	
 
 	// print register
 	mov	r2, #1
 	mov	r1, SP
 //	mov	r0, #0x3a		// read from REG_SIMLTEN
-	mov	r0, #0x42		// read from REG_CARD1EN
+//	mov	r0, #0x42		// read from REG_CARD1EN
+	mov	r0, #0x45		// read from REG_CARD2EN
 	bl	jump_PMIC_LUT1_read 
 //	mov	r1, #0x3c		// REG_SIMLTEN
-	mov	r1, #0x44		// REG_CARD1EN
+//	mov	r1, #0x44		// REG_CARD1EN
+	mov	r1, #0x48		// REG_CARD2EN
 	ldr	r2, [SP]
 	bl	PMIC_read_print_result
 
@@ -405,17 +433,20 @@ PMIC_setup_loop:
 	// enable LDO
 	mov	r1, #1
 //	mov	r0, #0x98 		// REG_SIMLTEN (SIMLTEN)
-	mov	r0, #0xA9 		// REG_CARD1EN (CARD1EN)
+//	mov	r0, #0xA9 		// REG_CARD1EN (CARD1EN)
+	mov	r0, #0xAE 		// REG_CARD2EN (CARD2EN)
 	bl	jump_PMIC_LUT2_write 
 
 	// print register
 	mov	r2, #1
 	mov	r1, SP
 //	mov	r0, #0x3a		// read from REG_SIMLTEN
-	mov	r0, #0x42		// read from REG_CARD1EN
+//	mov	r0, #0x42		// read from REG_CARD1EN
+	mov	r0, #0x45		// read from REG_CARD2EN
 	bl	jump_PMIC_LUT1_read
 //	mov	r1, #0x3c		// REG_SIMLTEN
-	mov	r1, #0x44		// REG_CARD1EN
+//	mov	r1, #0x44		// REG_CARD1EN
+	mov	r1, #0x48		// REG_CARD2EN
 	ldr	r2, [SP]
 	bl	PMIC_read_print_result
 
