@@ -241,9 +241,9 @@ _battery_okay:
 
 	bl	PMIC_setup	
 
-	bl	_wait_10s
+	bl	wait_10s
 //	b	_continue_nucleus
-	b	_spin_forever
+	b	spin_forever
 
 PMIC_setup:
 	stmfd	sp!, {r4,lr}
@@ -396,7 +396,7 @@ PMIC_setup:
 
 
 
-	bl	_wait_10s
+	bl	wait_10s
 
 PMIC_setup_loop:
 
@@ -428,7 +428,7 @@ PMIC_setup_loop:
 	ldr	r2, [SP]
 	bl	PMIC_read_print_result
 
-	bl	_wait_10s
+	bl	wait_10s
 
 	// enable LDO
 	mov	r1, #1
@@ -450,7 +450,7 @@ PMIC_setup_loop:
 	ldr	r2, [SP]
 	bl	PMIC_read_print_result
 
-	bl	_wait_10s
+	bl	wait_10s
 
 	// increment counter
 	ldr	r0, _LDO_source
@@ -727,29 +727,6 @@ disable_MSG:
 	bl	LCD_write_line_newline
 	ldmfd	sp!, {R4,pc}
 
-/*
- * Waiting (short, long, infinite)
- */
-
-_wait_10s:
-	mov	r0, #0x20000000			// approx 10 sec wait
-_wait10loop:
-	subs	r0, r0, #1
-	cmp	r0, #0
-	bne	_wait10loop
-	bx	lr
-
-_wait_5s:
-	mov	r0, #0x10000000			// approx 10 sec wait
-_wait5loop:
-	subs	r0, r0, #1
-	cmp	r0, #0
-	bne	_wait5loop
-	bx	lr
-
-_spin_forever:
-	b	_spin_forever
-
 
 /*
  * Long Distance Jumps
@@ -865,10 +842,10 @@ _continue_nucleus:
 	bl	jump_LCD_clear_screen
 	bl	jump_Samsung_boot_logo
 	bl	jump_LaunchNucleus
-	b	_spin_forever
+	b	spin_forever
 _continue_qiboot:
 	ldr	pc, _start_armboot
-	b	_spin_forever
+	b	spin_forever
 
 _start_armboot:
 	.word 	start_qi
