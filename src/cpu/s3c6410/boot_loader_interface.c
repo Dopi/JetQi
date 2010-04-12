@@ -21,7 +21,64 @@
  *
  */
 
-//#include <s3c6410.h>
+#include <s3c6410.h>
+
+
+void jump_OneNAND_Init (void)
+{
+asm volatile (
+	"ldr	pc, adr_OneNAND_Init\n\t"
+	"adr_OneNAND_Init:	.word	0x51401C3C"
+);
+}
+
+void jump_LCD_InitWin (void)
+{
+asm volatile (
+	"ldr	pc, adr_LCD_InitWin\n\t"
+	"adr_LCD_InitWin:	.word	0x51401B28"
+);
+}
+
+void jump_LaunchNucleus (void)
+{
+asm volatile (
+	"ldr	pc, adr_LaunchNucleus\n\t"
+	"adr_LaunchNucleus:	.word	0x514023A8"
+);
+}	
+
+void jump_LCD_clear_screen (void)
+{
+asm volatile (
+	"ldr	pc, adr_LCD_clear_screen\n\t"
+	"adr_LCD_clear_screen:	.word	0x5141847C"
+);
+}
+
+void jump_Samsung_boot_logo (void)
+{
+asm volatile (
+	"ldr	pc, adr_Samsung_boot_logo\n\t"
+	"adr_Samsung_boot_logo:	.word	0x51418498"
+);
+}
+
+void jump_LCD_blue_screen (void)
+{
+asm volatile (
+	"ldr	pc, adr_LCD_blue_screen\n\t"
+	"adr_LCD_blue_screen:	.word	0x5141864C"
+);
+}
+
+void jump_Baseband_Init (void)
+{
+asm volatile (
+	"ldr	pc, adr_Baseband_Init\n\t"
+	"adr_Baseband_Init:	.word	0x5141983C"
+);
+}
 
 void wait_10s (void)
 {

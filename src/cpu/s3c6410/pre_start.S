@@ -732,17 +732,7 @@ disable_MSG:
  * Long Distance Jumps
  */
 
-adr_OneNAND_Init:	.word	0x51401C3C
-jump_OneNAND_Init:
-	ldr	pc, adr_OneNAND_Init	
 
-adr_LCD_InitWin:	.word	0x51401B28
-jump_LCD_InitWin:
-	ldr	pc, adr_LCD_InitWin	
-
-adr_LaunchNucleus:	.word	0x514023A8 
-jump_LaunchNucleus:
-	ldr	pc, adr_LaunchNucleus
 
 adr_more_GPIO_setup:	.word	0x514029b0
 jump_more_GPIO_setup:
@@ -772,25 +762,9 @@ adr_LCD_printf:	.word	0x514182D4
 jump_LCD_printf:
 	ldr	pc, adr_LCD_printf	
 
-adr_LCD_clear_screen:	.word	0x5141847C
-jump_LCD_clear_screen:
-	ldr	pc, adr_LCD_clear_screen
-
-adr_Samsung_boot_logo:	.word	0x51418498
-jump_Samsung_boot_logo:
-	ldr	pc, adr_Samsung_boot_logo
-
 adr_MSG_UPLOAD_data_to_pc:	.word	0x5141852C
 jump_MSG_UPLOAD_data_to_pc:
 	ldr	pc, adr_MSG_UPLOAD_data_to_pc	
-
-adr_LCD_blue_screen:	.word	0x5141864C
-jump_LCD_blue_screen:
-	ldr	pc, adr_LCD_blue_screen
-
-adr_Baseband_Init:	.word	0x5141983C
-jump_Baseband_Init:
-	ldr	pc, adr_Baseband_Init	
 
 adr_PMIC_LUT1_write:	.word	0x51419D64
 jump_PMIC_LUT1_write:
