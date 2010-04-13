@@ -42,9 +42,29 @@ asm volatile (
 
 void jump_LaunchNucleus (void)
 {
+//	char *jump_addr;
+//	jump_addr = (char*) 0x514023A8;
 asm volatile (
+//	"ldr	pc, %[pointer]"
+//	: : [pointer] "X" (&jump_addr)
 	"ldr	pc, adr_LaunchNucleus\n\t"
 	"adr_LaunchNucleus:	.word	0x514023A8"
+);
+}	
+
+void jump_LCD_printf (void)
+{
+asm volatile (
+	"ldr	pc, adr_LCD_printf\n\t"
+	"adr_LCD_printf:	.word	0x514182D4"
+);
+}	
+
+void jump_MSG_UPLOAD_data_to_pc (void)
+{
+asm volatile (
+	"ldr	pc, adr_MSG_UPLOAD_data_to_pc\n\t"
+	"adr_MSG_UPLOAD_data_to_pc:	.word	0x5141852C"
 );
 }	
 
@@ -79,6 +99,10 @@ asm volatile (
 	"adr_Baseband_Init:	.word	0x5141983C"
 );
 }
+
+
+
+
 
 void wait_10s (void)
 {

@@ -240,10 +240,74 @@ _battery_okay:
 	bl	jump_Baseband_Init
 
 	bl	PMIC_setup	
+	bl	enable_SD_LDO
 
-	bl	wait_10s
 //	b	_continue_nucleus
 	b	spin_forever
+
+enable_SD_LDO:
+	stmfd	sp!, {lr}
+
+	mov	r1, #0x07F000000
+	add	r1, r1, #0x8000
+
+	// set pull-down on MMC_CDn1/GPG6
+	ldr	r0, [r1, #0xc0]		// read Port G Configuration Register
+	and	r0, r0, #0xf0ffffff 	// clear bits 24-27	==> GPG6 is input
+	str	r0, [r1, #0xc0]		// write Port G Configuration Register
+
+	ldr	r0, [r1, #0xc8]		// read Port G Pull-up/down Register
+	and	r0, r0, #0xffffe7ff 	// clear bits 12-13	
+	orr	r0, r0, #0x00000800	// set bit 12 ==> GPG6 pull-down enabled
+	str	r0, [r1, #0xc8]		// write Port G Pull-up/down Register
+/*
+	mov	r1, #0x07F000000
+	add	r1, r1, #0x8800
+
+	// set pull-up on MMC_CDn1/GPG6
+	ldr	r0, [r1, #0x04]		// read Port K Configuration Register 1
+	and	r0, r0, #0xfffffff0 	// clear bits 0-3	==> GPK8 is input
+	str	r0, [r1, #0x04]		// write Port K Configuration Register 1
+
+	ldr	r0, [r1, #0x0c]		// read Port K Pull-up/down Register
+	and	r0, r0, #0xfffcffff 	// clear bits 16-17	
+	orr	r0, r0, #0x00020000	// set bit 13 ==> GPK8 pull-up enabled
+	str	r0, [r1, #0x0c]		// write Port K Pull-up/down Register
+*/
+	ldmfd	sp!, {pc}
+
+
+disable_SD_LDO:
+	stmfd	sp!, {lr}
+
+	mov	r1, #0x07F000000
+	add	r1, r1, #0x8000
+
+	// set pull-up on MMC_CDn1/GPG6
+	ldr	r0, [r1, #0xc0]		// read Port G Configuration Register
+	and	r0, r0, #0xf0ffffff 	// clear bits 24-27	==> GPG6 is input
+	str	r0, [r1, #0xc0]		// write Port G Configuration Register
+
+	ldr	r0, [r1, #0xc8]		// read Port G Pull-up/down Register
+	and	r0, r0, #0xffffe7ff 	// clear bits 12-13	
+	orr	r0, r0, #0x00001000	// set bit 13 ==> GPG6 pull-up enabled
+	str	r0, [r1, #0xc8]		// write Port G Pull-up/down Register
+/*
+	mov	r1, #0x07F000000
+	add	r1, r1, #0x8800
+
+	// set pull-up on MMC_CDn1/GPG6
+	ldr	r0, [r1, #0x04]		// read Port K Configuration Register 1
+	and	r0, r0, #0xfffffff0 	// clear bits 0-3	==> GPK8 is input
+	str	r0, [r1, #0x04]		// write Port K Configuration Register 1
+
+	ldr	r0, [r1, #0x0c]		// read Port K Pull-up/down Register
+	and	r0, r0, #0xfffcffff 	// clear bits 16-17	
+	orr	r0, r0, #0x00010000	// set bit 13 ==> GPK8 pull-down enabled
+	str	r0, [r1, #0x0c]		// write Port K Pull-up/down Register
+*/
+	ldmfd	sp!, {pc}
+
 
 PMIC_setup:
 	stmfd	sp!, {r4,lr}
@@ -272,6 +336,7 @@ PMIC_setup:
 	bl	jump_PMIC_LUT2_write // REG_SIMLTTV (SIMLTTV)
 	mov	r1, #0x3E
 	bl	PMIC_write_print_result
+
 /*
 	mov	r1, #0x2D 
 	mov	r0, #0xAC 
@@ -295,31 +360,7 @@ PMIC_setup:
 	//
 	//	READ
 	//
-/*
-	mov	r2, #1
-	mov	r1, SP
-	mov	r0, #0x2e
-	bl	jump_PMIC_LUT1_read // read from REG_LDOAEN
-	mov	r1, #0x2c
-	ldr	r2, [SP]
-	bl	PMIC_read_print_result
 
-	mov	r2, #1
-	mov	r1, SP
-	mov	r0, #0x2f
-	bl	jump_PMIC_LUT1_read // read from REG_LDOAFSEQ
-	mov	r1, #0x2d
-	ldr	r2, [SP]
-	bl	PMIC_read_print_result
-
-	mov	r2, #1
-	mov	r1, SP
-	mov	r0, #0x30
-	bl	jump_PMIC_LUT1_read // read from REG_LDOATV
-	mov	r1, #0x2e
-	ldr	r2, [SP]
-	bl	PMIC_read_print_result
-*/
 	mov	r2, #1
 	mov	r1, SP
 	mov	r0, #0x3a
@@ -344,121 +385,47 @@ PMIC_setup:
 	ldr	r2, [SP]
 	bl	PMIC_read_print_result
 
-/*
-	mov	r2, #1
-	mov	r1, SP
-	mov	r0, #0x42
-	bl	jump_PMIC_LUT1_read // read from REG_CARD1EN
-	mov	r1, #0x44
-	ldr	r2, [SP]
-	bl	PMIC_read_print_result
-
-	mov	r2, #1
-	mov	r1, SP
-	mov	r0, #0x43
-	bl	jump_PMIC_LUT1_read // read from REG_CARD1FSEQ
-	mov	r1, #0x45
-	ldr	r2, [SP]
-	bl	PMIC_read_print_result
-
-	mov	r2, #1
-	mov	r1, SP
-	mov	r0, #0x44
-	bl	jump_PMIC_LUT1_read // read from REG_CARD1TV
-	mov	r1, #0x46
-	ldr	r2, [SP]
-	bl	PMIC_read_print_result
-*/
-
-	mov	r2, #1
-	mov	r1, SP
-	mov	r0, #0x45
-	bl	jump_PMIC_LUT1_read // read from REG_CARD2EN
-	mov	r1, #0x48
-	ldr	r2, [SP]
-	bl	PMIC_read_print_result
-
-	mov	r2, #1
-	mov	r1, SP
-	mov	r0, #0x46
-	bl	jump_PMIC_LUT1_read // read from REG_CARD2FSEQ
-	mov	r1, #0x49
-	ldr	r2, [SP]
-	bl	PMIC_read_print_result
-
-	mov	r2, #1
-	mov	r1, SP
-	mov	r0, #0x47
-	bl	jump_PMIC_LUT1_read // read from REG_CARD2TV
-	mov	r1, #0x4A
-	ldr	r2, [SP]
-	bl	PMIC_read_print_result
-
-
-
-	bl	wait_10s
-
-PMIC_setup_loop:
-
-	// disable LDO
-	mov	r1, #0
-//	mov	r0, #0x98 		// REG_SIMLTEN (SIMLTEN)
-//	mov	r0, #0xA9 		// REG_CARD1EN (CARD1EN)
-	mov	r0, #0xAF 		// REG_CARD1EN (CARD2EN)
-	bl	jump_PMIC_LUT2_write 
-
+	//
+	//	ENABLE SIM LDO
+	//
 
 	// set SRC
-	ldr	r1, _LDO_source
-//	mov	r0, #0x97		// REG_SIMLTEN (SIMLTENSRC)
+	mov	r1, #7
+	mov	r0, #0x97		// REG_SIMLTEN (SIMLTENSRC)
 //	mov	r0, #0xA8		// REG_CARD1EN (CARD1ENSRC)
-	mov	r0, #0xAE		// REG_CARD2EN (CARD2ENSRC)
+//	mov	r0, #0xAE		// REG_CARD2EN (CARD2ENSRC)
 	bl	jump_PMIC_LUT2_write 	
-
-	// print register
-	mov	r2, #1
-	mov	r1, SP
-//	mov	r0, #0x3a		// read from REG_SIMLTEN
-//	mov	r0, #0x42		// read from REG_CARD1EN
-	mov	r0, #0x45		// read from REG_CARD2EN
-	bl	jump_PMIC_LUT1_read 
-//	mov	r1, #0x3c		// REG_SIMLTEN
-//	mov	r1, #0x44		// REG_CARD1EN
-	mov	r1, #0x48		// REG_CARD2EN
-	ldr	r2, [SP]
-	bl	PMIC_read_print_result
-
-	bl	wait_10s
 
 	// enable LDO
 	mov	r1, #1
-//	mov	r0, #0x98 		// REG_SIMLTEN (SIMLTEN)
+	mov	r0, #0x98 		// REG_SIMLTEN (SIMLTEN)
 //	mov	r0, #0xA9 		// REG_CARD1EN (CARD1EN)
-	mov	r0, #0xAE 		// REG_CARD2EN (CARD2EN)
+//	mov	r0, #0xAE 		// REG_CARD2EN (CARD2EN)
 	bl	jump_PMIC_LUT2_write 
 
 	// print register
 	mov	r2, #1
 	mov	r1, SP
-//	mov	r0, #0x3a		// read from REG_SIMLTEN
+	mov	r0, #0x3a		// read from REG_SIMLTEN
 //	mov	r0, #0x42		// read from REG_CARD1EN
-	mov	r0, #0x45		// read from REG_CARD2EN
-	bl	jump_PMIC_LUT1_read
-//	mov	r1, #0x3c		// REG_SIMLTEN
+//	mov	r0, #0x45		// read from REG_CARD2EN
+	bl	jump_PMIC_LUT1_read 
+	mov	r1, #0x3c		// REG_SIMLTEN
 //	mov	r1, #0x44		// REG_CARD1EN
-	mov	r1, #0x48		// REG_CARD2EN
+//	mov	r1, #0x48		// REG_CARD2EN
 	ldr	r2, [SP]
 	bl	PMIC_read_print_result
 
+/*
+PMIC_setup_loop:
 	bl	wait_10s
-
 	// increment counter
 	ldr	r0, _LDO_source
 	add	r0, r0, #1
 	str	r0, _LDO_source
 	cmp	r0, #8
 	blt	PMIC_setup_loop
-
+*/
 	ldmfd	sp!, {R4,pc}
 	
 _LDO_source:	.word	0
@@ -757,14 +724,6 @@ jump_sub_51417fa0:
 adr_sub_5141804c:	.word	0x5141804c
 jump_sub_5141804c:
 	ldr	pc, adr_sub_5141804c
-
-adr_LCD_printf:	.word	0x514182D4
-jump_LCD_printf:
-	ldr	pc, adr_LCD_printf	
-
-adr_MSG_UPLOAD_data_to_pc:	.word	0x5141852C
-jump_MSG_UPLOAD_data_to_pc:
-	ldr	pc, adr_MSG_UPLOAD_data_to_pc	
 
 adr_PMIC_LUT1_write:	.word	0x51419D64
 jump_PMIC_LUT1_write:
