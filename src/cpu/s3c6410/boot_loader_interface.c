@@ -22,13 +22,13 @@
  */
 
 #include <s3c6410.h>
-
+#include "boot_loader_interface.h"
 
 void jump_OneNAND_Init (void)
 {
 asm volatile (
 	"ldr	pc, adr_OneNAND_Init\n\t"
-	"adr_OneNAND_Init:	.word	0x51401C3C"
+	"adr_OneNAND_Init:	.word	0x51401C3C\n\t"
 );
 }
 
@@ -50,6 +50,21 @@ asm volatile (
 	"ldr	pc, adr_LaunchNucleus\n\t"
 	"adr_LaunchNucleus:	.word	0x514023A8"
 );
+}	
+
+int LCD_printf (char *out_string, int line_number)
+{
+	int res;
+asm volatile (
+	"mov	R3, #0\n\t"
+	"mov	r1, %[line_pointer]\n\t"
+	"mov	r0, %[out_string]\n\t"
+	"ldr	pc, adr_LCD_printf\n\t"
+//	"adr_LCD_printf:	.word	0x514182D4"
+	: [result] "=r" (res) 
+	: [line_pointer] "r" (line_number), [out_string] "r" (out_string)
+);
+	return res;
 }	
 
 void jump_LCD_printf (void)
