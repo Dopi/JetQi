@@ -24,6 +24,10 @@
 #include <s3c6410.h>
 #include "boot_loader_interface.h"
 
+#define LCD_color_white		0xFFFF	
+#define LCD_color_yellow	0xFFE0	
+#define LCD_color_red		0xF800	
+
 void jump_OneNAND_Init (void)
 {
 asm volatile (
@@ -52,26 +56,46 @@ asm volatile (
 );
 }	
 
-int LCD_printf (char *out_string, int line_number)
+int LCD_printf (char *string, int color, int line_number )
 {
 	int res;
-asm volatile (
+	register char *out_string asm("r0") = string;
+	register int out_line asm("r1") = line_number;
+	register int out_color asm("r2") = color;
+	
+	out_string = out_string; out_line = out_line; out_color = out_color;	// pretend to use these vars
+
+asm volatile(
+//	"mov	r0, %[A]\n\t"
+//	"mov	r1, %[B]\n\t"
+//	"mov	r2, %[C]\n\t"
 	"mov	R3, #0\n\t"
-	"mov	r1, %[line_pointer]\n\t"
-	"mov	r0, %[out_string]\n\t"
-	"ldr	pc, adr_LCD_printf\n\t"
+	"bl	jump_LCD_printf\n\t"
+//	"ldr	pc, adr_LCD_printf\n\t"
 //	"adr_LCD_printf:	.word	0x514182D4"
 	: [result] "=r" (res) 
-	: [line_pointer] "r" (line_number), [out_string] "r" (out_string)
+	: [A] "r" (out_string), [B] "r" (out_line), [C] "r" (out_color)
+	: "lr"
 );
 	return res;
 }	
 
+void ctest_JetDroid_mode_MSG(void)
+{
+	LCD_printf("CCC---------------------------", LCD_color_red, 1);
+	LCD_printf("CCC\t   JetDroid mode  \t     ", LCD_color_white, 2);
+	LCD_printf("CCC---------------------------", LCD_color_red, 3);
+}
+
 void jump_LCD_printf (void)
 {
 asm volatile (
-	"ldr	pc, adr_LCD_printf\n\t"
-	"adr_LCD_printf:	.word	0x514182D4"
+//	"ldr	pc, adr_LCD_printf\n\t"
+	"stmfd	sp!, {r1,r4,lr}\n\t"
+	"ldr	r4, adr_LCD_printf\n\t"
+	"blx	r4\n\t"
+	"ldmfd	sp!, {r1,r4,pc}\n\t"
+	"adr_LCD_printf:	.word	0x514182D4\n\t"
 );
 }	
 
@@ -148,6 +172,76 @@ void spin_forever (void)
 asm volatile (
 	"_spin_forever:"
 	"b	_spin_forever"
+);
+}
+
+void disable_SD_LDO (void)
+{
+asm volatile (
+	"stmfd	sp!, {lr}\n\t"
+
+	"mov	r1, #0x07F000000\n\t"
+	"add	r1, r1, #0x8000\n\t"
+
+	// set pull-up on MMC_CDn1/GPG6
+	"ldr	r0, [r1, #0xc0]\n\t"		// read Port G Configuration Register
+	"and	r0, r0, #0xf0ffffff\n\t" 	// clear bits 24-27	==> GPG6 is input
+	"str	r0, [r1, #0xc0]	\n\t"		// write Port G Configuration Register
+
+	"ldr	r0, [r1, #0xc8]\n\t"		// read Port G Pull-up/down Register
+	"and	r0, r0, #0xffffe7ff\n\t" 	// clear bits 12-13	
+	"orr	r0, r0, #0x00001000\n\t"	// set bit 13 ==> GPG6 pull-up enabled
+	"str	r0, [r1, #0xc8]\n\t"		// write Port G Pull-up/down Register
+/*
+	mov	r1, #0x07F000000
+	add	r1, r1, #0x8800
+
+	// set pull-up on MMC_CDn1/GPG6
+	ldr	r0, [r1, #0x04]		// read Port K Configuration Register 1
+	and	r0, r0, #0xfffffff0 	// clear bits 0-3	==> GPK8 is input
+	str	r0, [r1, #0x04]		// write Port K Configuration Register 1
+
+	ldr	r0, [r1, #0x0c]		// read Port K Pull-up/down Register
+	and	r0, r0, #0xfffcffff 	// clear bits 16-17	
+	orr	r0, r0, #0x00010000	// set bit 13 ==> GPK8 pull-down enabled
+	str	r0, [r1, #0x0c]		// write Port K Pull-up/down Register
+*/
+	"ldmfd	sp!, {pc}\n\t"
+);
+}
+
+void enable_SD_LDO (void)
+{
+asm volatile (
+	"stmfd	sp!, {lr}\n\t"
+
+	"mov	r1, #0x07F000000\n\t"
+	"add	r1, r1, #0x8000\n\t"
+
+	// set pull-down on MMC_CDn1/GPG6
+	"ldr	r0, [r1, #0xc0]\n\t"		// read Port G Configuration Register
+	"and	r0, r0, #0xf0ffffff\n\t" 	// clear bits 24-27	==> GPG6 is input
+	"str	r0, [r1, #0xc0]\n\t"		// write Port G Configuration Register
+
+	"ldr	r0, [r1, #0xc8]\n\t"		// read Port G Pull-up/down Register
+	"and	r0, r0, #0xffffe7ff\n\t" 	// clear bits 12-13	
+	"orr	r0, r0, #0x00000800\n\t"	// set bit 12 ==> GPG6 pull-down enabled
+	"str	r0, [r1, #0xc8]\n\t"		// write Port G Pull-up/down Register
+/*
+	mov	r1, #0x07F000000
+	add	r1, r1, #0x8800
+
+	// set pull-up on MMC_CDn1/GPG6
+	ldr	r0, [r1, #0x04]		// read Port K Configuration Register 1
+	and	r0, r0, #0xfffffff0 	// clear bits 0-3	==> GPK8 is input
+	str	r0, [r1, #0x04]		// write Port K Configuration Register 1
+
+	ldr	r0, [r1, #0x0c]		// read Port K Pull-up/down Register
+	and	r0, r0, #0xfffcffff 	// clear bits 16-17	
+	orr	r0, r0, #0x00020000	// set bit 13 ==> GPK8 pull-up enabled
+	str	r0, [r1, #0x0c]		// write Port K Pull-up/down Register
+*/
+	"ldmfd	sp!, {pc}\n\t"
 );
 }
 

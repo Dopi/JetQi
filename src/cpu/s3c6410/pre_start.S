@@ -232,7 +232,9 @@ _battery_okay:
 	str	r0, [R4,#0x24]
 	ldr	r0, vvar_51402258 // =0x514449A8
 
-	bl	JetDroid_mode_MSG
+	bl	pre_mode_MSG_init
+//	bl	JetDroid_mode_MSG
+	bl	ctest_JetDroid_mode_MSG
 
 	ldr	r2, color_white
 	adr	r0, asc_baseband_init
@@ -245,68 +247,8 @@ _battery_okay:
 //	b	_continue_nucleus
 	b	spin_forever
 
-enable_SD_LDO:
-	stmfd	sp!, {lr}
-
-	mov	r1, #0x07F000000
-	add	r1, r1, #0x8000
-
-	// set pull-down on MMC_CDn1/GPG6
-	ldr	r0, [r1, #0xc0]		// read Port G Configuration Register
-	and	r0, r0, #0xf0ffffff 	// clear bits 24-27	==> GPG6 is input
-	str	r0, [r1, #0xc0]		// write Port G Configuration Register
-
-	ldr	r0, [r1, #0xc8]		// read Port G Pull-up/down Register
-	and	r0, r0, #0xffffe7ff 	// clear bits 12-13	
-	orr	r0, r0, #0x00000800	// set bit 12 ==> GPG6 pull-down enabled
-	str	r0, [r1, #0xc8]		// write Port G Pull-up/down Register
-/*
-	mov	r1, #0x07F000000
-	add	r1, r1, #0x8800
-
-	// set pull-up on MMC_CDn1/GPG6
-	ldr	r0, [r1, #0x04]		// read Port K Configuration Register 1
-	and	r0, r0, #0xfffffff0 	// clear bits 0-3	==> GPK8 is input
-	str	r0, [r1, #0x04]		// write Port K Configuration Register 1
-
-	ldr	r0, [r1, #0x0c]		// read Port K Pull-up/down Register
-	and	r0, r0, #0xfffcffff 	// clear bits 16-17	
-	orr	r0, r0, #0x00020000	// set bit 13 ==> GPK8 pull-up enabled
-	str	r0, [r1, #0x0c]		// write Port K Pull-up/down Register
-*/
-	ldmfd	sp!, {pc}
 
 
-disable_SD_LDO:
-	stmfd	sp!, {lr}
-
-	mov	r1, #0x07F000000
-	add	r1, r1, #0x8000
-
-	// set pull-up on MMC_CDn1/GPG6
-	ldr	r0, [r1, #0xc0]		// read Port G Configuration Register
-	and	r0, r0, #0xf0ffffff 	// clear bits 24-27	==> GPG6 is input
-	str	r0, [r1, #0xc0]		// write Port G Configuration Register
-
-	ldr	r0, [r1, #0xc8]		// read Port G Pull-up/down Register
-	and	r0, r0, #0xffffe7ff 	// clear bits 12-13	
-	orr	r0, r0, #0x00001000	// set bit 13 ==> GPG6 pull-up enabled
-	str	r0, [r1, #0xc8]		// write Port G Pull-up/down Register
-/*
-	mov	r1, #0x07F000000
-	add	r1, r1, #0x8800
-
-	// set pull-up on MMC_CDn1/GPG6
-	ldr	r0, [r1, #0x04]		// read Port K Configuration Register 1
-	and	r0, r0, #0xfffffff0 	// clear bits 0-3	==> GPK8 is input
-	str	r0, [r1, #0x04]		// write Port K Configuration Register 1
-
-	ldr	r0, [r1, #0x0c]		// read Port K Pull-up/down Register
-	and	r0, r0, #0xfffcffff 	// clear bits 16-17	
-	orr	r0, r0, #0x00010000	// set bit 13 ==> GPK8 pull-down enabled
-	str	r0, [r1, #0x0c]		// write Port K Pull-up/down Register
-*/
-	ldmfd	sp!, {pc}
 
 
 PMIC_setup:
@@ -659,6 +601,20 @@ LCD_write_line_newline:
 	add	r1, #1
 	str	r1, line_pointer
 	b	jump_LCD_printf	// 0x514182D4
+
+pre_mode_MSG_init: 
+	stmfd	sp!, {r4,lr}
+	mov	r0, #0x7D0
+	bl	jump_sub_51430f80
+	bl	jump_sub_51417fa0
+	mov	r0, #0
+	bl	jump_sub_51417f24
+	ldr	r2, color_red
+	adr	r0, asc_spacer // "--------------------------------"
+	bl	LCD_write_line_newline
+	ldmfd	sp!, {R4,lr}
+	mov	r0, #8
+	ldr	pc, adr_sub_5141804c //b	sub_5141804C
 
 JetDroid_mode_MSG: //0x514184B8
 	stmfd	sp!, {r4,lr}
