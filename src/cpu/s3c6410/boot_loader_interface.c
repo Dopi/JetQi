@@ -28,6 +28,8 @@
 #define LCD_color_yellow	0xFFE0	
 #define LCD_color_red		0xF800	
 
+int	LCD_line_pointer = 1;
+
 void jump_OneNAND_Init (void)
 {
 asm volatile (
@@ -56,7 +58,7 @@ asm volatile (
 );
 }	
 
-int LCD_printf (char *string, int color, int line_number )
+int LCD_print (char *string, int color, int line_number )
 {
 	int res;
 	register char *out_string asm("r0") = string;
@@ -70,9 +72,7 @@ asm volatile(
 //	"mov	r1, %[B]\n\t"
 //	"mov	r2, %[C]\n\t"
 	"mov	R3, #0\n\t"
-	"bl	jump_LCD_printf\n\t"
-//	"ldr	pc, adr_LCD_printf\n\t"
-//	"adr_LCD_printf:	.word	0x514182D4"
+	"bl	jump_LCD_print\n\t"
 	: [result] "=r" (res) 
 	: [A] "r" (out_string), [B] "r" (out_line), [C] "r" (out_color)
 	: "lr"
@@ -80,22 +80,31 @@ asm volatile(
 	return res;
 }	
 
-void ctest_JetDroid_mode_MSG(void)
+int LCD_print_newline (char *string, int color)
 {
-	LCD_printf("CCC---------------------------", LCD_color_red, 1);
-	LCD_printf("CCC\t   JetDroid mode  \t     ", LCD_color_white, 2);
-	LCD_printf("CCC---------------------------", LCD_color_red, 3);
+	int res;
+	res=LCD_print( string, color, LCD_line_pointer);
+	LCD_line_pointer++;
+	return res;
 }
 
-void jump_LCD_printf (void)
+
+void ctest_JetDroid_mode_MSG(void)
+{
+	LCD_print("------------------------------", LCD_color_red, 1);
+	LCD_print("   \t   JetDroid mode  \t     ", LCD_color_white, 2);
+	LCD_print("------------------------------", LCD_color_red, 3);
+}
+
+void jump_LCD_print (void)
 {
 asm volatile (
-//	"ldr	pc, adr_LCD_printf\n\t"
+//	"ldr	pc, adr_LCD_print\n\t"
 	"stmfd	sp!, {r1,r4,lr}\n\t"
-	"ldr	r4, adr_LCD_printf\n\t"
+	"ldr	r4, adr_LCD_print\n\t"
 	"blx	r4\n\t"
 	"ldmfd	sp!, {r1,r4,pc}\n\t"
-	"adr_LCD_printf:	.word	0x514182D4\n\t"
+	"adr_LCD_print:	.word	0x514182D4\n\t"
 );
 }	
 
