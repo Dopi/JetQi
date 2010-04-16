@@ -232,22 +232,7 @@ _battery_okay:
 	str	r0, [R4,#0x24]
 	ldr	r0, vvar_51402258 // =0x514449A8
 
-	bl	pre_mode_MSG_init
-//	bl	JetDroid_mode_MSG
-	bl	ctest_JetDroid_mode_MSG
-
-	ldr	r2, color_white
-	adr	r0, asc_baseband_init
-	bl	LCD_write_line_newline
-	bl	jump_Baseband_Init
-
-	bl	PMIC_setup	
-	bl	enable_SD_LDO
-
-//	b	_continue_nucleus
-	b	spin_forever
-
-
+	b	qi_cstart
 
 
 
@@ -435,21 +420,6 @@ ret_5142fd78:
  *  Text
  */
 
-asc_spacer:
-	.ascii	"------------------------------"
-	.byte	0
-	.align	4
-
-asc_jetdroid:
-	.ascii	"   \t    JetDroid mode  \t     "
-	.byte	0
-	.align	4
-
-asc_baseband_init:
-	.ascii	"Initializing baseband ........"
-	.byte	0
-	.align	4
-
 asc_PMIC_write:
 	.ascii	"PMIC write to 0x"
 asc_PMIC_write_value:
@@ -588,53 +558,20 @@ _PMIC_read_print_result_D:
 	bl	LCD_write_line_newline
 	ldmfd	sp!, {r2-r7,pc}
 
-
+/*
 
 LCD_write_line:
 	mov	R3, #0
 	ldr	r1, line_pointer
-	b	jump_LCD_printf	// 0x514182D4
+	b	jump_LCD_print	// 0x514182D4
 
 LCD_write_line_newline:
 	mov	R3, #0
 	ldr	r1, line_pointer
 	add	r1, #1
 	str	r1, line_pointer
-	b	jump_LCD_printf	// 0x514182D4
-
-pre_mode_MSG_init: 
-	stmfd	sp!, {r4,lr}
-	mov	r0, #0x7D0
-	bl	jump_sub_51430f80
-	bl	jump_sub_51417fa0
-	mov	r0, #0
-	bl	jump_sub_51417f24
-	ldr	r2, color_red
-	adr	r0, asc_spacer // "--------------------------------"
-	bl	LCD_write_line_newline
-	ldmfd	sp!, {R4,lr}
-	mov	r0, #8
-	ldr	pc, adr_sub_5141804c //b	sub_5141804C
-
-JetDroid_mode_MSG: //0x514184B8
-	stmfd	sp!, {r4,lr}
-	mov	r0, #0x7D0
-	bl	jump_sub_51430f80
-	bl	jump_sub_51417fa0
-	mov	r0, #0
-	bl	jump_sub_51417f24
-	ldr	r2, color_red
-	adr	r0, asc_spacer // "--------------------------------"
-	bl	LCD_write_line_newline
-	ldr	r2, color_white
-	adr	r0, asc_jetdroid // "   \t    JetDroid mode  \t      "
-	bl	LCD_write_line_newline
-	ldr	r2, color_red
-	adr	r0, asc_spacer  // "--------------------------------"
-	bl	LCD_write_line_newline
-	ldmfd	sp!, {R4,lr}
-	mov	r0, #8
-	ldr	pc, adr_sub_5141804c //b	sub_5141804C
+	b	jump_LCD_print	// 0x514182D4
+*/
 
 enable_MSG:
 	stmfd	sp!, {r4,lr}

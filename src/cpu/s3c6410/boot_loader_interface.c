@@ -67,16 +67,16 @@ int LCD_print (char *string, int color, int line_number )
 	
 	out_string = out_string; out_line = out_line; out_color = out_color;	// pretend to use these vars
 
-asm volatile(
-//	"mov	r0, %[A]\n\t"
-//	"mov	r1, %[B]\n\t"
-//	"mov	r2, %[C]\n\t"
-	"mov	R3, #0\n\t"
-	"bl	jump_LCD_print\n\t"
-	: [result] "=r" (res) 
-	: [A] "r" (out_string), [B] "r" (out_line), [C] "r" (out_color)
-	: "lr"
-);
+	asm volatile(
+		//"mov	r0, %[A]\n\t"
+		//"mov	r1, %[B]\n\t"
+		//"mov	r2, %[C]\n\t"
+		"mov	R3, #0\n\t"
+		"bl	jump_LCD_print\n\t"
+		: [result] "=r" (res) 
+		: [A] "r" (out_string), [B] "r" (out_line), [C] "r" (out_color)
+		: "lr"
+	);
 	return res;
 }	
 
@@ -88,12 +88,18 @@ int LCD_print_newline (char *string, int color)
 	return res;
 }
 
-
 void ctest_JetDroid_mode_MSG(void)
 {
 	LCD_print("------------------------------", LCD_color_red, 1);
 	LCD_print("   \t   JetDroid mode  \t     ", LCD_color_white, 2);
 	LCD_print("------------------------------", LCD_color_red, 3);
+
+	LCD_line_pointer=4;
+}
+
+void MSG_PMIC_setup(void)
+{
+	LCD_print_newline("Setting up PMIC ...", LCD_color_white);
 }
 
 void jump_LCD_print (void)
@@ -107,6 +113,27 @@ asm volatile (
 	"adr_LCD_print:	.word	0x514182D4\n\t"
 );
 }	
+
+
+void pre_mode_MSG_init(void) 
+{
+asm volatile (
+	"stmfd	sp!, {r4,lr}\n\t"
+	"mov	r0, #0x7D0\n\t"
+	"bl	jump_sub_51430f80\n\t"
+	"bl	jump_sub_51417fa0\n\t"
+	"mov	r0, #0\n\t"
+	"bl	jump_sub_51417f24\n\t"
+//	"ldr	r2, color_red\n\t"
+//	"adr	r0, asc_spacer // "--------------------------------"\n\t"
+//	"bl	LCD_write_line_newline\n\t"
+	"ldmfd	sp!, {R4,lr}\n\t"
+	"mov	r0, #8\n\t"
+	"ldr	pc, adr_sub_5141804c\n\t" //b	sub_5141804C
+);
+}
+
+
 
 void jump_MSG_UPLOAD_data_to_pc (void)
 {
@@ -178,10 +205,14 @@ asm volatile (
 
 void spin_forever (void)
 {
+	while(1==1){
+	}
+/*
 asm volatile (
 	"_spin_forever:"
 	"b	_spin_forever"
 );
+*/
 }
 
 void disable_SD_LDO (void)
@@ -217,6 +248,8 @@ asm volatile (
 */
 	"ldmfd	sp!, {pc}\n\t"
 );
+
+	LCD_print_newline("Disabled SD-card LDO", LCD_color_white);
 }
 
 void enable_SD_LDO (void)
@@ -252,7 +285,28 @@ asm volatile (
 */
 	"ldmfd	sp!, {pc}\n\t"
 );
+	LCD_print_newline("Enabled SD-card LDO", LCD_color_white);
 }
+
+void qi_cstart(void)
+{
+	pre_mode_MSG_init();
+	ctest_JetDroid_mode_MSG();
+
+	LCD_print_newline("Initializing baseband ...", LCD_color_white);
+	//jump_Baseband_Init();
+	asm volatile (
+		"ldr	pc, aadr_Baseband_Init\n\t"
+		"aadr_Baseband_Init:	.word	0x5141983C"
+	);
+
+	//MSG_PMIC_setup();
+	//PMIC_setup();	
+	enable_SD_LDO();
+
+	spin_forever();
+}
+
 
 
 /*
