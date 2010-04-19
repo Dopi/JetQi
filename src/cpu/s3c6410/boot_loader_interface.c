@@ -102,6 +102,18 @@ void MSG_PMIC_setup(void)
 	LCD_print_newline("Setting up PMIC ...", LCD_color_white);
 }
 
+void enable_MSG(void)
+{
+	LCD_print_newline("Enable.", LCD_color_white);
+}
+
+void disable_MSG(void)
+{
+	LCD_print_newline("Disable.", LCD_color_white);
+}
+
+
+
 void jump_LCD_print (void)
 {
 asm volatile (
@@ -113,27 +125,6 @@ asm volatile (
 	"adr_LCD_print:	.word	0x514182D4\n\t"
 );
 }	
-
-
-void pre_mode_MSG_init(void) 
-{
-asm volatile (
-	"stmfd	sp!, {r4,lr}\n\t"
-	"mov	r0, #0x7D0\n\t"
-	"bl	jump_sub_51430f80\n\t"
-	"bl	jump_sub_51417fa0\n\t"
-	"mov	r0, #0\n\t"
-	"bl	jump_sub_51417f24\n\t"
-//	"ldr	r2, color_red\n\t"
-//	"adr	r0, asc_spacer // "--------------------------------"\n\t"
-//	"bl	LCD_write_line_newline\n\t"
-	"ldmfd	sp!, {R4,lr}\n\t"
-	"mov	r0, #8\n\t"
-	"ldr	pc, adr_sub_5141804c\n\t" //b	sub_5141804C
-);
-}
-
-
 
 void jump_MSG_UPLOAD_data_to_pc (void)
 {
@@ -170,7 +161,10 @@ asm volatile (
 void jump_Baseband_Init (void)
 {
 asm volatile (
-	"ldr	pc, adr_Baseband_Init\n\t"
+	"stmfd	sp!, {r1-r4,lr}\n\t"
+	"ldr	r0, adr_Baseband_Init\n\t"
+	"blx	r0\n\t"
+	"ldmfd	sp!, {r1-r4,pc}\n\t"
 	"adr_Baseband_Init:	.word	0x5141983C"
 );
 }
@@ -218,7 +212,7 @@ asm volatile (
 void disable_SD_LDO (void)
 {
 asm volatile (
-	"stmfd	sp!, {lr}\n\t"
+//	"stmfd	sp!, {lr}\n\t"
 
 	"mov	r1, #0x07F000000\n\t"
 	"add	r1, r1, #0x8000\n\t"
@@ -246,7 +240,7 @@ asm volatile (
 	orr	r0, r0, #0x00010000	// set bit 13 ==> GPK8 pull-down enabled
 	str	r0, [r1, #0x0c]		// write Port K Pull-up/down Register
 */
-	"ldmfd	sp!, {pc}\n\t"
+//	"ldmfd	sp!, {pc}\n\t"
 );
 
 	LCD_print_newline("Disabled SD-card LDO", LCD_color_white);
@@ -255,7 +249,7 @@ asm volatile (
 void enable_SD_LDO (void)
 {
 asm volatile (
-	"stmfd	sp!, {lr}\n\t"
+//	"stmfd	sp!, {lr}\n\t"
 
 	"mov	r1, #0x07F000000\n\t"
 	"add	r1, r1, #0x8000\n\t"
@@ -283,27 +277,32 @@ asm volatile (
 	orr	r0, r0, #0x00020000	// set bit 13 ==> GPK8 pull-up enabled
 	str	r0, [r1, #0x0c]		// write Port K Pull-up/down Register
 */
-	"ldmfd	sp!, {pc}\n\t"
+//	"ldmfd	sp!, {lr}\n\t"
+//	: : "r0", "r1"
 );
 	LCD_print_newline("Enabled SD-card LDO", LCD_color_white);
 }
 
 void qi_cstart(void)
 {
-	pre_mode_MSG_init();
+	//LCD_init2();		// this is still in ASM
 	ctest_JetDroid_mode_MSG();
 
 	LCD_print_newline("Initializing baseband ...", LCD_color_white);
 	//jump_Baseband_Init();
 	asm volatile (
-		"ldr	pc, aadr_Baseband_Init\n\t"
-		"aadr_Baseband_Init:	.word	0x5141983C"
+		"ldr	r0, aadr_Baseband_Init\n\t"
+		"blx	r0\n\t"
+		"b	after_bb_init\n\t"
+		"aadr_Baseband_Init:	.word	0x5141983C\n\t"
+		"after_bb_init:\n\t"
 	);
 
 	//MSG_PMIC_setup();
 	//PMIC_setup();	
 	enable_SD_LDO();
 
+	LCD_print_newline("Now entering infinte loop ...", LCD_color_white);
 	spin_forever();
 }
 

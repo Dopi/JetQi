@@ -232,9 +232,26 @@ _battery_okay:
 	str	r0, [R4,#0x24]
 	ldr	r0, vvar_51402258 // =0x514449A8
 
+	bl	LCD_init2
 	b	qi_cstart
+init2_end:
+	b	init2_end
 
 
+
+LCD_init2:
+	stmfd	sp!, {r4,lr}
+	mov	r0, #0x7D0
+	bl	jump_sub_51430f80
+	bl	jump_sub_51417fa0
+	mov	r0, #0
+	bl	jump_sub_51417f24
+//	ldr	r2, color_red
+//	adr	r0, asc_spacer // "--------------------------------"
+//	bl	LCD_write_line_newline
+	ldmfd	sp!, {R4,lr}
+	mov	r0, #8
+	ldr	pc, adr_sub_5141804c //b	sub_5141804C
 
 PMIC_setup:
 	stmfd	sp!, {r4,lr}
@@ -558,7 +575,7 @@ _PMIC_read_print_result_D:
 	bl	LCD_write_line_newline
 	ldmfd	sp!, {r2-r7,pc}
 
-/*
+
 
 LCD_write_line:
 	mov	R3, #0
@@ -571,8 +588,8 @@ LCD_write_line_newline:
 	add	r1, #1
 	str	r1, line_pointer
 	b	jump_LCD_print	// 0x514182D4
-*/
 
+/*
 enable_MSG:
 	stmfd	sp!, {r4,lr}
 	ldr	r2, color_white
@@ -587,7 +604,7 @@ disable_MSG:
 	bl	LCD_write_line_newline
 	ldmfd	sp!, {R4,pc}
 
-
+*/
 /*
  * Long Distance Jumps
  */
