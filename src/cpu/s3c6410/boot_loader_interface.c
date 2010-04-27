@@ -212,6 +212,7 @@ asm volatile (
 void disable_SD_LDO (void)
 {
 asm volatile (
+	"stmfd	sp!, {r0-r1}\n\t"
 //	"stmfd	sp!, {lr}\n\t"
 
 	"mov	r1, #0x07F000000\n\t"
@@ -240,6 +241,7 @@ asm volatile (
 	orr	r0, r0, #0x00010000	// set bit 13 ==> GPK8 pull-down enabled
 	str	r0, [r1, #0x0c]		// write Port K Pull-up/down Register
 */
+	"ldmfd	sp!, {r0-r1}\n\t"
 //	"ldmfd	sp!, {pc}\n\t"
 );
 
@@ -249,7 +251,7 @@ asm volatile (
 void enable_SD_LDO (void)
 {
 asm volatile (
-//	"stmfd	sp!, {lr}\n\t"
+	"stmfd	sp!, {r0-r1}\n\t"
 
 	"mov	r1, #0x07F000000\n\t"
 	"add	r1, r1, #0x8000\n\t"
@@ -277,7 +279,7 @@ asm volatile (
 	orr	r0, r0, #0x00020000	// set bit 13 ==> GPK8 pull-up enabled
 	str	r0, [r1, #0x0c]		// write Port K Pull-up/down Register
 */
-//	"ldmfd	sp!, {lr}\n\t"
+	"ldmfd	sp!, {r0-r1}\n\t"
 //	: : "r0", "r1"
 );
 	LCD_print_newline("Enabled SD-card LDO", LCD_color_white);
@@ -291,11 +293,13 @@ void qi_cstart(void)
 	LCD_print_newline("Initializing baseband ...", LCD_color_white);
 	//jump_Baseband_Init();
 	asm volatile (
+		"stmfd	sp!, {r1-r4}\n\t"
 		"ldr	r0, aadr_Baseband_Init\n\t"
 		"blx	r0\n\t"
 		"b	after_bb_init\n\t"
 		"aadr_Baseband_Init:	.word	0x5141983C\n\t"
 		"after_bb_init:\n\t"
+		"ldmfd	sp!, {r1-r4}\n\t"
 	);
 
 	//MSG_PMIC_setup();
