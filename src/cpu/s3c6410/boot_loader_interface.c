@@ -306,6 +306,8 @@ void qi_cstart(void)
 	//PMIC_setup();	
 	enable_SD_LDO();
 
+	// start_qi();
+
 	LCD_print_newline("Now entering infinte loop ...", LCD_color_white);
 	spin_forever();
 }
