@@ -28,6 +28,7 @@
 #include <qi.h>
 #include <serial-s3c64xx.h>
 #include "jet.h"
+#include "boot_loader_interface.h"
 
 #define stringify2(s) stringify1(s)
 #define stringify1(s) #s
@@ -131,5 +132,6 @@ void start_qi(void)
 	puts("\n"); */
 
 	/* jump to bootloader_second_phase() running from DRAM copy */
+	LCD_print_newline("starting second phase ...");
 	bootloader_second_phase();
 }
