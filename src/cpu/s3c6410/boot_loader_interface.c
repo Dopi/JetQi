@@ -156,12 +156,10 @@ int LCD_print (char *string, int line_number )
 	out_string = out_string; out_line = out_line; // pretend to use these vars
 
 	asm volatile(
-		"ldr	r2, lcd_print_white\n\t"
+		"mov	r2, #0xff\n\t"
+		"orr	r2, r2, #0xff00\n\t"
 		"mov	R3, #0\n\t"
 		"bl	jump_LCD_print\n\t"
-		"b	lcd_print_ret\n\t"
-		"lcd_print_white:	.word	0xffff\n\t"
-		"lcd_print_ret:\n\t"
 		: [result] "=r" (res) 
 		: [A] "r" (out_string), [B] "r" (out_line)
 		: "lr"
