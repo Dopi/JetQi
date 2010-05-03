@@ -152,18 +152,18 @@ int LCD_print (char *string, int line_number )
 	int res;
 	register char *out_string asm("r0") = string;
 	register int out_line asm("r1") = line_number;
-	register int out_color asm("r2") = LCD_color_white;
 	
-	out_string = out_string; out_line = out_line; out_color = out_color;	// pretend to use these vars
+	out_string = out_string; out_line = out_line; // pretend to use these vars
 
 	asm volatile(
-		//"mov	r0, %[A]\n\t"
-		//"mov	r1, %[B]\n\t"
-		//"mov	r2, %[C]\n\t"
+		"ldr	r2, lcd_print_white\n\t"
 		"mov	R3, #0\n\t"
 		"bl	jump_LCD_print\n\t"
+		"b	lcd_print_ret\n\t"
+		"lcd_print_white:	.word	0xffff\n\t"
+		"lcd_print_ret:\n\t"
 		: [result] "=r" (res) 
-		: [A] "r" (out_string), [B] "r" (out_line), [C] "r" (out_color)
+		: [A] "r" (out_string), [B] "r" (out_line)
 		: "lr"
 	);
 	return res;
@@ -354,7 +354,3 @@ void qi_cstart(void)
 	LCD_print_newline("Now entering infinite loop ...");
 	spin_forever();
 }
-
-
-
-
