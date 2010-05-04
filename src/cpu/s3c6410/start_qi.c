@@ -32,6 +32,7 @@
 
 #define stringify2(s) stringify1(s)
 #define stringify1(s) #s
+#define DEBUG(s) LCD_print_newline(s)	// initially it was puts(s)
 
 void bootloader_second_phase(void);
 
@@ -54,21 +55,11 @@ void start_qi(void)
 	int board = 0;
 
 	/*
-	 * well, we can be running on this CPU two different ways.
+	 * We were copied into steppingstone and TEXT_BASE already
+	 * by the original bootloader and some additional custom code.
+	 * We don't have to do anything else.  
 	 *
-	 * 1) We were copied into steppingstone and TEXT_BASE already
-	 *    by JTAG.  We don't have to do anything else.  JTAG script
-	 *    then sets data at address 0x4 to 0xffffffff as a signal we
-	 *    are running by JTAG.
-	 *
-	 * 2) We only got our first 4K into steppingstone, we need to copy
-	 *    the rest of ourselves into TEXT_BASE.
-	 *
-	 * So we do the copy out of NAND only if we see we did not come up
-	 * under control of JTAG.
 	 */
-
-//	led_set(2);
 
 	/* ask all the boards we support in turn if they recognize this
 	 * hardware we are running on, accept the first positive answer
@@ -87,51 +78,27 @@ void start_qi(void)
 	if (this_board->early_port_init)
 		this_board->early_port_init();
 
-	set_putc_func(this_board->putc);
+	//set_putc_func(this_board->putc);
 
-	/* stick some hello messages on debug console */
+	/* stick some hello messages on debug output */
 
-	puts("\n\n\nQi Bootloader "stringify2(QI_CPU)"  "
+	DEBUG("Qi Bootloader "stringify2(QI_CPU)"  "
 	   stringify2(BUILD_HOST)" "
 	   stringify2(BUILD_VERSION)" "
 	   "\n");
 
-	puts(stringify2(BUILD_DATE) "  Copyright (C) 2008 Openmoko, Inc.\n");
-	puts("  This version of Qi for Jet (S8000) is modified by\n");
-	puts("  dopi711@googlemail.com>\n\n");
-
-	if (!is_jtag) {
-		/*
-		* We got the first 8KBytes of the bootloader pulled into the
-		* steppingstone SRAM for free.  Now we pull the whole bootloader
-		* image into SDRAM.
-		*
-		* This code and the .S files are arranged by the linker script
-		* to expect to run from 0x0.  But the linker script has told
-		* everything else to expect to run from 0x53000000+.  That's
-		* why we are going to be able to copy this code and not have it
-		* crash when we run it from there.
-		*/
-
-		if (!(flag = sd_card_block_read_jet((void*)BOOTLOADER_MEM_ADDR,
-		globalBlockSizeHide - BOOTLOADER_BLKS - 18, BOOTLOADER_BLKS))) {
-			led_blink(3, 0);
-			poweroff();
-		}
-	}
-
-	/* all of Qi is in memory now, stuff outside steppingstone too */
+	DEBUG(stringify2(BUILD_DATE) "  Copyright (C) 2008 Openmoko, Inc.\n");
+	DEBUG("  This version of Qi for Jet (S8000) is modified by\n");
+	DEBUG("  dopi711@googlemail.com>\n\n");
 
 	if (this_board->port_init)
 		this_board->port_init();
 
-	/* puts("\n     Detected: ");
-	puts(this_board->name);
-	puts(", ");
-	puts((this_board->get_board_variant)()->name);
-	puts("\n"); */
+	/* DEBUG("\n     Detected: ");
+	DEBUG(this_board->name);
+	DEBUG((this_board->get_board_variant)()->name);
 
 	/* jump to bootloader_second_phase() running from DRAM copy */
-	LCD_print_newline("starting second phase ...");
+	DEBUG("starting second phase ...");
 	bootloader_second_phase();
 }
