@@ -51,7 +51,6 @@ extern int is_jtag;
 
 void start_qi(void)
 {
-	int flag = 0;
 	int board = 0;
 
 	/*
@@ -94,9 +93,9 @@ void start_qi(void)
 	if (this_board->port_init)
 		this_board->port_init();
 
-	/* DEBUG("\n     Detected: ");
-	DEBUG(this_board->name);
-	DEBUG((this_board->get_board_variant)()->name);
+	// DEBUG("\n     Detected: ");
+	//DEBUG(this_board->name);
+	//DEBUG((this_board->get_board_variant)()->name);
 
 	/* jump to bootloader_second_phase() running from DRAM copy */
 	DEBUG("starting second phase ...");

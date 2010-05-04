@@ -96,10 +96,10 @@ void jump_LCD_print (void)
 {
 asm volatile (
 //	"ldr	pc, adr_LCD_print\n\t"
-	"stmfd	sp!, {r1,r4,lr}\n\t"
+	"stmfd	sp!, {r0-r4,lr}\n\t"
 	"ldr	r4, adr_LCD_print\n\t"
 	"blx	r4\n\t"
-	"ldmfd	sp!, {r1,r4,pc}\n\t"
+	"ldmfd	sp!, {r0-r4,pc}\n\t"
 	"adr_LCD_print:	.word	0x514182D4\n\t"
 );
 }	
@@ -170,8 +170,27 @@ int LCD_print (char *string, int line_number )
 int LCD_print_newline (char *string)
 {
 	int res;
-	res=LCD_print( string, LCD_line_pointer);
-	LCD_line_pointer++;
+//	res=LCD_print( string, LCD_line_pointer);
+	int *LCD_line_pointer_adr = &LCD_line_pointer;
+	register char *out_string asm("r0") = string;
+	
+	out_string = out_string;  // pretend to use these vars
+
+	asm volatile(
+		"mov	r4, %[B]\n\t" 
+		"ldr	r1, [r4]\n\t"
+		"mov	r2, #0xff\n\t"
+		"orr	r2, r2, #0xff00\n\t"
+		"mov	R3, #0\n\t"
+		"bl	jump_LCD_print\n\t"
+		"ldr	r1, [r4]\n\t"
+		"add	r1, r1, #1\n\t"
+		"str	r1, [r4]\n\t"		
+		: [result] "=r" (res) 
+		: [A] "r" (out_string), [B] "r" (LCD_line_pointer_adr)
+		: "r1", "r2", "r3", "r4", "lr"
+	);
+//	LCD_line_pointer++;
 	return res;
 }
 
