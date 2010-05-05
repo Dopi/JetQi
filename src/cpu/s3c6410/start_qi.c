@@ -81,14 +81,13 @@ void start_qi(void)
 
 	/* stick some hello messages on debug output */
 
-	DEBUG("Qi Bootloader "stringify2(QI_CPU)"  "
-	   stringify2(BUILD_HOST)" "
-	   stringify2(BUILD_VERSION)" "
-	   "\n");
+	DEBUG("Qi Bootloader "stringify2(QI_CPU));
+	DEBUG("Build "stringify2(BUILD_DATE));
+	DEBUG(stringify2(BUILD_HOST)" "stringify2(BUILD_VERSION));
 
-	DEBUG(stringify2(BUILD_DATE) "  Copyright (C) 2008 Openmoko, Inc.\n");
-	DEBUG("  This version of Qi for Jet (S8000) is modified by\n");
-	DEBUG("  dopi711@googlemail.com>\n\n");
+	DEBUG("Copyright (C) 2008 Openmoko, Inc.");
+	DEBUG("Modified version for Jet (S8000)");
+	DEBUG("by dopi711@googlemail.com>");
 
 	if (this_board->port_init)
 		this_board->port_init();
@@ -98,6 +97,6 @@ void start_qi(void)
 	//DEBUG((this_board->get_board_variant)()->name);
 
 	/* jump to bootloader_second_phase() running from DRAM copy */
-	DEBUG("starting second phase ...");
+	//DEBUG("starting second phase ...");
 	bootloader_second_phase();
 }

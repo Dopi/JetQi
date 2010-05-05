@@ -382,15 +382,16 @@ static void try_this_kernel(void)
 	partition_offset_blocks = 0;
 	partition_length_blocks = 0;
 
-	DEBUG("\nTrying kernel: ");
+	DEBUG("Trying kernel: ");
 	//DEBUG(this_kernel->name);
-	//DEBUG("\n");
+
 
 	indicate(UI_IND_MOUNT_PART);
 
+	DEBUG("do_block_init()");
 	if (!do_block_init())
 		return;
-
+	DEBUG("do_partitionsi()");
 	if (!do_partitions(kernel_dram))
 		return;
 
@@ -414,6 +415,7 @@ static void try_this_kernel(void)
 	read_file(this_board->append, (u8 *)commandline_rootfs_append, 512);
 
 	indicate(UI_IND_KERNEL_PULL);
+	DEBUG("Pulling the kernel");
 
 	/* pull the kernel image */
 
@@ -474,13 +476,13 @@ void bootloader_second_phase(void)
 	DEBUG("Phase2\n");
 
 	udelay(100000);
-	led_set(3);
+	//led_set(3);
 	for (this_kernel = this_board->kernel_source; this_kernel->name; this_kernel++)
 		try_this_kernel();
 
 	/* none of the kernels worked out */
 
-	DEBUG("\nNo usable kernel image found\n");
+	DEBUG("No usable kernel image found");
 	led_blink(1, 0);
 	poweroff();
 }
