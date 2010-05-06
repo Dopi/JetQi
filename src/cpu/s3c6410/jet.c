@@ -33,11 +33,14 @@
 
 #include <qi.h>
 #include <serial-s3c64xx.h>
+#include "boot_loader_interface.h"
 
 #define JET
 #define JET_START	
 
 #define SMDK6410_DEBUG_UART 0
+
+#define DEBUG(s) LCD_print_newline(s)	// initially it was puts(s)
 
 #define CHANNEL ((*(volatile u32*)0x0C003FEC == 0x7c300000) ? 1 : 0)
 
@@ -195,6 +198,8 @@ int sd_card_block_read_jet(unsigned char *buf, unsigned long start512, int block
 {
 	int retval;
 
+	DEBUG("sd_card_block_read_jet()");
+
 	if(blocks512 > 1)
 		retval = (int)CopyMMCtoMem(start512, blocks512, (void*)buf, 0);
 	else if(blocks512 == 1) {
@@ -209,6 +214,30 @@ int sd_card_block_read_jet(unsigned char *buf, unsigned long start512, int block
 	if(!retval)
 		return -1;
 	return blocks512;
+}
+
+void jet_early_port_init(void)
+{
+	JetDroid_mode_MSG();
+}
+
+void jet_port_init(void)
+{
+	//jump_Baseband_Init();
+	LCD_print_newline_col("Initializing baseband ...", LCD_color_white);
+	asm volatile (
+		"stmfd	sp!, {r1-r4}\n\t"
+		"ldr	r0, aadr_Baseband_Init\n\t"
+		"blx	r0\n\t"
+		"b	after_bb_init\n\t"
+		"aadr_Baseband_Init:	.word	0x5141983C\n\t"
+		"after_bb_init:\n\t"
+		"ldmfd	sp!, {r1-r4}\n\t"
+	);
+
+	//MSG_PMIC_setup();
+	//PMIC_setup();	
+	enable_SD_LDO();
 }
 
 static const struct board_variant board_variants[] = {
@@ -231,6 +260,8 @@ const struct board_api board_api_jet = {
 	.linux_tag_placement = 0x50000000 + 0x100,
 	.get_board_variant = get_board_variant_jet,
 	.is_this_board = is_this_board_jet,
+	.early_port_init = jet_early_port_init,
+	.port_init = jet_port_init,
 	.putc = putc_smdk6410,
 	.commandline_board = "loglevel=6 rootwait s3cfb.backlight=80 ",
 	.commandline_board_debug = "console=ttySAC0,115200n8 ignore_loglevel ",

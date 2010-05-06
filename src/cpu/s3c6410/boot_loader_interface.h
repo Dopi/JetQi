@@ -18,5 +18,6 @@ int LCD_print (char *string, int line_number );
 int LCD_print_newline_col (char *string, int color);
 int LCD_print_newline (char *string);
 
+void JetDroid_mode_MSG(void);
 #endif
 

@@ -72,7 +72,7 @@ void start_qi(void)
 		else
 			this_board = boards[board++];
 
-	/* okay, do the critical port and serial init for our board */
+	/* okay, do the critical port, serial and display init for our board */
 
 	if (this_board->early_port_init)
 		this_board->early_port_init();
@@ -83,10 +83,10 @@ void start_qi(void)
 
 	DEBUG("Qi Bootloader "stringify2(QI_CPU));
 	DEBUG("Build "stringify2(BUILD_DATE));
-	DEBUG(stringify2(BUILD_HOST)" "stringify2(BUILD_VERSION));
+	//DEBUG(stringify2(BUILD_HOST)" "stringify2(BUILD_VERSION));
 
-	DEBUG("Copyright (C) 2008 Openmoko, Inc.");
-	DEBUG("Modified version for Jet (S8000)");
+	DEBUG("(C) 2008 Openmoko, Inc.");
+	DEBUG("Modified version for S8000 Jet");
 	DEBUG("by dopi711@googlemail.com>");
 
 	if (this_board->port_init)

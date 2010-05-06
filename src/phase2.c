@@ -33,6 +33,8 @@
 #include "cpu/s3c6410/jet.h"
 #include "cpu/s3c6410/boot_loader_interface.h"
 
+#define stringify2(s) stringify1(s)
+#define stringify1(s) #s
 #define DEBUG(s) LCD_print_newline(s)	// initially it was puts(s)
 
 typedef void (*the_kernel_fn)(int zero, int arch, unsigned int params);
@@ -382,8 +384,11 @@ static void try_this_kernel(void)
 	partition_offset_blocks = 0;
 	partition_length_blocks = 0;
 
-	DEBUG("Trying kernel: ");
-	//DEBUG(this_kernel->name);
+	DEBUG("try_this_kernel()");
+
+	static char trying_kernel_msg[128] = "Trying kernel:                              ";
+	strncpy((char *) &trying_kernel_msg[15], stringify2(this_kernel->name), 20);         
+	DEBUG(trying_kernel_msg);
 
 
 	indicate(UI_IND_MOUNT_PART);
@@ -391,7 +396,7 @@ static void try_this_kernel(void)
 	DEBUG("do_block_init()");
 	if (!do_block_init())
 		return;
-	DEBUG("do_partitionsi()");
+	DEBUG("do_partitions()");
 	if (!do_partitions(kernel_dram))
 		return;
 
@@ -472,8 +477,6 @@ void bootloader_second_phase(void)
 		(this_board->post_serial_init)();
 
 	/* we try the possible kernels for this board in order */
-
-	DEBUG("Phase2\n");
 
 	udelay(100000);
 	//led_set(3);

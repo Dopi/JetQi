@@ -199,7 +199,7 @@ int LCD_print_newline (char *string)
  * Display Messages
  */
 
-void ctest_JetDroid_mode_MSG(void)
+void JetDroid_mode_MSG(void)
 {
 	LCD_print_col("------------------------------", LCD_color_red, 1);
 	LCD_print_col("   \t   JetDroid mode  \t     ", LCD_color_white, 2);
@@ -347,7 +347,7 @@ void spin_forever (void)
 void qi_cstart(void)
 {
 	//LCD_init2();		// this is still in ASM
-	ctest_JetDroid_mode_MSG();
+	JetDroid_mode_MSG();
 
 	LCD_print_newline_col("Initializing baseband ...", LCD_color_white);
 	//jump_Baseband_Init();

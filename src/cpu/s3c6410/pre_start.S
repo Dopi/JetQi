@@ -233,7 +233,8 @@ _battery_okay:
 	ldr	r0, vvar_51402258 // =0x514449A8
 
 	bl	LCD_init2
-	b	qi_cstart
+	b	start_qi
+//	b	qi_cstart
 init2_end:
 	b	init2_end
 
