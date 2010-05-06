@@ -224,7 +224,7 @@ void jet_early_port_init(void)
 void jet_port_init(void)
 {
 	//jump_Baseband_Init();
-	LCD_print_newline_col("Initializing baseband ...", LCD_color_white);
+	LCD_print_newline("Initializing baseband ...");
 	asm volatile (
 		"stmfd	sp!, {r1-r4}\n\t"
 		"ldr	r0, aadr_Baseband_Init\n\t"
