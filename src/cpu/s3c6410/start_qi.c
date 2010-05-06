@@ -82,21 +82,21 @@ void start_qi(void)
 	/* stick some hello messages on debug output */
 
 	DEBUG("Qi Bootloader "stringify2(QI_CPU));
+	DEBUG("(C) 2008 Openmoko, Inc.");
+	DEBUG("Modified version for S8000 Jet");
+	DEBUG("(C) 2010 JetDroid project");
 	DEBUG("Build "stringify2(BUILD_DATE));
 	//DEBUG(stringify2(BUILD_HOST)" "stringify2(BUILD_VERSION));
 
-	DEBUG("(C) 2008 Openmoko, Inc.");
-	DEBUG("Modified version for S8000 Jet");
-	DEBUG("by dopi711@googlemail.com>");
-
+	DEBUG("--- INIT ---------------------");
 	if (this_board->port_init)
 		this_board->port_init();
 
-	// DEBUG("\n     Detected: ");
+	//DEBUG("Detected: ");
 	//DEBUG(this_board->name);
 	//DEBUG((this_board->get_board_variant)()->name);
 
 	/* jump to bootloader_second_phase() running from DRAM copy */
-	//DEBUG("starting second phase ...");
+	DEBUG("--- DEBUG --------------------");
 	bootloader_second_phase();
 }
