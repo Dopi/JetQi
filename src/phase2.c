@@ -36,6 +36,7 @@
 #define stringify2(s) stringify1(s)
 #define stringify1(s) #s
 #define DEBUG(s) LCD_print_newline(s)	// initially it was puts(s)
+#define puts(s) LCD_print_newline(s)
 
 typedef void (*the_kernel_fn)(int zero, int arch, unsigned int params);
 
@@ -65,6 +66,7 @@ static int read_file(const char * filepath, u8 * destination, int size)
 
 	switch (this_kernel->filesystem) {
 	case FS_EXT2:
+	  DEBUG("before mounting");
 		if (!ext2fs_mount()) {
 			DEBUG("Unable to mount ext2 filesystem\n");
 			indicate(UI_IND_MOUNT_FAIL);
@@ -125,7 +127,7 @@ static int do_block_init(void)
 	}
 
 	if (last_block_init_result) {
-		DEBUG("block device init failed\n");
+		DEBUG("block device init failed");
 		if (fresh)
 			indicate(UI_IND_MOUNT_FAIL);
 
@@ -172,13 +174,8 @@ static int do_partitions(void *kernel_dram)
 				  (((u32)p[5]) << 8) |
 				  p[4];
 
-	DEBUG("    Partition: ");
-	printdec(this_kernel->partition_index);
-	DEBUG(" start +");
-	printdec(partition_offset_blocks);
-	DEBUG(" 512-byte blocks, size ");
-	printdec(partition_length_blocks / 2048);
-	DEBUG(" MiB\n");
+
+/* Al Ch modified it at 2010-05-17 */
 
 	return 1;
 }
@@ -378,18 +375,12 @@ static void try_this_kernel(void)
 	the_kernel_fn the_kernel;
 	unsigned int initramfs_len = 0;
 	static char commandline_rootfs_append[512] = "";
-	int ret;
 	void * kernel_dram = (void *)this_board->linux_mem_start + 0x8000;
 
 	partition_offset_blocks = 0;
 	partition_length_blocks = 0;
 
 	DEBUG("try_this_kernel()");
-
-	static char trying_kernel_msg[128] = "Trying kernel:                              ";
-	strncpy((char *) &trying_kernel_msg[15], stringify2(this_kernel->name), 20);         
-	DEBUG(trying_kernel_msg);
-
 
 	indicate(UI_IND_MOUNT_PART);
 
@@ -400,32 +391,17 @@ static void try_this_kernel(void)
 	if (!do_partitions(kernel_dram))
 		return;
 
-	/* does he want us to skip this? */
-
-	ret = read_file(this_board->noboot, kernel_dram, 512);
-	if (ret != -1) {
-		/* -2 (mount fail) should make us give up too */
-		if (ret >= 0) {
-			DEBUG("    (Skipping on finding ");
-			//DEBUG(this_board->noboot);
-			DEBUG(")\n");
-			indicate(UI_IND_SKIPPING);
-		}
-		return;
-	}
-
-	/* is there a commandline append file? */
+/* Al Ch edited this at 2010-05-17 */
 
 	commandline_rootfs_append[0] = '\0';
-	read_file(this_board->append, (u8 *)commandline_rootfs_append, 512);
-
-	indicate(UI_IND_KERNEL_PULL);
 	DEBUG("Pulling the kernel");
 
 	/* pull the kernel image */
 
 	if (read_file(this_kernel->filepath, kernel_dram, 4096) < 0)
 		return;
+
+	DEBUG("kernel readed");
 
 	the_kernel = load_uimage(kernel_dram);
 	if (!the_kernel)
@@ -472,10 +448,10 @@ static void try_this_kernel(void)
 void bootloader_second_phase(void)
 {
 	/* give device a chance to print device-specific things */
-
+/*
 	if (this_board->post_serial_init)
 		(this_board->post_serial_init)();
-
+*/
 	/* we try the possible kernels for this board in order */
 
 	udelay(100000);

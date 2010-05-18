@@ -31,6 +31,10 @@
 extern unsigned long partition_offset_blocks;
 extern unsigned long partition_length_blocks;
 
+/* Al Ch edited this file at 2010-05-17 */
+#include "../cpu/s3c6410/jet.h"
+#include "../cpu/s3c6410/boot_loader_interface.h"
+#define puts(s) LCD_print_newline(s)
 
 int ext2fs_devread(int sector, int filesystem_block_log2, int byte_offset, int byte_len, u8 *buf)
 {
@@ -47,7 +51,6 @@ int ext2fs_devread(int sector, int filesystem_block_log2, int byte_offset, int b
 	partition_length_blocks)) {
 		/* errnum = ERR_OUTSIDE_PART; */
 		puts(" ** ext2fs_devread() read outside partition sector ");
-		printdec(sector);
 		puts("\n");
 		return 0;
 	}
@@ -93,11 +96,6 @@ int ext2fs_devread(int sector, int filesystem_block_log2, int byte_offset, int b
 	if (block_len > 0) {
 		if (this_kernel->block_read(buf, partition_offset_blocks + sector, block_len / SECTOR_SIZE) < 0) {
 			puts(" ** ext2fs_devread() read error - block\n");
-			printdec(partition_offset_blocks + sector);
-			puts(" ");
-			print32(block_len);
-			puts(" ");
-			print32(sector);
 			return 0;
 		}
 		block_len = byte_len & ~(SECTOR_SIZE - 1);
@@ -105,19 +103,16 @@ int ext2fs_devread(int sector, int filesystem_block_log2, int byte_offset, int b
 		byte_len -= block_len;
 		sector += block_len / SECTOR_SIZE;
 	}
+  puts("ext2fs_devread 4");
 
 	if (byte_len) {
 		/* read rest of data which are not in whole sector */
 		if (this_kernel->block_read(sec_buf, partition_offset_blocks + sector, 1) != 1) {
 			puts(" ** ext2fs_devread() read error - last part\n");
-			printdec(partition_offset_blocks + sector);
-			puts(" ");
-			print32(block_len);
-			puts(" ");
-			print32(sector);
 			return 0;
 		}
 		memcpy (buf, sec_buf, byte_len);
 	}
+  puts("ext2fs_devread 5");
 	return 1;
 }

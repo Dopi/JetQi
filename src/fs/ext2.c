@@ -29,6 +29,11 @@
 #include <malloc.h>
 #include <string.h>
 
+/* Al Ch edited this file at 2010-05-17 */
+#include "../cpu/s3c6410/jet.h"
+#include "../cpu/s3c6410/boot_loader_interface.h"
+#define puts(s) LCD_print_newline(s)
+
 extern int ext2fs_devread(int sector, int log2blksize, int byte_offset, int byte_len, char *buf);
 
 /* Magic value used to identify an ext2 filesystem.  */

@@ -56,7 +56,7 @@ void start_qi(void)
 	/*
 	 * We were copied into steppingstone and TEXT_BASE already
 	 * by the original bootloader and some additional custom code.
-	 * We don't have to do anything else.  
+	 * We don't have to do anything else.
 	 *
 	 */
 
@@ -80,15 +80,7 @@ void start_qi(void)
 	//set_putc_func(this_board->putc);
 
 	/* stick some hello messages on debug output */
-
-	DEBUG("Qi Bootloader "stringify2(QI_CPU));
-	DEBUG("(C) 2008 Openmoko, Inc.");
-	DEBUG("Modified version for S8000 Jet");
-	DEBUG("(C) 2010 JetDroid project");
-	DEBUG("Build "stringify2(BUILD_DATE));
-	//DEBUG(stringify2(BUILD_HOST)" "stringify2(BUILD_VERSION));
-
-	DEBUG("--- INIT ---------------------");
+/* Al Ch edited this at 2010-05-17 */
 	if (this_board->port_init)
 		this_board->port_init();
 
@@ -97,6 +89,5 @@ void start_qi(void)
 	//DEBUG((this_board->get_board_variant)()->name);
 
 	/* jump to bootloader_second_phase() running from DRAM copy */
-	DEBUG("--- DEBUG --------------------");
 	bootloader_second_phase();
 }
