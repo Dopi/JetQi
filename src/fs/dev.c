@@ -103,7 +103,7 @@ int ext2fs_devread(int sector, int filesystem_block_log2, int byte_offset, int b
 		byte_len -= block_len;
 		sector += block_len / SECTOR_SIZE;
 	}
-  puts("ext2fs_devread 4");
+  //puts("ext2fs_devread 4");
 
 	if (byte_len) {
 		/* read rest of data which are not in whole sector */
@@ -113,6 +113,6 @@ int ext2fs_devread(int sector, int filesystem_block_log2, int byte_offset, int b
 		}
 		memcpy (buf, sec_buf, byte_len);
 	}
-  puts("ext2fs_devread 5");
+  //puts("ext2fs_devread 5");
 	return 1;
 }

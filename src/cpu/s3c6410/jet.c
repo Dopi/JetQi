@@ -229,7 +229,7 @@ static int wait_for_cmd_done (void)
 			return 0;
 	}
 
-	DEBUG("cmd error1: 0x");
+	//DEBUG("cmd error1: 0x");
 	e_int = s3c_hsmmc_readw(HM_ERRINTSTS);
 	s3c_hsmmc_writew(e_int, HM_ERRINTSTS);
 	s3c_hsmmc_writew(n_int, HM_NORINTSTS);
@@ -341,7 +341,7 @@ static void set_clock (u32 clksrc, u32 div)
 			break;
 	}
 	if (i == 0x10000)
-		DEBUG("internal clock stabilization failed\n");
+		DEBUG("internal clock stabilization failed");
 
 	hsmmc_clock_onoff(1);
 }
@@ -514,7 +514,7 @@ int s3c6410_mmc_init (void)
 		}
 	}
 	if (retries == -1) {
-		puts("no response\n");
+		puts("no response");
 		return -2;
 	}
 
@@ -561,18 +561,19 @@ int s3c6410_mmc_init (void)
 
 		switch (card_type) {
 		case CARDTYPE_SDHC:
-			DEBUG("    SDHC size: ");
+			//LCD_print("SDHC size: ", LCD_line_pointer);
 			sd_sectors = (UNSTUFF_BITS(((u32 *)&response[0]), 48, 22)
 								    + 1) << 10;
+			//LCD_print_integer(sd_sectors);
 			break;
 		default:
 			/*DEBUG("  MMC/SD size: ");*/
 			sd_sectors = ((((unsigned long)1 << csd->c_size_mult1) *
 					(unsigned long)(csd->c_size)) >> 9);
 		}
-		/*DEBUG(" MiB\n");*/
+		/*DEBUG(" MiB");*/
 	} else
-		DEBUG("CSD grab broken\n");
+		DEBUG("CSD grab broken");
 
 	resp = issue_command(MMC_SELECT_CARD, rca<<16, 0, MMC_RSP_R1);
 	if (!resp)
@@ -788,10 +789,11 @@ int sd_card_block_read_jet(unsigned char *buf, unsigned long start512, int block
 {
 	int retval;
 
-	DEBUG("sd_card_block_read_jet() begin");
+	//DEBUG("sd_card_block_read_jet() begin");
 
-	if(blocks512 >= 1)
+	if(blocks512 >= 1) {
 		retval = (int)CopyMMCtoMem(start512, blocks512, (void*)buf, 0);
+	}
 	else if(blocks512 == 1) {
 		/* CopyMMCtoMem fails to read 1 block. This is a workaround that reads 2
 		blocks to a temporary buffer and copy only the first one. */
@@ -804,7 +806,7 @@ int sd_card_block_read_jet(unsigned char *buf, unsigned long start512, int block
 	if(!retval)
 		return -1;
 
-	DEBUG("sd_card_block_read_jet() end");
+	//DEBUG("sd_card_block_read_jet() end");
 	return blocks512;
 }
 
@@ -867,6 +869,7 @@ const struct board_api board_api_jet = {
 			.partition_index = 1,
 			.block_init = s3c6410_mmc_init,
 			.filepath = "zImage",
+			//.initramfs_filepath = "initrd.gz",
 			.commandline_append = "root=/dev/mmcblk1p1 "
 		},
 		[1] = {
@@ -876,6 +879,7 @@ const struct board_api board_api_jet = {
 			.block_init = s3c6410_mmc_init,
 			.partition_index = 2,
 			.filepath = "zImage",
+			//.initramfs_filepath = "initrd.gz",
 			.commandline_append = "root=/dev/mmcblk1p2 "
 		},
 		[2] = {
@@ -885,6 +889,7 @@ const struct board_api board_api_jet = {
 			.partition_index = 3,
 			.filepath = "zImage",
 			.block_init = s3c6410_mmc_init,
+			//.initramfs_filepath = "initrd.gz",
 			.commandline_append = "root=/dev/mmcblk1p3 "
 		},
 		[3] = {
@@ -894,6 +899,7 @@ const struct board_api board_api_jet = {
 			.partition_index = 4,
 			.filepath = "zImage",
 			.block_init = s3c6410_mmc_init,
+			//.initramfs_filepath = "initrd.gz",
 			.commandline_append = "root=/dev/mmcblk1p4 "
 		},
 	},

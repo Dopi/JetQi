@@ -22,6 +22,7 @@
  */
 
 #include <s3c6410.h>
+#include <stddef.h>
 #include "boot_loader_interface.h"
 
 void start_qi(void);
@@ -165,7 +166,69 @@ int LCD_print (char *string, int line_number )
 		: "lr"
 	);
 	return res;
-}	
+}
+
+int LCD_print_String_Int(char *string, int number) {
+	char con[strlen2(string) + 20];
+	char num[20];
+	int i;
+	for (i=0;i<20;i++) {
+		num[i] = ' ';
+		con[i] = ' ';
+	}
+	itoa(number, num);
+	concat(string, num, con);
+	LCD_print_newline(con);
+	return 0;
+}
+
+void concat(char a[], char b[], char con[]) {
+	int i;
+	int j;
+	for (i=0;i<strlen2(a);i++) {
+		con[i] = a[i];
+	}
+	for (j=0;j<strlen2(b);j++) {
+		con[i+j] = b[j];
+	}
+}
+
+void itoa(int n, char s[])
+ {
+     int i, sign;
+
+     if ((sign = n) < 0)  /* record sign */
+         n = -n;          /* make n positive */
+     i = 0;
+     do {       /* generate digits in reverse order */
+         s[i++] = n % 10 + '0';   /* get next digit */
+     } while ((n /= 10) > 0);     /* delete it */
+     if (sign < 0)
+         s[i++] = '-';
+     s[i] = '\0';
+     reverse(s);
+ }
+
+void reverse(char s[])
+ {
+     int i, j;
+     char c;
+
+     for (i = 0, j = strlen2(s)-1; i<j; i++, j--) {
+         c = s[i];
+         s[i] = s[j];
+         s[j] = c;
+     }
+ }
+
+size_t strlen2(const char * str)
+{
+    const char *s;
+    for (s = str; *s; ++s);
+    return(s - str);
+}
+
+
 
 int LCD_print_newline (char *string)
 {

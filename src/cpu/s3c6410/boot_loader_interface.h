@@ -18,6 +18,12 @@ int LCD_print (char *string, int line_number );
 int LCD_print_newline_col (char *string, int color);
 int LCD_print_newline (char *string);
 
+int LCD_print_String_Int(char *string, int number);
+void concat(char a[], char b[], char con[]);
+void itoa(int n, char s[]);
+void reverse(char s[]);
+size_t strlen2(const char * str);
+
 void JetDroid_mode_MSG(void);
 #endif
 

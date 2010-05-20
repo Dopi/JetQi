@@ -64,40 +64,52 @@ static int read_file(const char * filepath, u8 * destination, int size)
 	int len = size;
 	int ret;
 
+	//char test[strlen2(filepath)];
+
 	switch (this_kernel->filesystem) {
 	case FS_EXT2:
-	  DEBUG("before mounting");
+	  //DEBUG("before mounting");
 		if (!ext2fs_mount()) {
-			DEBUG("Unable to mount ext2 filesystem\n");
+			DEBUG("Unable to mount ext2 filesystem");
 			indicate(UI_IND_MOUNT_FAIL);
 			return -2; /* death */
 		}
-		DEBUG("    EXT2 open: ");
-		//DEBUG(filepath);
+		//LCD_print("EXT2 open: ", LCD_line_pointer);
+
+		/*
+		int i;
+		for (i=0;i<strlen(filepath);i++) {
+			if (filepath[i] != '\0')
+				test[i] = filepath[i];
+		}
+		LCD_print_newline("Read File:");
+		LCD_print_newline(test);
+	*/
 		len = ext2fs_open(filepath);
 		if (len < 0) {
-			DEBUG(" Open failed\n");
+			DEBUG(" Open failed");
 			return -1;
 		}
-		DEBUG(" OK\n");
+		//DEBUG(" OK");
 		ret = ext2fs_read((char *)destination, size);
 		if (ret < 0) {
-			DEBUG(" Read failed\n");
+			DEBUG(" Read failed");
 			return -1;
 		}
 		break;
 
 	case FS_FAT:
 		/* FIXME */
+		DEBUG("No FAT-support yet");
 	case FS_RAW:
 		/* any filename-related request in raw filesystem will fail */
 		if (filepath)
 			return -1;
 		DEBUG("     RAW open: +");
 		printdec(partition_offset_blocks);
-		DEBUG(" 512-byte blocks\n");
+		DEBUG(" 512-byte blocks");
 		if (this_kernel->block_read(destination, partition_offset_blocks, size >> 9) < 0) {
-			DEBUG("Bad kernel header\n");
+			DEBUG("Bad kernel header");
 			return -1;
 		}
 		break;
@@ -126,7 +138,7 @@ static int do_block_init(void)
 		fresh = 1;
 	}
 
-	if (last_block_init_result) {
+	if (last_block_init_result < 0) {
 		DEBUG("block device init failed");
 		if (fresh)
 			indicate(UI_IND_MOUNT_FAIL);
@@ -152,13 +164,13 @@ static int do_partitions(void *kernel_dram)
 	}
 
 	if ((int)this_kernel->block_read(kernel_dram, 0, 4) < 0) {
-		DEBUG("Bad partition read\n");
+		DEBUG("Bad partition read");
 		indicate(UI_IND_MOUNT_FAIL);
 		return 0;
 	}
 
 	if ((p[0x1fe] != 0x55) || (p[0x1ff] != 0xaa)) {
-		DEBUG("partition signature missing\n");
+		DEBUG("partition signature missing");
 		indicate(UI_IND_MOUNT_FAIL);
 		return 0;
 	}
@@ -267,9 +279,17 @@ static void do_params(unsigned initramfs_len,
 	params->hdr.size = (sizeof(struct tag_header) +
 		strlen(params->u.cmdline.cmdline) + 1 + 4) >> 2;
 
-	DEBUG("      Cmdline: ");
-	DEBUG(params->u.cmdline.cmdline);
-	DEBUG("\n");
+	DEBUG("Cmdline: ");
+	char chs[29];
+	int i = 0;
+	while (i < strlen(params->u.cmdline.cmdline)) {
+		if (i != 0 && i % 28 == 0)
+			DEBUG(chs);
+
+		chs[i % 28] = params->u.cmdline.cmdline[i];
+		i++;
+	}
+	//DEBUG(params->u.cmdline.cmdline);
 
 	params = tag_next(params);
 
@@ -292,37 +312,36 @@ static int do_crc(const image_header_t *hdr, const void *kernel_dram)
 	if (crc == __be32_to_cpu(hdr->ih_dcrc))
 		return 1;
 
-	DEBUG("\nKernel CRC ERROR: read 0x");
+	DEBUG("Kernel CRC ERROR: read 0x");
 	print32(crc);
 	DEBUG(" vs hdr CRC 0x");
 	print32(__be32_to_cpu(hdr->ih_dcrc));
-	DEBUG("\n");
 
 	return 0;
 }
 
 static the_kernel_fn load_uimage(void *kernel_dram)
 {
+	//DEBUG("load u-Image");
 	image_header_t	*hdr;
 	u32 kernel_size;
 
 	hdr = (image_header_t *)kernel_dram;
 
+	//LCD_print_String_Int("Expected: ", IH_MAGIC);
+	//LCD_print_String_Int("Found: ", hdr->ih_magic);
+
 	if (__be32_to_cpu(hdr->ih_magic) != IH_MAGIC) {
-		DEBUG("bad magic ");
-		print32(hdr->ih_magic);
-		DEBUG("\n");
+		DEBUG("invalid uImage");
 		return NULL;
 	}
 
-	DEBUG("        Found: \"");
-	//DEBUG((const char *)hdr->ih_name);
-	DEBUG("\"\n         Size: ");
-	printdec(__be32_to_cpu(hdr->ih_size) >> 10);
-	DEBUG(" KiB\n");
-
 	kernel_size = ((__be32_to_cpu(hdr->ih_size) +
 			  sizeof(image_header_t) + 2048) & ~(2048 - 1));
+
+	//DEBUG("Found: ");
+	//DEBUG((char *)hdr->ih_name);
+	LCD_print_String_Int("Size [KiB]: ", kernel_size >> 10);
 
 	if (read_file(this_kernel->filepath, kernel_dram, kernel_size) < 0) {
 		indicate(UI_IND_KERNEL_PULL_FAIL);
@@ -339,20 +358,20 @@ static the_kernel_fn load_uimage(void *kernel_dram)
 
 static the_kernel_fn load_zimage(void *kernel_dram)
 {
+	//DEBUG("load z-Image");
 	u32 magic = *(u32 *) (kernel_dram + 0x24);
 	u32 size = *(u32 *) (kernel_dram + 0x2c);
 	int got;
 
+	//LCD_print_String_Int("Expected: ", 0x016f2818);
+	//LCD_print_String_Int("Found: ", magic);
+
 	if (magic != 0x016f2818) {
-		DEBUG("bad magic ");
-		print32(magic);
-		DEBUG("\n");
+		DEBUG("invalid zImage");
 		return NULL;
 	}
 
-	DEBUG("         Size: ");
-	printdec(size >> 10);
-	DEBUG(" KiB\n");
+	LCD_print_String_Int("Size [KiB]: ", size >> 10);
 
 	got = read_file(this_kernel->filepath, kernel_dram, size);
 	if (got < 0) {
@@ -361,7 +380,7 @@ static the_kernel_fn load_zimage(void *kernel_dram)
 	}
 
 	if (got != size) {
-		DEBUG("short kernel\n");
+		DEBUG("short kernel");
 		return NULL;
 	}
 
@@ -401,7 +420,7 @@ static void try_this_kernel(void)
 	if (read_file(this_kernel->filepath, kernel_dram, 4096) < 0)
 		return;
 
-	DEBUG("kernel readed");
+	DEBUG("kernel file read");
 
 	the_kernel = load_uimage(kernel_dram);
 	if (!the_kernel)
@@ -409,15 +428,18 @@ static void try_this_kernel(void)
 	if (!the_kernel)
 		return;
 
+	DEBUG("Kernel recognised");
 	/* initramfs if needed */
 
+
 	if (this_kernel->initramfs_filepath) {
+		DEBUG("loading initramfs");
 		indicate(UI_IND_INITRAMFS_PULL);
 		initramfs_len = read_file(this_kernel->initramfs_filepath,
 			  (u8 *)this_board->linux_mem_start + INITRD_OFFSET,
 							  16 * 1024 * 1024);
 		if (initramfs_len < 0) {
-			DEBUG("initramfs load failed\n");
+			DEBUG("initramfs load failed");
 			indicate(UI_IND_INITRAMFS_PULL_FAIL);
 			return;
 		}
@@ -432,7 +454,7 @@ static void try_this_kernel(void)
 	if (this_board->close)
 		(this_board->close)();
 
-	DEBUG("Starting --->\n\n");
+	DEBUG("Starting --->");
 	indicate(UI_IND_KERNEL_START);
 
 	led_set(1);
@@ -440,8 +462,8 @@ static void try_this_kernel(void)
 	* ooh that's it, we're gonna try boot this image!
 	* never mind the cache, Linux will take care of it
 	*/
+	DEBUG("Kernel should take over now");
 	the_kernel(0, this_board->linux_machine_id, this_board->linux_tag_placement);
-
 	/* we won't come back here no matter what */
 }
 
