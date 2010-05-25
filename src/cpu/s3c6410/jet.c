@@ -846,18 +846,20 @@ const struct board_variant const * get_board_variant_jet(void)
 	return &board_variants[0];
 }
 
+/*25.5.2010: some modifications by Chris:*/
+
 const struct board_api board_api_jet = {
 	.name = "SMDK6410",
-	.linux_machine_id = 1626,
+	.linux_machine_id = 1626, 
 	.linux_mem_start = 0x50000000,
-	.linux_mem_size = (128 * 1024 * 1024),
+	.linux_mem_size = (128 * 1024 * 1024), //(64 * 1024 * 1024) is also possible
 	.linux_tag_placement = 0x50000000 + 0x100,
 	.get_board_variant = get_board_variant_jet,
 	.is_this_board = is_this_board_jet,
 	.early_port_init = jet_early_port_init,
 	.port_init = jet_port_init,
 	.putc = putc_smdk6410,
-	.commandline_board = "loglevel=6 rootwait s3cfb.backlight=80 ",
+	.commandline_board = "loglevel=6 rootdelay=5 s3cfb.backlight=80 ", 
 	.commandline_board_debug = "console=ttySAC0,115200n8 ignore_loglevel ",
 	.noboot = "boot/noboot-SMDK6410",
 	.append = "boot/append-SMDK6410",
