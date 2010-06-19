@@ -37,4 +37,7 @@
 #define	TRANSFERCOMPLETE_STS_INT_EN	(1<<1)
 #define	COMMANDCOMPLETE_STS_INT_EN	(1<<0)
 
+//Function prototypes
+unsigned long s3c6410_mmc_bread(int dev_num, unsigned long start_blk, unsigned long blknum, void *dst);
+int s3c6410_mmc_init (void);
 #endif /*__HS_MMC_H__*/
