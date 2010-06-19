@@ -868,9 +868,9 @@ const struct board_api board_api_jet = {
 			.partition_index = 1,
 			.block_init = s3c6410_mmc_init,
 			.filepath = "zImage",
-			//.initramfs_filepath = "initrd.gz",
-			//.commandline_append = "root=/dev/mmcblk0p1"
-			.commandline_append = "root=0301"
+			//.initramfs_filepath = "initramfs.igz",
+			//.commandline_append = "root=/dev/mmcblk0p1 rw"
+			.commandline_append = "root=0301 rw"
 		},
 		[1] = {
 			.name = "SD Card rootfs P2",
@@ -879,9 +879,9 @@ const struct board_api board_api_jet = {
 			.block_init = s3c6410_mmc_init,
 			.partition_index = 2,
 			.filepath = "zImage",
-			//.initramfs_filepath = "initrd.gz",
-			//.commandline_append = "root=/dev/mmcblk0p2"
-			.commandline_append = "root=0302"
+			//.initramfs_filepath = "initramfs.igz",
+			//.commandline_append = "root=/dev/mmcblk0p2 rw"
+			.commandline_append = "root=0302 rw"
 		},
 		[2] = {
 			.name = "SD Card rootfs P3",
@@ -890,9 +890,9 @@ const struct board_api board_api_jet = {
 			.partition_index = 3,
 			.filepath = "zImage",
 			.block_init = s3c6410_mmc_init,
-			//.initramfs_filepath = "initrd.gz",
-			//.commandline_append = "root=/dev/mmcblk0p3"
-			.commandline_append = "root=0303"
+			//.initramfs_filepath = "initramfs.igz",
+			//.commandline_append = "root=/dev/mmcblk0p3 rw"
+			.commandline_append = "root=0303 rw"
 		},
 		[3] = {
 			.name = "SD Card rootfs P4",
@@ -901,9 +901,9 @@ const struct board_api board_api_jet = {
 			.partition_index = 4,
 			.filepath = "zImage",
 			.block_init = s3c6410_mmc_init,
-			//.initramfs_filepath = "initrd.gz",
-			//.commandline_append = "root=/dev/mmcblk0p4"
-			.commandline_append = "root=0304"
+			//.initramfs_filepath = "initramfs.igz",
+			//.commandline_append = "root=/dev/mmcblk0p4 rw"
+			.commandline_append = "root=0304 rw"
 		},
 	},
 };
