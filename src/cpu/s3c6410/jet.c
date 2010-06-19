@@ -42,8 +42,6 @@
 
 #define DEBUG(s) LCD_print_newline(s)	// initially it was puts(s)
 
-#define CHANNEL ((*(volatile u32*)0x0C003FEC == 0x7c300000) ? 1 : 0)
-
 #define readl(a) (*(volatile unsigned int *)(a))
 #define writel(v,a) (*(volatile unsigned int *)(a) = (v))
 
@@ -859,7 +857,8 @@ const struct board_api board_api_jet = {
 	.early_port_init = jet_early_port_init,
 	.port_init = jet_port_init,
 	.putc = putc_smdk6410,
-	.commandline_board = "loglevel=6 rootdelay=5 s3cfb.backlight=80 ", 
+//	.commandline_board = "loglevel=6 rootwait s3cfb.backlight=80 ",
+	.commandline_board = "loglevel=7 rootdelay=10 ",
 	.commandline_board_debug = "console=ttySAC0,115200n8 ignore_loglevel ",
 	.noboot = "boot/noboot-SMDK6410",
 	.append = "boot/append-SMDK6410",
@@ -871,8 +870,9 @@ const struct board_api board_api_jet = {
 			.partition_index = 1,
 			.block_init = s3c6410_mmc_init,
 			.filepath = "zImage",
-			//.initramfs_filepath = "initrd.gz",
-			.commandline_append = "root=/dev/mmcblk1p1 "
+			//.initramfs_filepath = "initramfs.igz",
+			//.commandline_append = "root=/dev/mmcblk0p1 rw"
+			.commandline_append = "root=0301 rw"
 		},
 		[1] = {
 			.name = "SD Card rootfs P2",
@@ -881,8 +881,9 @@ const struct board_api board_api_jet = {
 			.block_init = s3c6410_mmc_init,
 			.partition_index = 2,
 			.filepath = "zImage",
-			//.initramfs_filepath = "initrd.gz",
-			.commandline_append = "root=/dev/mmcblk1p2 "
+			//.initramfs_filepath = "initramfs.igz",
+			//.commandline_append = "root=/dev/mmcblk0p2 rw"
+			.commandline_append = "root=0302 rw"
 		},
 		[2] = {
 			.name = "SD Card rootfs P3",
@@ -891,8 +892,9 @@ const struct board_api board_api_jet = {
 			.partition_index = 3,
 			.filepath = "zImage",
 			.block_init = s3c6410_mmc_init,
-			//.initramfs_filepath = "initrd.gz",
-			.commandline_append = "root=/dev/mmcblk1p3 "
+			//.initramfs_filepath = "initramfs.igz",
+			//.commandline_append = "root=/dev/mmcblk0p3 rw"
+			.commandline_append = "root=0303 rw"
 		},
 		[3] = {
 			.name = "SD Card rootfs P4",
@@ -901,8 +903,9 @@ const struct board_api board_api_jet = {
 			.partition_index = 4,
 			.filepath = "zImage",
 			.block_init = s3c6410_mmc_init,
-			//.initramfs_filepath = "initrd.gz",
-			.commandline_append = "root=/dev/mmcblk1p4 "
+			//.initramfs_filepath = "initramfs.igz",
+			//.commandline_append = "root=/dev/mmcblk0p4 rw"
+			.commandline_append = "root=0304 rw"
 		},
 	},
 };
