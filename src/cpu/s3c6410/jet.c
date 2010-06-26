@@ -858,7 +858,7 @@ const struct board_api board_api_jet = {
 	.port_init = jet_port_init,
 	.putc = putc_smdk6410,
 //	.commandline_board = "loglevel=6 rootwait s3cfb.backlight=80 ",
-	.commandline_board = "loglevel=7 rootdelay=10 ",
+	.commandline_board = "loglevel=7 rootdelay=1 ",
 	.commandline_board_debug = "console=ttySAC0,115200n8 ignore_loglevel ",
 	.noboot = "boot/noboot-SMDK6410",
 	.append = "boot/append-SMDK6410",
@@ -871,8 +871,7 @@ const struct board_api board_api_jet = {
 			.block_init = s3c6410_mmc_init,
 			.filepath = "zImage",
 			//.initramfs_filepath = "initramfs.igz",
-			//.commandline_append = "root=/dev/mmcblk0p1 rw"
-			.commandline_append = "root=0301 rw"
+			.commandline_append = "init=/init root=/dev/mmcblk0p1 rw"
 		},
 		[1] = {
 			.name = "SD Card rootfs P2",
@@ -882,8 +881,7 @@ const struct board_api board_api_jet = {
 			.partition_index = 2,
 			.filepath = "zImage",
 			//.initramfs_filepath = "initramfs.igz",
-			//.commandline_append = "root=/dev/mmcblk0p2 rw"
-			.commandline_append = "root=0302 rw"
+			.commandline_append = "init=/init root=/dev/mmcblk0p2 rw"
 		},
 		[2] = {
 			.name = "SD Card rootfs P3",
@@ -893,8 +891,7 @@ const struct board_api board_api_jet = {
 			.filepath = "zImage",
 			.block_init = s3c6410_mmc_init,
 			//.initramfs_filepath = "initramfs.igz",
-			//.commandline_append = "root=/dev/mmcblk0p3 rw"
-			.commandline_append = "root=0303 rw"
+			.commandline_append = "init=/init root=/dev/mmcblk0p3 rw"
 		},
 		[3] = {
 			.name = "SD Card rootfs P4",
@@ -904,8 +901,7 @@ const struct board_api board_api_jet = {
 			.filepath = "zImage",
 			.block_init = s3c6410_mmc_init,
 			//.initramfs_filepath = "initramfs.igz",
-			//.commandline_append = "root=/dev/mmcblk0p4 rw"
-			.commandline_append = "root=0304 rw"
+			.commandline_append = "init=/init root=/dev/mmcblk0p4 rw"
 		},
 	},
 };
