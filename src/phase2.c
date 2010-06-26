@@ -36,6 +36,7 @@
 #define stringify2(s) stringify1(s)
 #define stringify1(s) #s
 #define DEBUG(s) LCD_print_newline(s)	// initially it was puts(s)
+#define DEBUG_XL(s) LCD_print_multiline(s)
 #define puts(s) LCD_print_newline(s)
 
 typedef void (*the_kernel_fn)(int zero, int arch, unsigned int params);
@@ -75,13 +76,13 @@ static int read_file(const char * filepath, u8 * destination, int size)
 		//DEBUG(filepath);
 		len = ext2fs_open(filepath);
 		if (len < 0) {
-			puts(" Open failed\n");
+			DEBUG("Open failed!");
 			return -1;
 		}
 		//DEBUG(" OK\n");
 		ret = ext2fs_read((char *)destination, size);
 		if (ret < 0) {
-			DEBUG(" Read failed");
+			DEBUG("Read failed!");
 			return -1;
 		}
 		break;
@@ -93,12 +94,12 @@ static int read_file(const char * filepath, u8 * destination, int size)
 		/* any filename-related request in raw filesystem will fail */
 		if (filepath)
 			return -1;
-		DEBUG("     RAW open: +");
+		DEBUG("RAW open: +");
 		printdec(partition_offset_blocks);
-		DEBUG(" 512-byte blocks");
+		DEBUG("512-byte blocks");
 		if (this_kernel->block_read(destination, partition_offset_blocks, size >> 9) < 0) 
 		{
-			DEBUG("Bad kernel header");
+			DEBUG("Bad kernel header!");
 			return -1;
 		}
 		break;
@@ -128,7 +129,7 @@ static int do_block_init(void)
 	}
 
 	if (last_block_init_result < 0) {
-		DEBUG("block device init failed");
+		DEBUG("Block device init failed!");
 		if (fresh)
 			indicate(UI_IND_MOUNT_FAIL);
 
@@ -153,13 +154,13 @@ static int do_partitions(void *kernel_dram)
 	}
 
 	if ((int)this_kernel->block_read(kernel_dram, 0, 4) < 0) {
-		DEBUG("Bad partition read");
+		DEBUG("Bad partition read!");
 		indicate(UI_IND_MOUNT_FAIL);
 		return 0;
 	}
 
 	if ((p[0x1fe] != 0x55) || (p[0x1ff] != 0xaa)) {
-		DEBUG("partition signature missing");
+		DEBUG("Partition signature missing!");
 		indicate(UI_IND_MOUNT_FAIL);
 		return 0;
 	}
@@ -273,17 +274,8 @@ static void do_params(unsigned initramfs_len,
 	params->hdr.size = (sizeof(struct tag_header) +
 		strlen(params->u.cmdline.cmdline) + 1 + 4) >> 2;
 
-	DEBUG("Cmdline: ");
-	char chs[29];
-	int i = 0;
-	while (i < strlen(params->u.cmdline.cmdline)) {
-		if (i != 0 && i % 28 == 0)
-			DEBUG(chs);
-
-		chs[i % 28] = params->u.cmdline.cmdline[i];
-		i++;
-	}
-	//DEBUG(params->u.cmdline.cmdline);
+	DEBUG("Kernel commandline: ");
+	DEBUG_XL(params->u.cmdline.cmdline);
 
 	params = tag_next(params);
 
@@ -310,7 +302,7 @@ static int do_crc(const image_header_t *hdr, const void *kernel_dram)
 	print32(crc);
 	DEBUG(" vs hdr CRC 0x");
 	print32(__be32_to_cpu(hdr->ih_dcrc));
-	//puts("\n");
+	//DEBUG("\n");
 
 	return 0;
 }
@@ -326,7 +318,7 @@ static the_kernel_fn load_uimage(void *kernel_dram)
 	//LCD_print_String_Int("Found: ", hdr->ih_magic);
 
 	if (__be32_to_cpu(hdr->ih_magic) != IH_MAGIC) {
-		DEBUG("invalid uImage");
+		DEBUG("Invalid uImage!");
 		return NULL;
 	}
 
@@ -361,7 +353,7 @@ static the_kernel_fn load_zimage(void *kernel_dram)
 	//LCD_print_String_Int("Found: ", magic);
 
 	if (magic != 0x016f2818) {
-		DEBUG("invalid zImage");
+		DEBUG("Invalid zImage!");
 		return NULL;
 	}
 
@@ -374,7 +366,7 @@ static the_kernel_fn load_zimage(void *kernel_dram)
 	}
 
 	if (got != size) {
-		DEBUG("short kernel");
+		DEBUG("Short kernel!");
 		return NULL;
 	}
 
@@ -397,10 +389,10 @@ static void try_this_kernel(void)
 
 	indicate(UI_IND_MOUNT_PART);
 
-	DEBUG("do_block_init()");
+	DEBUG("Initializing block device ...");
 	if (!do_block_init())
 		return;
-	DEBUG("do_partitions()");
+	DEBUG("Reading partition table ...");
 	if (!do_partitions(kernel_dram))
 		return;
 
@@ -426,7 +418,7 @@ static void try_this_kernel(void)
 	indicate(UI_IND_KERNEL_PULL);
 
 	/* pull the kernel image */
-	DEBUG("Pulling the kernel");
+	DEBUG("Loading the kernel ...");
 
 	if (read_file(this_kernel->filepath, kernel_dram, 4096) < 0)
 		return;
@@ -442,13 +434,13 @@ static void try_this_kernel(void)
 	/* initramfs if needed */
 
 	if (this_kernel->initramfs_filepath) {
-		DEBUG("Loading initramfs");
+		DEBUG("Loading initramfs ...");
 		indicate(UI_IND_INITRAMFS_PULL);
 		initramfs_len = read_file(this_kernel->initramfs_filepath,
 			  (u8 *)this_board->linux_mem_start + INITRD_OFFSET,
 							  16 * 1024 * 1024);
 		if (initramfs_len < 0) {
-			DEBUG("initramfs load failed");
+			DEBUG("Initramfs load failed!");
 			indicate(UI_IND_INITRAMFS_PULL_FAIL);
 			return;
 		}
@@ -469,7 +461,8 @@ static void try_this_kernel(void)
 	* ooh that's it, we're gonna try boot this image!
 	* never mind the cache, Linux will take care of it
 	*/
-//	DEBUG("Starting kernel --->");
+	DEBUG("Starting kernel --->");
+	//udelay(500000);
 	the_kernel(0, this_board->linux_machine_id, this_board->linux_tag_placement);
 	/* we won't come back here no matter what */
 }
@@ -483,14 +476,13 @@ void bootloader_second_phase(void)
 */
 	/* we try the possible kernels for this board in order */
 
-//	udelay(100000);
-	udelay(10000);
+	//udelay(100000);
 	for (this_kernel = this_board->kernel_source;  this_kernel->name; this_kernel++)
 		try_this_kernel();
 
 	/* none of the kernels worked out */
 
-	DEBUG("No usable kernel image found");
+	DEBUG("No usable kernel found!");
 	led_blink(1, 0);
 	poweroff();
 }

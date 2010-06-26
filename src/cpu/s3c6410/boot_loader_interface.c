@@ -168,6 +168,29 @@ int LCD_print (char *string, int line_number )
 	return res;
 }
 
+int LCD_print_multiline(char *string) 
+{
+	char chs[30];
+	int i = 0;
+
+	while (i < strlen2(string)) 
+	{
+		chs[i % 28] = string[i];
+
+		if (i != 0 && i % 28 == 0)
+			LCD_print_newline(chs);
+		i++;
+	}
+
+	if (i % 28 != 0)
+	{
+		chs[i] = 0;
+		LCD_print_newline(chs);
+	}
+
+	return 0;
+}
+
 int LCD_print_String_Int(char *string, int number) {
 	char con[strlen2(string) + 20];
 	char num[20];

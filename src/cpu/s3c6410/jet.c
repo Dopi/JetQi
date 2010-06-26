@@ -256,7 +256,7 @@ const struct board_api board_api_jet = {
 	.port_init = jet_port_init,
 	.putc = putc_smdk6410,
 //	.commandline_board = "loglevel=6 rootwait s3cfb.backlight=80 ",
-	.commandline_board = "loglevel=7",
+	.commandline_board = "loglevel=7 rootdelay=1",
 	.commandline_board_debug = "console=ttySAC0,115200n8 ignore_loglevel ",
 	.noboot = "boot/noboot-jet",
 	.append = "boot/append-jet",

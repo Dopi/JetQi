@@ -17,7 +17,7 @@ int LCD_print_col (char *string, int color, int line_number );
 int LCD_print (char *string, int line_number );
 int LCD_print_newline_col (char *string, int color);
 int LCD_print_newline (char *string);
-
+int LCD_print_multiline(char *string);
 int LCD_print_String_Int(char *string, int number);
 void concat(char a[], char b[], char con[]);
 void itoa(int n, char s[]);
