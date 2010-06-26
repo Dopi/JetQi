@@ -43,11 +43,10 @@
 
 #define DEBUG(s) LCD_print_newline(s)	// initially it was puts(s)
 
-/* Aleksey Cherepanov (aleksey.4erepanov@gmail.com) modified this file here at 2010-05-17 looking on hs_mmc.c from qi's repo */
-/* some parts of that file and its dependencies was inserted here */
-/* NOTE: this is very bad style, it should be removed or cleaned up */
+/* MMC mem read wrapper */
 #define CopyMMCtoMem(a,b,c,e) s3c6410_mmc_bread(e,a,b,c)
 
+/* low level memory access */
 #define readl(a) (*(volatile unsigned int *)(a))
 #define writel(v,a) (*(volatile unsigned int *)(a) = (v))
 
@@ -57,9 +56,6 @@
 
 /* high poweroff, low start */
 #define GPIO_POWEROFF (('K'-'A')*16 + 15)
-
-/* LCD backlight on or off */
-#define GPIO_LCD_BACKLIGHT (('F'-'A')*16 + 15)
 
 /* DAT offset for groups */
 static char gdat[]= {4, 4, 4, 4, 4, 4, 4, 8, 4, 4, 8, 8, 4, 4, 4, 4, 4};
@@ -173,11 +169,6 @@ void poweroff(void)
 #endif
 }
 
-/*void set_lcd_backlight(int flag)
-{
-	gpio_direction_output(GPIO_LCD_BACKLIGHT, flag ? 1 : 0);
-}*/
-
 int battery_probe(void)
 {
 	/* TODO */
@@ -199,8 +190,6 @@ int sd_card_block_read_jet(unsigned char *buf, unsigned long start512, int block
 {
 	int retval;
 
-	//DEBUG("sd_card_block_read_jet() begin");
-
 	if(blocks512 >= 1) {
 		retval = (int)CopyMMCtoMem(start512, blocks512, (void*)buf, 0);
 	}
@@ -216,7 +205,6 @@ int sd_card_block_read_jet(unsigned char *buf, unsigned long start512, int block
 	if(!retval)
 		return -1;
 
-	//DEBUG("sd_card_block_read_jet() end");
 	return blocks512;
 }
 
@@ -257,7 +245,7 @@ const struct board_variant const * get_board_variant_jet(void)
 }
 
 const struct board_api board_api_jet = {
-	.name = "SMDK6410",
+	.name = "Jet",
 	.linux_machine_id = 1626,
 	.linux_mem_start = 0x50000000,
 	.linux_mem_size = (128 * 1024 * 1024),
@@ -268,10 +256,10 @@ const struct board_api board_api_jet = {
 	.port_init = jet_port_init,
 	.putc = putc_smdk6410,
 //	.commandline_board = "loglevel=6 rootwait s3cfb.backlight=80 ",
-	.commandline_board = "loglevel=7 rootdelay=10 ",
+	.commandline_board = "loglevel=7",
 	.commandline_board_debug = "console=ttySAC0,115200n8 ignore_loglevel ",
-	.noboot = "boot/noboot-SMDK6410",
-	.append = "boot/append-SMDK6410",
+	.noboot = "boot/noboot-jet",
+	.append = "boot/append-jet",
 	.kernel_source = {
 		[0] = {
 			.name = "SD Card rootfs P1",
@@ -280,9 +268,8 @@ const struct board_api board_api_jet = {
 			.partition_index = 1,
 			.block_init = s3c6410_mmc_init,
 			.filepath = "zImage",
-			//.initramfs_filepath = "initramfs.igz",
-			//.commandline_append = "root=/dev/mmcblk0p1 rw"
-			.commandline_append = "root=0301 rw"
+			//.initramfs_filepath = "ramdisk.img",
+			.commandline_append = "init=/init root=/dev/mmcblk0p1 rw"
 		},
 		[1] = {
 			.name = "SD Card rootfs P2",
@@ -291,9 +278,8 @@ const struct board_api board_api_jet = {
 			.block_init = s3c6410_mmc_init,
 			.partition_index = 2,
 			.filepath = "zImage",
-			//.initramfs_filepath = "initramfs.igz",
-			//.commandline_append = "root=/dev/mmcblk0p2 rw"
-			.commandline_append = "root=0302 rw"
+			//.initramfs_filepath = "ramdisk.img",
+			.commandline_append = "init=/init root=/dev/mmcblk0p2 rw"
 		},
 		[2] = {
 			.name = "SD Card rootfs P3",
@@ -302,9 +288,8 @@ const struct board_api board_api_jet = {
 			.partition_index = 3,
 			.filepath = "zImage",
 			.block_init = s3c6410_mmc_init,
-			//.initramfs_filepath = "initramfs.igz",
-			//.commandline_append = "root=/dev/mmcblk0p3 rw"
-			.commandline_append = "root=0303 rw"
+			//.initramfs_filepath = "ramdisk.img",
+			.commandline_append = "init=/init root=/dev/mmcblk0p3 rw"
 		},
 		[3] = {
 			.name = "SD Card rootfs P4",
@@ -313,9 +298,8 @@ const struct board_api board_api_jet = {
 			.partition_index = 4,
 			.filepath = "zImage",
 			.block_init = s3c6410_mmc_init,
-			//.initramfs_filepath = "initramfs.igz",
-			//.commandline_append = "root=/dev/mmcblk0p4 rw"
-			.commandline_append = "root=0304 rw"
+			//.initramfs_filepath = "ramdisk.img",
+			.commandline_append = "init=/init root=/dev/mmcblk0p4 rw"
 		},
 	},
 };

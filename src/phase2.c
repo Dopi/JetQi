@@ -64,33 +64,21 @@ static int read_file(const char * filepath, u8 * destination, int size)
 	int len = size;
 	int ret;
 
-	//char test[strlen2(filepath)];
-
 	switch (this_kernel->filesystem) {
 	case FS_EXT2:
-	  //DEBUG("before mounting");
 		if (!ext2fs_mount()) {
 			DEBUG("Unable to mount ext2 filesystem");
 			indicate(UI_IND_MOUNT_FAIL);
 			return -2; /* death */
 		}
-		//LCD_print("EXT2 open: ", LCD_line_pointer);
-
-		/*
-		int i;
-		for (i=0;i<strlen(filepath);i++) {
-			if (filepath[i] != '\0')
-				test[i] = filepath[i];
-		}
-		LCD_print_newline("Read File:");
-		LCD_print_newline(test);
-	*/
+		//DEBUG("    EXT2 open: ");
+		//DEBUG(filepath);
 		len = ext2fs_open(filepath);
 		if (len < 0) {
-			DEBUG(" Open failed");
+			puts(" Open failed\n");
 			return -1;
 		}
-		//DEBUG(" OK");
+		//DEBUG(" OK\n");
 		ret = ext2fs_read((char *)destination, size);
 		if (ret < 0) {
 			DEBUG(" Read failed");
@@ -108,7 +96,8 @@ static int read_file(const char * filepath, u8 * destination, int size)
 		DEBUG("     RAW open: +");
 		printdec(partition_offset_blocks);
 		DEBUG(" 512-byte blocks");
-		if (this_kernel->block_read(destination, partition_offset_blocks, size >> 9) < 0) {
+		if (this_kernel->block_read(destination, partition_offset_blocks, size >> 9) < 0) 
+		{
 			DEBUG("Bad kernel header");
 			return -1;
 		}
@@ -185,10 +174,15 @@ static int do_partitions(void *kernel_dram)
 				  (((u32)p[6]) << 16) |
 				  (((u32)p[5]) << 8) |
 				  p[4];
-
-
-/* Al Ch modified it at 2010-05-17 */
-
+/*
+	puts("    Partition: ");
+	printdec(this_kernel->partition_index);
+	puts(" start +");
+	printdec(partition_offset_blocks);
+	puts(" 512-byte blocks, size ");
+	printdec(partition_length_blocks / 2048);
+	puts(" MiB\n");
+*/
 	return 1;
 }
 
@@ -316,13 +310,13 @@ static int do_crc(const image_header_t *hdr, const void *kernel_dram)
 	print32(crc);
 	DEBUG(" vs hdr CRC 0x");
 	print32(__be32_to_cpu(hdr->ih_dcrc));
+	//puts("\n");
 
 	return 0;
 }
 
 static the_kernel_fn load_uimage(void *kernel_dram)
 {
-	//DEBUG("load u-Image");
 	image_header_t	*hdr;
 	u32 kernel_size;
 
@@ -399,7 +393,7 @@ static void try_this_kernel(void)
 	partition_offset_blocks = 0;
 	partition_length_blocks = 0;
 
-	DEBUG("try_this_kernel()");
+	//DEBUG("try_this_kernel()");
 
 	indicate(UI_IND_MOUNT_PART);
 
@@ -410,30 +404,45 @@ static void try_this_kernel(void)
 	if (!do_partitions(kernel_dram))
 		return;
 
-/* Al Ch edited this at 2010-05-17 */
+	/* does he want us to skip this? */
+#if 0
+	ret = read_file(this_board->noboot, kernel_dram, 512);
+	if (ret != -1) {
+		/* -2 (mount fail) should make us give up too */
+		if (ret >= 0) {
+			DEBUG("(Skipping on finding ");
+			DEBUG(this_board->noboot);
+			indicate(UI_IND_SKIPPING);
+		}
+		return;
+	}
+#endif
+
+	/* is there a commandline append file? */
 
 	commandline_rootfs_append[0] = '\0';
-	DEBUG("Pulling the kernel");
+	read_file(this_board->append, (u8 *)commandline_rootfs_append, 512);
+
+	indicate(UI_IND_KERNEL_PULL);
 
 	/* pull the kernel image */
+	DEBUG("Pulling the kernel");
 
 	if (read_file(this_kernel->filepath, kernel_dram, 4096) < 0)
 		return;
-
-	DEBUG("kernel file read");
+	//DEBUG("Kernel file read");
 
 	the_kernel = load_uimage(kernel_dram);
 	if (!the_kernel)
 		the_kernel = load_zimage(kernel_dram);
 	if (!the_kernel)
 		return;
+	//DEBUG("Kernel recognised");
 
-	DEBUG("Kernel recognised");
 	/* initramfs if needed */
 
-
 	if (this_kernel->initramfs_filepath) {
-		DEBUG("loading initramfs");
+		DEBUG("Loading initramfs");
 		indicate(UI_IND_INITRAMFS_PULL);
 		initramfs_len = read_file(this_kernel->initramfs_filepath,
 			  (u8 *)this_board->linux_mem_start + INITRD_OFFSET,
@@ -454,15 +463,13 @@ static void try_this_kernel(void)
 	if (this_board->close)
 		(this_board->close)();
 
-	DEBUG("Starting --->");
 	indicate(UI_IND_KERNEL_START);
 
-	led_set(1);
 	/*
 	* ooh that's it, we're gonna try boot this image!
 	* never mind the cache, Linux will take care of it
 	*/
-	DEBUG("Kernel should take over now");
+//	DEBUG("Starting kernel --->");
 	the_kernel(0, this_board->linux_machine_id, this_board->linux_tag_placement);
 	/* we won't come back here no matter what */
 }
@@ -476,9 +483,9 @@ void bootloader_second_phase(void)
 */
 	/* we try the possible kernels for this board in order */
 
-	udelay(100000);
-	//led_set(3);
-	for (this_kernel = this_board->kernel_source; this_kernel->name; this_kernel++)
+//	udelay(100000);
+	udelay(10000);
+	for (this_kernel = this_board->kernel_source;  this_kernel->name; this_kernel++)
 		try_this_kernel();
 
 	/* none of the kernels worked out */
