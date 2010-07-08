@@ -233,11 +233,32 @@ _battery_okay:
 	ldr	r0, vvar_51402258 // =0x514449A8
 
 	bl	LCD_init2
+
+	bl	test_adc_ldo
+
 	b	start_qi
 //	b	qi_cstart
 init2_end:
 	b	init2_end
 
+
+test_adc_ldo:
+	stmfd	sp!, {r4,lr}
+
+	// print register
+	mov	r2, #1
+	mov	r1, SP
+//	mov	r0, #0x3a		// read from REG_SIMLTEN
+	mov	r0, #0x42		// read from REG_CARD1EN
+//	mov	r0, #0x45		// read from REG_CARD2EN
+	bl	jump_PMIC_LUT1_read 
+//	mov	r1, #0x3c		// REG_SIMLTEN
+	mov	r1, #0x44		// REG_CARD1EN
+//	mov	r1, #0x48		// REG_CARD2EN
+	ldr	r2, [SP]
+	bl	PMIC_read_print_result
+
+	ldmfd	sp!, {R4,pc}
 
 
 LCD_init2:
