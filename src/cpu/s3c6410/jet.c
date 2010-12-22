@@ -244,11 +244,13 @@ const struct board_variant const * get_board_variant_jet(void)
 	return &board_variants[0];
 }
 
+/*25.5.2010: some modifications by Chris:*/
+
 const struct board_api board_api_jet = {
 	.name = "Jet",
 	.linux_machine_id = 1626,
 	.linux_mem_start = 0x50000000,
-	.linux_mem_size = (128 * 1024 * 1024),
+	.linux_mem_size = (128 * 1024 * 1024), //(64 * 1024 * 1024) is also possible
 	.linux_tag_placement = 0x50000000 + 0x100,
 	.get_board_variant = get_board_variant_jet,
 	.is_this_board = is_this_board_jet,
