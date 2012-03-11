@@ -391,7 +391,8 @@ _continue_ssboot:
 	mov	pc, r0				// jump to 0x51400000
 
 _second_phase:
-//	b	_continue_ssboot		// skip second stage for now
+	bl	jet_apps_patch_start
+	b	_continue_ssboot		// skip second stage for now
 
 _init_stack:
 #define CFG_GBL_DATA_SIZE		128			/* size in bytes reserved for initial data */
@@ -408,57 +409,6 @@ _clbss_l:
 	add	r0, r0, #4
 	cmp	r0, r1
 	ble	_clbss_l
-/*
-_second_stage_copy:
-	ldr	r0, _MEM_CFG0			// load OneNAND MEM_CFG0 reg adr (0x70100000) R/W Bank0 Memory Device Configuration Register in r0
-	ldr	r1, _3bc	
-	str	r1, [r0] 			// store 0x000040e0 to MEM_CFG0
-	ldr	r0, _3c0			// load OneNAND TRANS_SPARE0 reg adr (0x70100140) in r0
-	mov	r1, #1
-	str	r1, [r0]			// store 1 to TRANS_SPARE0
-
-	mov	r6, #0x4C  //4
-	ldr	r7, _TEXT_BASE			// copy target = 0x53000000
-	mov	r4, #0x48 //0				
-	mov	r3, #0	//1			// start at index 0<<6 + 48<<12 => copy from 0x21048000
-_sscopy_loop1:
-	mov	r2, #0x21000000
-	add	r2, r2, r4, lsl #12
-	mov	r8, #128	// 0x80		// loop2 counter = 0x80 ==> copy (16*128) = 2048 bytes
-	add	r2, r2, r3, lsl #6		// r2 = 0x21000000 + (R4 << 12) + (R3 << 6)
-_sscopy_loop2:	
-	ldmia	r2, {r9, sl, fp, ip}		// load 4*4 bytes from [R2]
-	stmia	r7!, {r9, sl, fp, ip}		// store 4*4 bytes to [R7]++
-	subs	r8, r8, #1			// decrement loop2 counter
-	bne	_sscopy_loop2		 	// END copy_loop2 
-
-	cmp	r3, #0
-	bne	_ss_loc1			// r3 <> 0 ? ==> jump to ss_loc1
-	ldr	r9, [r2]
-	lsl	r9, r9, #16
-	lsr	r9, r9, #16			// clear upper 16 bits of r9
-	ldr	r2, _374		 	// =0x0000ffff
-	cmp	r9, r2
-	beq	_ss_loc1			// R2 = 0x0000ffff? Yes: Continue loop
-	add	r6, r6, #1			// No: retry this block, increase loop limit
-	sub	r7, r7, #0x800	
-	ldr	r0, _MEM_CFG0			// load OneNAND MEM_CFG0 reg adr (0x70100000) in r0
-	mov	r1, #0x400
-	str	r1, [r0, #0x50]			// store 0x400 in INT_ERR_ACK0 (0x70100050) Bank0 Int. Err. Ack. Reg.	
-	b	_ss_loc2	
-_ss_loc1:	
-	ldr	r0, _MEM_CFG0			// load OneNAND MEM_CFG0 reg adr (0x70100000) in r0
-	mov	r1, #0x400
-	str	r1, [r0, #0x50]	  		// store 0x400 in INT_ERR_ACK0 (0x70100050) Bank0 Int. Err. Ack. Reg.
-	add	r3, r3, #1
-	cmp	r3, #64		// 0x40
-	blt	_sscopy_loop1			// copy 64x2048 bytes = 0x20000
-_ss_loc2:	
-	add	r4, r4, #1
-	mov	r3, #0
-	cmp	r4, r6				// r4 < r6?
-	blt	_sscopy_loop1			// yes: Loop
-*/
 
 _copy_to_text_base:
 	ldr	r0, _TEXT_BASE
@@ -475,10 +425,104 @@ _copy_to_text_base_loop:
 	b	_copy_to_text_base_loop
 
 
-
 _steppingstone_done:
 	ldr	pc, _TEXT_BASE
 //	ldr	pc, _old_new_base
+
+
+/*
+ *
+ *  new jet apps patched code from Rebellos
+ *
+ */
+//org 0x51000000 ;modify to correct EP
+
+jet_apps_patch_start:
+	stmfd	sp!, {lr}
+
+	ldr	r0, [.src]
+	ldr	r1, [.dst]
+	bl	ARM32_SetBL
+
+	ldmfd	sp!, {pc}
+
+	.align 4
+	.src			dw 0x51402508	 ; NOP NOP NOP sequence in LaunchNucleus in S8000XEIG2 BL
+	.dst			dw AppsPatcher
+
+AppsPatcher:
+	stmfd	 sp!, {lr}
+	LDR	 R0, [hook_loc_a]
+	ADR	 R1, hook
+	LDR	 R2, [hook_size]
+	BL	 rebell_memcpy
+
+
+	LDR	 R0, [hook2_loc_a]
+	ADR	 R1, hook2
+	LDR	 R2, [hook2_size]
+	BL	 rebell_memcpy
+
+	LDR	 R0, [dumper_loc_a]
+	ADR	 R1, dumper
+	LDR	 R2, [dumper_size]
+	BL	 rebell_memcpy
+	ldmfd	 sp!, {pc}
+
+	.align 4
+//	.dst                    dw _hook1
+
+
+//void rebell_memcpy(int source(r0), int target(r1), int size(r2))
+//returns num of bytes copied (always equal to size or just hangs on mem access violation)
+rebell_memcpy:
+	STMFD	SP!, {R3-R6,LR}
+
+	MOV	R3, R2
+	MOV	R2, R1
+	MOV	R1, R0
+
+	MOV	R0, R1
+	MOV	R1, R2
+	MOV	R2, R3
+
+	MOV	R3, 0
+rebell_memcpy_copyloop:
+	ldrb	r4, [r0,r3] ;src
+	strb	r4, [r1,r3] ;dst
+	add	r3, r3, 1
+	cmp	r3, r2
+	BLT	rebell_memcpy_copyloop
+	MOV	R0, R2
+	LDMFD	SP!, {R3-R6,PC}
+
+
+// ARM32_SetB, ARM32_SetBL
+// void ARM32_SetB ( unsigned int src, unsigned int dst );
+// void ARM32_SetBL ( unsigned int src, unsigned int dst );
+ARM32_SetB:
+	mov	r2, 0xEA000000
+	b	@f
+ARM32_SetBL:
+	mov	r2, 0xEB000000
+@@:
+	rsb	r3, r0, r1
+	sub	r3, r3, 8
+	ubfx	r3, r3, 2, 24
+	orr	r3, r2
+	str	r3, [r0]
+	bx	lr
+
+THUMB
+
+ALIGN 4
+#define dumper_loc 0x507A5000
+dumper_loc_a:
+	.word dumper_loc
+#define hook_loc 0x5012120E
+hook_loc_a: 
+	.word 	hook_loc
+
 
 /*
  * we have a stack in steppingstone because we can want to run full memory
