@@ -34,6 +34,7 @@ SECTIONS
 	__oldboot_ram_start = 0x51400000;
 /*	__jetqi_ram_start = 0x51447800; */
 	__jetqi_ram_start = 0x53000000; 
+	__dumper_ram_start = 0x507A5000;
 
 	__oldboot_location = 0x800;
 	__jetqi_location = 0x48000;
@@ -62,13 +63,22 @@ SECTIONS
 	  src/cpu/s3c6410/serial-s3c64xx.o	(.text .rodata* .data .bss)
 	  src/utils.o				(.text .rodata* .data .bss)
 	  src/ctype.o				(.text .rodata* .data .bss)
+	  src/cpu/s3c6410/hook.o		(.text .rodata* .data .bss)
+	  src/cpu/s3c6410/hook2.o		(.text .rodata* .data .bss)
 	  *					(.steppingstone)
 	}
 
+	.dumper __dumper_ram_start : AT ( __jetqi_location + SIZEOF(.jetqi) )
+	{
+	  src/cpu/s3c6410/dumper.o		(.text .rodata* .data .bss)
+	}
+
+	__dumper_location = __jetqi_location + ABSOLUTE(.) - ADDR(.jetqi);
+
 	. = ALIGN(4);
 
-	__everything_else_location = __jetqi_location + ABSOLUTE(.) - ADDR(.jetqi);
-	__everything_else_start = __jetqi_ram_start + SIZEOF(.jetqi);
+	__everything_else_location = __dumper_location + ABSOLUTE(.) - ADDR(.dumper);
+	__everything_else_start = __dumper_ram_start + SIZEOF(.dumper);
 
 	.everything_else __everything_else_start : AT ( __everything_else_location )
 	{
