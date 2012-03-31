@@ -6,7 +6,7 @@
 	.code 32
 
 dumper:
-	.org	dumper_loc, 0
+//	.org	dumper_loc, 0
 dumper_begin:
 	stmfd	sp!, {r0-r10, lr}
 	MOV	R8, R2
