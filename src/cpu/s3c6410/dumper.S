@@ -1,5 +1,3 @@
-	.equ	MemAllocTraceEx, 0x5025A3D4
-	.equ	MemFreeTraceEx, 0x5025A66A
 	.equ 	dumper_loc, 0x507A5000
 	.equ	dumper_size, (dumper_end-dumper_begin)
 
@@ -21,7 +19,7 @@ do_dump:
 	MOV	 R2, #0
 	MOV	 R1, #0x4000
 	MOV	 R0, #0
-	BLX	MemAllocTraceEx
+	BLX	jump_MemAllocTraceEx
 	MOV	R5, R0
 
 	MOV	R1, #0
@@ -85,7 +83,7 @@ dumploop:
 	MOV	R2, #0
 	MOV	R1, R5
 	MOV	R0, #0
-	BLX	MemFreeTraceEx
+	BLX	jump_MemFreeTraceEx
 
 	LDMFD	sp!, {r0-r10, pc}
 	.align 4
@@ -132,21 +130,47 @@ uart_sfr:
 
 
 	.align 4
-#define getCurrentFramePtr 0x5039BD8C
 tx_hook:
 	STMFD		SP!, {R1-R10,LR}
-	BL		getCurrentFramePtr
+	BL		jump_getCurrentFramePtr
 	LDR		R1, [R0, #0x8]
 	ADD		R1, #0xC
 	MOV		R2, #1
-	BL		dumper_loc
+//	BL		dumper_loc
+	BL		dumper_begin
 
 	MOV		R0, #0x1000 
 	#replaced opcode
 
 	LDMFD		SP!, {R1-R10,PC}
 
+/* 
+ *
+ * long distance jumps
+ *
+ */
+
+// MemAllocTraceEx (thumb) 
+	.equ	MemAllocTraceEx, 0x5025A3D4
+	.word	adr_MemAllocTraceEx, MemAllocTraceEx
+	.thumb
+jump_MemAllocTraceEx:
+	b	[adr_MemAllocTraceEx]
+
+// MemFreeTraceEx (thumb)
+	.equ	MemFreeTraceEx, 0x5025A66A
+	.word	adr_MemFreeTraceEx, MemFreeTraceEx
+	.thumb
+jump_MemFreeTraceEx:
+	b	[adr_MemFreeTraceEx]
+
+// getCurrentFramePtr (code 32)
+	.equ	getCurrentFramePtr, 0x5039BD8C
+	.word	adr_getCurrentFramePtr
+	.code 32
+jump_getCurrentFramePtr:
+	b	[adr_getCurrentFramePtr]
+
 dumper_end:
 //	.org ((dumper_end-dumper_begin)+dumper)
-
 

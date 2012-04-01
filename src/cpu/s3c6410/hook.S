@@ -26,6 +26,7 @@ hook_return:
 	NOP
 	NOP
 	B	hook_end
+	.align 4
 dumper_loc_a:
 	.word 	dumper_loc
 hook_loc_a:

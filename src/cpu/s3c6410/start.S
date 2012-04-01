@@ -440,32 +440,34 @@ _steppingstone_done:
 jet_apps_patch_start:
 	stmfd	sp!, {lr}
 
-	ldr	r0, [.src]
-	ldr	r1, [.dst]
+	ldr	r0, src
+	ldr	r1, dst
 	bl	ARM32_SetBL
 
 	ldmfd	sp!, {pc}
 
 	.align 4
-	.src			dw 0x51402508	 ; NOP NOP NOP sequence in LaunchNucleus in S8000XEIG2 BL
-	.dst			dw AppsPatcher
+src:
+	.word	0x51402508	 // NOP NOP NOP sequence in LaunchNucleus in S8000XEIG2 BL
+dst:
+	.word	AppsPatcher
 
 AppsPatcher:
 	stmfd	 sp!, {lr}
-	LDR	 R0, [hook_loc_a]
+	LDR	 R0, hook_loc_a
 	ADR	 R1, hook
-	LDR	 R2, [hook_size]
+	LDR	 R2, hook_size
 	BL	 rebell_memcpy
 
 
-	LDR	 R0, [hook2_loc_a]
+	LDR	 R0, hook2_loc_a
 	ADR	 R1, hook2
-	LDR	 R2, [hook2_size]
+	LDR	 R2, hook2_size
 	BL	 rebell_memcpy
 
-	LDR	 R0, [dumper_loc_a]
+	LDR	 R0, dumper_loc_a
 	ADR	 R1, dumper
-	LDR	 R2, [dumper_size]
+	LDR	 R2, dumper_size
 	BL	 rebell_memcpy
 	ldmfd	 sp!, {pc}
 
@@ -486,11 +488,11 @@ rebell_memcpy:
 	MOV	R1, R2
 	MOV	R2, R3
 
-	MOV	R3, 0
+	MOV	R3, #0
 rebell_memcpy_copyloop:
-	ldrb	r4, [r0,r3] ;src
-	strb	r4, [r1,r3] ;dst
-	add	r3, r3, 1
+	ldrb	r4, [r0,r3] //src
+	strb	r4, [r1,r3] //dst
+	add	r3, r3, #1
 	cmp	r3, r2
 	BLT	rebell_memcpy_copyloop
 	MOV	R0, R2
@@ -501,21 +503,21 @@ rebell_memcpy_copyloop:
 // void ARM32_SetB ( unsigned int src, unsigned int dst );
 // void ARM32_SetBL ( unsigned int src, unsigned int dst );
 ARM32_SetB:
-	mov	r2, 0xEA000000
+	mov	r2, #0xEA000000
 	b	@f
 ARM32_SetBL:
-	mov	r2, 0xEB000000
+	mov	r2, #0xEB000000
 @@:
 	rsb	r3, r0, r1
-	sub	r3, r3, 8
-	ubfx	r3, r3, 2, 24
+	sub	r3, r3, #8
+	ubfx	r3, r3, #2, #24
 	orr	r3, r2
 	str	r3, [r0]
 	bx	lr
 
-THUMB
+	.THUMB
 
-ALIGN 4
+	.ALIGN 4
 #define dumper_loc 0x507A5000
 dumper_loc_a:
 	.word dumper_loc
