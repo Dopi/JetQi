@@ -510,7 +510,9 @@ ARM32_SetBL:
 @@:
 	rsb	r3, r0, r1
 	sub	r3, r3, #8
-	ubfx	r3, r3, #2, #24
+//	ubfx	r3, r3, #2, #24	// replaced with ror+and 
+	ror	r3,r3, #2
+	and	r3,r3, #0x00ffffff
 	orr	r3, r2
 	str	r3, [r0]
 	bx	lr
