@@ -2,7 +2,11 @@
 	.THUMB
 
 	.ALIGN 4
-	.equ 	hook_loc, 0x5012120E
+	.equ 	hook_target_loc, 0x5012120E
+	.equ	hook_loc, hook
+	.equ	hook_size_val, (hook_end-hook_begin)
+	.global	hook_loc
+	.global	hook_size_val
 
 hook:
 //	.org 	hook_loc
@@ -34,8 +38,6 @@ hook_loc_a:
 hook_end:
 //	.org ((hook_end-hook_begin)+hook)
 	.align 4
-hook_size:
-	.word	(hook_end-hook_begin)
 
 
 

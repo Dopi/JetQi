@@ -1,5 +1,8 @@
-	.equ 	dumper_loc, 0x507A5000
-	.equ	dumper_size, (dumper_end-dumper_begin)
+	.equ 	dumper_target_loc, 0x507A5000
+	.equ	dumper_loc, dumper
+	.equ	dumper_size_val, (dumper_end-dumper_begin)
+	.global	dumper
+	.global	dumper_size_val
 
 	.code 32
 

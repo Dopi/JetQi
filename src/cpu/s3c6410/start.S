@@ -437,6 +437,10 @@ _steppingstone_done:
  */
 //org 0x51000000 ;modify to correct EP
 
+	.extern	dumper
+	.extern hook
+	.extern	hook2
+
 jet_apps_patch_start:
 	stmfd	sp!, {lr}
 
@@ -454,19 +458,19 @@ dst:
 
 AppsPatcher:
 	stmfd	 sp!, {lr}
-	LDR	 R0, hook_loc_a
-	ADR	 R1, hook
+	LDR	 R0, hook_target_loc_a
+	LDR	 R1, hook_loc_a
 	LDR	 R2, hook_size
 	BL	 rebell_memcpy
 
 
-	LDR	 R0, hook2_loc_a
-	ADR	 R1, hook2
+	LDR	 R0, hook2_target_loc_a
+	LDR	 R1, hook2_loc_a
 	LDR	 R2, hook2_size
 	BL	 rebell_memcpy
 
-	LDR	 R0, dumper_loc_a
-	ADR	 R1, dumper
+	LDR	 R0, dumper_target_loc_a
+	LDR	 R1, dumper_loc_a
 	LDR	 R2, dumper_size
 	BL	 rebell_memcpy
 	ldmfd	 sp!, {pc}
@@ -520,13 +524,28 @@ ARM32_SetBL:
 	.THUMB
 
 	.ALIGN 4
-#define dumper_loc 0x507A5000
+#define dumper_target_loc 0x507A5000
+dumper_target_loc_a:
+	.word	dumper_target_loc
 dumper_loc_a:
-	.word dumper_loc
-#define hook_loc 0x5012120E
-hook_loc_a: 
-	.word 	hook_loc
+	.word	dumper_loc
+dumper_size:
+	.word	dumper_size_val
 
+#define hook_target_loc 0x5012120E
+hook_target_loc_a: 
+	.word 	hook_target_loc
+hook_loc_a:
+	.word	hook_loc
+hook_size:
+	.word	hook_size_val
+
+hook2_target_loc_a: 
+	.word 	hook2_target_loc
+hook2_loc_a:
+	.word	hook2_loc
+hook2_size:
+	.word	hook2_size_val
 
 /*
  * we have a stack in steppingstone because we can want to run full memory
