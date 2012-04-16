@@ -57,12 +57,6 @@ SECTIONS
 
 	.jetqi __jetqi_ram_start : AT ( __jetqi_location ) 
 	{
-	  src/cpu/s3c6410/pre_start.o		(.text .rodata* .data .bss)
-	  src/cpu/s3c6410/start_qi.o		(.text .rodata* .data .bss)
-	  src/cpu/s3c6410/jet.o			(.text .rodata* .data .bss)
-	  src/cpu/s3c6410/serial-s3c64xx.o	(.text .rodata* .data .bss)
-	  src/utils.o				(.text .rodata* .data .bss)
-	  src/ctype.o				(.text .rodata* .data .bss)
 	  src/cpu/s3c6410/hook.o		(.text .rodata* .data .bss)
 	  src/cpu/s3c6410/hook2.o		(.text .rodata* .data .bss)
 	  *					(.steppingstone)

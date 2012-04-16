@@ -437,10 +437,6 @@ _steppingstone_done:
  */
 //org 0x51000000 ;modify to correct EP
 
-	.extern	dumper
-	.extern hook
-	.extern	hook2
-
 jet_apps_patch_start:
 	stmfd	sp!, {lr}
 
@@ -508,10 +504,10 @@ rebell_memcpy_copyloop:
 // void ARM32_SetBL ( unsigned int src, unsigned int dst );
 ARM32_SetB:
 	mov	r2, #0xEA000000
-	b	@f
+	b	ARM32_Set
 ARM32_SetBL:
 	mov	r2, #0xEB000000
-@@:
+ARM32_Set:
 	rsb	r3, r0, r1
 	sub	r3, r3, #8
 //	ubfx	r3, r3, #2, #24	// replaced with ror+and 
@@ -524,6 +520,12 @@ ARM32_SetBL:
 	.THUMB
 
 	.ALIGN 4
+
+	.extern	dumper
+	.extern hook
+	.extern	hook2
+	.extern dumper_loc
+
 #define dumper_target_loc 0x507A5000
 dumper_target_loc_a:
 	.word	dumper_target_loc
