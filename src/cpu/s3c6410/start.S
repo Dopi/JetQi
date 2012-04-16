@@ -521,11 +521,6 @@ ARM32_Set:
 
 	.ALIGN 4
 
-	.extern	dumper
-	.extern hook
-	.extern	hook2
-	.extern dumper_loc
-
 #define dumper_target_loc 0x507A5000
 dumper_target_loc_a:
 	.word	dumper_target_loc
