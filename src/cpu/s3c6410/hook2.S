@@ -1,5 +1,8 @@
 
 	.global	hook2
+	.global	hook2_loc
+	.global	hook2_size_val
+	.global	hook2_target_loc
 	.align 4
 	.equ	hook2_target_loc, 0x5039A93C
 	.equ	hook2_loc, hook2

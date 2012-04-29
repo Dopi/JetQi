@@ -2,6 +2,7 @@
 	.equ	dumper_loc, dumper
 	.equ	dumper_size_val, (dumper_end-dumper_begin)
 	.global	dumper
+	.global	dumper_loc
 	.global	dumper_size_val
 
 	.code 32
@@ -131,7 +132,7 @@ uart_sfr:
 	.word	0x7F005800 
 #	from S8000 BL2
 
-
+	.global	tx_hook
 	.align 4
 tx_hook:
 	STMFD		SP!, {R1-R10,LR}
@@ -155,21 +156,30 @@ tx_hook:
 
 // MemAllocTraceEx (thumb) 
 	.equ	MemAllocTraceEx, 0x5025A3D4
-	.word	adr_MemAllocTraceEx, MemAllocTraceEx
+	.global adr_MemAllocTraceEx
+adr_MemAllocTraceEx:
+	.word	MemAllocTraceEx
+	.global jump_MemAllocTraceEx
 	.thumb
 jump_MemAllocTraceEx:
 	b	[adr_MemAllocTraceEx]
 
 // MemFreeTraceEx (thumb)
 	.equ	MemFreeTraceEx, 0x5025A66A
-	.word	adr_MemFreeTraceEx, MemFreeTraceEx
+	.global	adr_MemFreeTraceEx
+adr_MemFreeTraceEx:
+	.word	MemFreeTraceEx
+	.global	jump_MemFreeTraceEx
 	.thumb
 jump_MemFreeTraceEx:
 	b	[adr_MemFreeTraceEx]
 
 // getCurrentFramePtr (code 32)
 	.equ	getCurrentFramePtr, 0x5039BD8C
-	.word	adr_getCurrentFramePtr
+	.global	adr_getCurrentFramePtr
+adr_getCurrentFramePtr:
+	.word	getCurrentFramePtr
+	.global	jump_getCurrentFramePtr
 	.code 32
 jump_getCurrentFramePtr:
 	b	[adr_getCurrentFramePtr]
