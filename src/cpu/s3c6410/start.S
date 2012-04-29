@@ -521,7 +521,6 @@ ARM32_Set:
 
 	.ALIGN 4
 
-#define dumper_target_loc 0x507A5000
 dumper_target_loc_a:
 	.word	dumper_target_loc
 dumper_loc_a:
@@ -529,7 +528,6 @@ dumper_loc_a:
 dumper_size:
 	.word	dumper_size_val
 
-#define hook_target_loc 0x5012120E
 hook_target_loc_a: 
 	.word 	hook_target_loc
 hook_loc_a:

@@ -1,15 +1,14 @@
 	.equ 	dumper_target_loc, 0x507A5000
+	.global	dumper_target_loc
+
 	.equ	dumper_loc, dumper
-	.equ	dumper_size_val, (dumper_end-dumper_begin)
-	.global	dumper
 	.global	dumper_loc
+
+	.equ	dumper_size_val, (dumper_end-dumper)
 	.global	dumper_size_val
 
-	.code 32
-
 dumper:
-//	.org	dumper_loc, 0
-dumper_begin:
+	.code 32
 	stmfd	sp!, {r0-r10, lr}
 	MOV	R8, R2
 	MOV	R7, R1
@@ -140,8 +139,7 @@ tx_hook:
 	LDR		R1, [R0, #0x8]
 	ADD		R1, #0xC
 	MOV		R2, #1
-//	BL		dumper_loc
-	BL		dumper_begin
+	BL		dumper
 
 	MOV		R0, #0x1000 
 	#replaced opcode
