@@ -459,7 +459,6 @@ AppsPatcher:
 	LDR	 R2, hook_size
 	BL	 rebell_memcpy
 
-
 	LDR	 R0, hook2_target_loc_a
 	LDR	 R1, hook2_loc_a
 	LDR	 R2, hook2_size

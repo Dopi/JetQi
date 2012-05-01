@@ -11,9 +11,6 @@
 	.align 4
 hook2:
 	BL  	tx_hook
-//	BL	hook2_end:
-hook2_loc_a:
-	.word	hook2_target_loc
 
 	.align 4
 hook2_end:

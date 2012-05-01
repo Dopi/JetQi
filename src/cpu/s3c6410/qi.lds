@@ -34,10 +34,15 @@ SECTIONS
 	__oldboot_ram_start = 0x51400000;
 /*	__jetqi_ram_start = 0x51447800; */
 	__jetqi_ram_start = 0x53000000; 
-	__dumper_ram_start = 0x507A5000;
+	__hook_ram_start = hook_target_loc;
+	__hook2_ram_start = hook2_target_loc;
+	__dumper_ram_start = dumper_target_loc;
 
 	__oldboot_location = 0x800;
 	__jetqi_location = 0x48000;
+	__hook_location = 0x48010;
+	__hook2_location = 0x48030;
+	__dumper_location = 0x48050;
 
 	/* this text section is magically pulled from flash
 	 * and stored by the iRom at 0x0c000000, then it is jumped into
@@ -57,17 +62,23 @@ SECTIONS
 
 	.jetqi __jetqi_ram_start : AT ( __jetqi_location ) 
 	{
-	  src/cpu/s3c6410/hook.o		(.text .rodata* .data .bss)
-	  src/cpu/s3c6410/hook2.o		(.text .rodata* .data .bss)
 	  *					(.steppingstone)
 	}
 
-	.dumper __dumper_ram_start : AT ( __jetqi_location + SIZEOF(.jetqi) )
+	.hook __hook_ram_start : AT ( __hook_location ) 
+	{
+	  src/cpu/s3c6410/hook.o		(.text .rodata* .data .bss)
+	}
+
+	.hook2 __hook2_ram_start : AT ( __hook2_location ) 
+	{
+	  src/cpu/s3c6410/hook2.o		(.text .rodata* .data .bss)
+	}
+
+	.dumper __dumper_ram_start : AT ( __dumper_location )
 	{
 	  src/cpu/s3c6410/dumper.o		(.text .rodata* .data .bss)
 	}
-
-	__dumper_location = __jetqi_location + ABSOLUTE(.) - ADDR(.jetqi);
 
 	. = ALIGN(4);
 

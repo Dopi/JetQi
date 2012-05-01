@@ -9,10 +9,8 @@
 	.global	hook_size_val
 
 	.ALIGN 4
-hook:
 	.THUMB
-	NOP
-//	MOV.W	R2, #0
+hook:
 	MOV	R2, #0
 //	BLX	dumper_loc
 	LDR	R7, dumper_loc_a
@@ -20,25 +18,17 @@ hook:
 hook_return:
 //	NOP //BL  BadaPrint
 //	NOP //MOV.W = 4bytes
-
-//	NOP
-//	NOP
-//	NOP
-	NOP
-	NOP
-
-	NOP
-	NOP
 	B	hook_end
-	.align 4
-
 dumper_loc_a:
 	.word 	dumper_loc
-hook_loc_a:
-	.word 	hook_loc
-	
-	.align 4
+//	NOP
+//	NOP
+//	NOP
+//	NOP
+//	NOP
+//	NOP
 hook_end:
+	nop
 //	.org ((hook_end-hook_begin)+hook)
 
 

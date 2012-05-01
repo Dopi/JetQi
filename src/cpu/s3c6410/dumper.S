@@ -7,8 +7,8 @@
 	.equ	dumper_size_val, (dumper_end-dumper)
 	.global	dumper_size_val
 
-dumper:
 	.code 32
+dumper:
 	stmfd	sp!, {r0-r10, lr}
 	MOV	R8, R2
 	MOV	R7, R1
